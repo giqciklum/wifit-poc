@@ -1,7 +1,77 @@
 (() => {
     const STORAGE_KEY = "wifit_runtime_v1";
+    const BACKEND_URL = "https://script.google.com/macros/s/AKfycbwmmgY9mg4p8o6lVboAelyR2P0WtnMYo7kDJWWLpvzHy6B2kuiatZSr1qguU2jGDLwnWg/exec";
+    const BACKEND_TIMEOUT = 8000;
 
     const deepClone = (value) => JSON.parse(JSON.stringify(value));
+
+    const backend = {
+        mode: "local",
+        liveState: null,
+        lastError: null,
+        checking: false
+    };
+
+    function backendFetch(params) {
+        const url = BACKEND_URL + "?" + new URLSearchParams(params).toString();
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), BACKEND_TIMEOUT);
+        return fetch(url, { signal: controller.signal })
+            .then(function (resp) { clearTimeout(timer); return resp.json(); })
+            .catch(function (err) { clearTimeout(timer); throw err; });
+    }
+
+    function probeBackend() {
+        if (backend.checking) return;
+        backend.checking = true;
+        backendFetch({ action: "state" })
+            .then(function (data) {
+                if (data && data.status === "ok") {
+                    backend.mode = "live";
+                    backend.liveState = data.resumen;
+                    backend.lastError = null;
+                } else {
+                    backend.mode = "local";
+                    backend.lastError = "Respuesta inesperada";
+                }
+            })
+            .catch(function (err) {
+                backend.mode = "local";
+                backend.lastError = err.message || "Error de red";
+            })
+            .finally(function () {
+                backend.checking = false;
+                renderBackendBadge();
+            });
+    }
+
+    function triggerBackendAction(actionName, params) {
+        var query = Object.assign({ action: actionName }, params || {});
+        return backendFetch(query)
+            .then(function (data) {
+                if (data && data.status === "ok") {
+                    backend.lastError = null;
+                    return data;
+                }
+                throw new Error("Backend respondió con error");
+            })
+            .catch(function (err) {
+                backend.lastError = err.message || "Error de red";
+                return null;
+            });
+    }
+
+    function renderBackendBadge() {
+        var el = document.getElementById("backend-mode-badge");
+        if (!el) return;
+        if (backend.mode === "live") {
+            el.className = "backend-badge live";
+            el.innerHTML = '<span class="badge-dot"></span> Backend en vivo';
+        } else {
+            el.className = "backend-badge local";
+            el.innerHTML = '<span class="badge-dot"></span> Modo demo local';
+        }
+    }
 
     const scenarioLibrary = {
         defaultScenario: "activation",
@@ -466,7 +536,20 @@
         `;
 
         const scenario = runtime.currentScenario ? scenarioLibrary.scenarios[runtime.currentScenario] : null;
-        summary.innerHTML = scenario ? `
+        const liveStats = backend.mode === "live" && backend.liveState ? backend.liveState : null;
+        const liveBlock = liveStats ? `
+            <div class="live-stats">
+                <small>Google Sheets en tiempo real</small>
+                <div class="live-stats-grid">
+                    <span><strong>${liveStats.socios_activos}</strong> socios activos</span>
+                    <span><strong>${liveStats.leads_nuevos}</strong> leads nuevos</span>
+                    <span><strong>${liveStats.automatizaciones_en_curso}</strong> automatizaciones</span>
+                    <span><strong>${liveStats.retencion_estimada}</strong> retención</span>
+                </div>
+            </div>
+        ` : "";
+
+        summary.innerHTML = (scenario ? `
             <div class="eyebrow">Escenarios conectados</div>
             <strong>${scenario.label}</strong>
             <p>${scenario.summary}</p>
@@ -474,7 +557,8 @@
             <div class="eyebrow">Escenarios conectados</div>
             <strong>Escenario preparado</strong>
             <p>Selecciona un trigger para activar socio, gestión y evidencias generadas.</p>
-        `;
+        `) + liveBlock;
+
         status.innerHTML = scenario ? `
             <div class="status-chip">${scenario.status.badge}</div>
             <strong>${scenario.status.title}</strong>
@@ -489,6 +573,7 @@
 
         bar.classList.toggle("compacta", runtime.collapsed);
         toggle.textContent = runtime.collapsed ? "Mostrar panel" : "Ocultar panel";
+        renderBackendBadge();
     }
 
     function renderMemberSync() {
@@ -661,6 +746,34 @@
         if (!silent) {
             showToast(scenario.toast.title, scenario.toast.text);
         }
+
+        if (backend.mode === "live" && !silent) {
+            fireLiveTrigger(id, scenario);
+        }
+    }
+
+    function fireLiveTrigger(id, scenario) {
+        var actionMap = {
+            activation: { action: "activation", nombre: "Manuel Garcia", sede: "WiFit Retiro" },
+            lead: { action: "lead", nombre: "Nuevo Lead Demo", canal: "Google Ads" },
+            retention: { action: "retention", socio_id: "S003" }
+        };
+        var params = actionMap[id];
+        if (!params) return;
+
+        triggerBackendAction(params.action, params)
+            .then(function (data) {
+                if (!data) return;
+                var prev = runtime.events.length ? runtime.events : [];
+                var liveEvent = {
+                    time: new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" }),
+                    title: "Backend confirmado",
+                    detail: data.mensaje || "Acción registrada en Google Sheets."
+                };
+                runtime.events = prev.concat([liveEvent]);
+                renderEventFeed();
+                probeBackend();
+            });
     }
 
     function resetRuntimeScenario() {
@@ -724,6 +837,8 @@
         runtime.collapsed = true;
         applyScenario(scenarioLibrary.defaultScenario, { silent: true });
     }
+
+    probeBackend();
 
     if ("serviceWorker" in navigator && window.location.protocol.startsWith("http")) {
         window.addEventListener("load", () => {

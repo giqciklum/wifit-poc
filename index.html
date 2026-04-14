@@ -298,6 +298,68 @@
             letter-spacing: 0.12em;
         }
 
+        .backend-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            padding: 4px 10px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+        .backend-badge .badge-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+        .backend-badge.live {
+            background: rgba(34, 120, 60, 0.1);
+            color: #1a6b35;
+        }
+        .backend-badge.live .badge-dot {
+            background: #22a84a;
+            box-shadow: 0 0 6px rgba(34, 168, 74, 0.5);
+        }
+        .backend-badge.local {
+            background: rgba(160, 150, 120, 0.12);
+            color: #7a7258;
+        }
+        .backend-badge.local .badge-dot {
+            background: #b0a880;
+        }
+
+        .live-stats {
+            margin-top: 10px;
+            padding: 10px 12px;
+            background: rgba(34, 120, 60, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(34, 120, 60, 0.12);
+        }
+        .live-stats small {
+            display: block;
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: #1a6b35;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        .live-stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px 12px;
+            font-size: 0.78rem;
+            color: var(--oliva-texto);
+        }
+        .live-stats-grid strong {
+            font-size: inherit;
+            color: var(--oliva-oscuro);
+        }
+
         .runtime-toggle {
             min-width: 140px;
         }
@@ -2497,6 +2559,7 @@
                     <p>La demo mantiene estado, sincroniza journeys y deja trazabilidad operativa.</p>
                 </div>
                 <div class="runtime-controls">
+                    <span class="backend-badge local" id="backend-mode-badge"><span class="badge-dot"></span> Modo demo local</span>
                     <button class="btn-soft" type="button" onclick="resetRuntimeScenario()">Reiniciar</button>
                     <button class="btn-primary runtime-toggle" id="runtime-toggle" type="button" onclick="toggleRuntimePanel()">Mostrar panel</button>
                 </div>
