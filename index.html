@@ -1330,55 +1330,126 @@
         .profile-hero {
             position: relative;
             overflow: hidden;
-            padding: 20px;
+            display: grid;
+            gap: 18px;
+            align-content: space-between;
+            padding: 22px;
             border-radius: 24px;
             color: var(--blanco);
             background:
-                linear-gradient(180deg, rgba(0, 0, 0, 0.16), rgba(0, 0, 0, 0.54)),
+                linear-gradient(180deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.62)),
                 url("https://wifitgyms.com/wp-content/uploads/2025/03/wifit_home-gimnasios-chamberi-1.jpg") center/cover;
             box-shadow: var(--sombra-media);
+            min-height: 524px;
+        }
+
+        .profile-hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(90deg, rgba(7, 10, 10, 0.86) 0%, rgba(7, 10, 10, 0.74) 38%, rgba(7, 10, 10, 0.28) 66%, rgba(7, 10, 10, 0.02) 100%);
+            pointer-events: none;
+        }
+
+        .profile-hero::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at top left, rgba(255, 255, 255, 0.12), transparent 34%),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 24%);
+            pointer-events: none;
+        }
+
+        .profile-hero > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-copy {
+            display: grid;
+            gap: 12px;
+            max-width: min(72%, 350px);
+        }
+
+        .profile-hero .eyebrow {
+            justify-self: start;
+            padding: 10px 16px;
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.24);
+            color: var(--blanco);
+            backdrop-filter: blur(12px);
         }
 
         .profile-hero h2 {
-            font-size: 1.8rem;
-            line-height: 1;
-            margin: 10px 0 8px;
+            font-size: clamp(2.7rem, 7vw, 4rem);
+            line-height: 0.92;
+            letter-spacing: -0.05em;
+            margin: 0;
+            text-wrap: balance;
+            text-shadow: 0 8px 24px rgba(0, 0, 0, 0.32);
         }
 
         .profile-hero p {
             color: rgba(255, 255, 255, 0.94);
-            line-height: 1.65;
-            max-width: 38ch;
+            line-height: 1.52;
+            font-size: 1rem;
+            max-width: 28ch;
+            text-shadow: 0 4px 18px rgba(0, 0, 0, 0.3);
         }
 
         .profile-metrics {
             display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 10px;
-            margin-top: 14px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
         }
 
         .profile-metric {
-            padding: 13px;
-            border-radius: 18px;
-            background: rgba(255, 255, 255, 0.94);
+            display: grid;
+            align-content: start;
+            gap: 10px;
+            min-height: 132px;
+            padding: 16px;
+            border-radius: 22px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(250, 251, 246, 0.92));
             color: var(--oliva-oscuro);
-            border: 1px solid rgba(255, 255, 255, 0.36);
+            border: 1px solid rgba(255, 255, 255, 0.46);
+            box-shadow:
+                0 18px 34px rgba(0, 0, 0, 0.14),
+                inset 0 1px 0 rgba(255, 255, 255, 0.74);
+            backdrop-filter: blur(16px);
+        }
+
+        .profile-metric.metric-highlight {
+            background:
+                radial-gradient(circle at top left, rgba(153, 185, 18, 0.16), transparent 42%),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(248, 250, 242, 0.94));
         }
 
         .profile-metric span {
             display: block;
-            font-size: 0.66rem;
+            font-size: 0.7rem;
             text-transform: uppercase;
-            letter-spacing: 0.12em;
+            letter-spacing: 0.14em;
             color: var(--oliva-texto);
-            margin-bottom: 6px;
         }
 
         .profile-metric strong {
             display: block;
-            font-size: 0.98rem;
-            line-height: 1.2;
+            font-size: clamp(1.22rem, 3.6vw, 1.74rem);
+            line-height: 1.05;
+            letter-spacing: -0.04em;
+            text-wrap: balance;
+            overflow-wrap: anywhere;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .profile-metric small {
+            display: block;
+            font-size: 0.76rem;
+            line-height: 1.45;
+            color: var(--oliva-texto);
         }
 
         .segmented {
@@ -2845,6 +2916,10 @@
                 display: grid;
             }
 
+            .profile-copy {
+                max-width: none;
+            }
+
             .phone-shell {
                 width: 100%;
             }
@@ -4091,6 +4166,12 @@
 
         function renderSocio() {
             const perfil = perfiles[estado.socioPerfil];
+            const metricasPerfil = [
+                { label: "Objetivo", value: perfil.objetivo, note: "Enfoque principal de tu plan", className: "metric-highlight" },
+                { label: "Asistencia", value: perfil.frecuencia.replace("veces/semana", "x/sem").replace("veces por semana", "x/sem"), note: "Media reciente de uso" },
+                { label: "Clase base", value: perfil.clase, note: `${perfil.hoy.clase.hora} · recomendada` },
+                { label: "Último acceso", value: perfil.checkin, note: "Check-in registrado en club" }
+            ];
             document.getElementById("phone-status").textContent = perfil.subtitulo.split("·")[0].trim();
             document.querySelectorAll(".segment-btn").forEach((btn) => {
                 btn.classList.toggle("activo", btn.dataset.socioView === estado.socioView);
@@ -4106,26 +4187,19 @@
             if (estado.socioView === "dia") {
                 document.getElementById("phone-content").innerHTML = `
                     <div class="profile-hero">
-                        <div class="eyebrow" style="background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.24); color: var(--blanco);">${perfil.subtitulo}</div>
-                        <h2>${perfil.saludo}</h2>
-                        <p>${perfil.resumen}</p>
+                        <div class="profile-copy">
+                            <div class="eyebrow">${perfil.subtitulo}</div>
+                            <h2>${perfil.saludo}</h2>
+                            <p>${perfil.resumen}</p>
+                        </div>
                         <div class="profile-metrics">
-                            <div class="profile-metric">
-                                <span>Objetivo</span>
-                                <strong>${perfil.objetivo}</strong>
-                            </div>
-                            <div class="profile-metric">
-                                <span>Asistencia</span>
-                                <strong>${perfil.frecuencia}</strong>
-                            </div>
-                            <div class="profile-metric">
-                                <span>Clase</span>
-                                <strong>${perfil.clase}</strong>
-                            </div>
-                            <div class="profile-metric">
-                                <span>Último check-in</span>
-                                <strong>${perfil.checkin}</strong>
-                            </div>
+                            ${metricasPerfil.map((item) => `
+                                <div class="profile-metric ${item.className || ""}">
+                                    <span>${item.label}</span>
+                                    <strong>${item.value}</strong>
+                                    <small>${item.note}</small>
+                                </div>
+                            `).join("")}
                         </div>
                     </div>
                     <div class="app-stack" style="margin-top: 14px;">
