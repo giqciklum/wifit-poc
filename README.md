@@ -1,141 +1,128 @@
-# WiFit Gyms x Ciklum - Guía de presentación
+# WiFit Gyms x Ciklum - Guía breve de presentación
 
-Guía breve para presentar la demo con un relato más sólido, más realista y alineado con la versión publicada.
-
-Demo pública:
+Versión pública:
 https://giqciklum.github.io/wifit-poc/
 
 Repositorio:
 https://github.com/giqciklum/wifit-poc
 
-## 1. Qué es esta demo
+## 1. Qué muestra la versión actual
 
-Este PoC enseña cómo WiFit puede convertir una digitalización todavía fragmentada en una plataforma más conectada para crecer, operar mejor y defender mejor su diferenciación.
+La versión actual ya no se presenta como un dashboard genérico. Está organizada en dos recorridos muy claros:
 
-La idea no es enseñar una landing bonita ni una demo genérica de IA. La idea es enseñar algo más cercano a un producto real:
+1. `Experiencia del Socio`
+Una interfaz tipo app para el usuario final del gimnasio. Enseña cómo WiFit podría ofrecer entrenamiento, clases, nutrición y seguimiento con una experiencia propia y escalable.
 
-- identidad visual alineada con WiFit
-- sedes, horarios, servicios y precios públicos actuales
-- narrativa clara para dirección, fondo y equipo comercial
-- una historia conectada entre captación, operación, finanzas y experiencia del socio
+2. `Centro de Gestión`
+Una vista para dirección, operación y crecimiento. Parte de una hoja operativa tipo Excel o Google Sheets y enseña cómo un cobro, un lead o un impago pueden disparar automatizaciones útiles y fáciles de entender.
 
-## 2. Qué incluye la demo
+La idea es enseñar dos frontends distintos para dos usuarios distintos, conectados por una misma capa de datos, reglas y automatización.
 
-La versión actual está organizada en 6 bloques:
+## 2. Cómo contarlo en reunión
 
-1. `Visión general`
-Resumen ejecutivo del caso, situación actual vs propuesta, sedes reales de la red y lectura de negocio para crecimiento y escalado.
+Orden recomendado:
 
-2. `Entrenador IA WiFit`
-Experiencia de socio con perfiles demo, conversación guiada, recomendaciones de entrenamiento y comparación directa frente a Harbiz.
+1. Abrir la landing y explicar que WiFit no necesita una sola herramienta más, sino una capa conectada entre experiencia y gestión.
+2. Entrar primero en `Experiencia del Socio` para enseñar la parte aspiracional y diferencial.
+3. Después pasar a `Centro de Gestión` para aterrizar eficiencia, cobros, leads, operaciones y control.
 
-3. `Copiloto de operaciones`
-Vista operativa por sede con incidencias, mantenimiento predictivo, ahorro preventivo y resumen listo para gerencia.
+Mensaje corto:
 
-4. `Inteligencia financiera`
-Precios oficiales visibles hoy, proyección de facturación, sensibilidad a expansión, reducción de bajas y monetización adicional por IA.
+`WiFit puede ofrecer una experiencia más premium al socio y, al mismo tiempo, operar mejor con una capa propia de automatización y control.`
 
-5. `Cualificación comercial con IA`
-Embudo comercial, oportunidades priorizadas, drivers de conversión y siguiente mejor acción por canal.
+## 3. Qué enseñar en Experiencia del Socio
 
-6. `Hoja de ruta y recomendación`
-Fases, presupuesto orientativo, arranque recomendado y matriz construir vs comprar vs híbrido.
+Puntos clave:
 
-## 3. Mensaje comercial principal
-
-Mensaje simple para usar en conversación:
-
-`WiFit no necesita solo más software; necesita una plataforma propia que conecte captación, operación, finanzas y experiencia del socio.`
-
-Idea fuerza:
-
-- una herramienta estándar puede resolver una necesidad puntual
-- una plataforma propia conectada al negocio crea diferenciación real
-- eso es lo que hace que la propuesta sea más difícil de copiar
-
-## 4. Guion corto de 3-5 minutos
-
-Puedes contarlo así:
-
-"Lo que os enseñamos no es una demo aislada de IA, sino una visión de cómo WiFit podría operar con una plataforma más inteligente y más conectada a su negocio real.
-
-Partimos de una situación con crecimiento, presión de expansión y digitalización todavía fragmentada. A partir de ahí, el PoC enseña tres cosas.
-
-Primero, cómo mejorar la experiencia del socio con un Entrenador IA WiFit conectado a clases, sedes, hábitos y Gym Virtual.
-
-Segundo, cómo mejorar la operación con mantenimiento predictivo, incidencias priorizadas y un resumen útil para cada responsable de club.
-
-Tercero, cómo aterrizar el caso económico con una capa financiera que combine precios actuales, expansión de sedes, mejora de retención y nuevas vías de monetización.
-
-La clave no es solo la IA. La clave es que la IA no vive aislada: conecta captación, operación y finanzas en una sola historia. Ahí está la diferencia entre una demo más y un activo de verdad para WiFit.
-
-Si encaja, el siguiente paso lógico es un piloto corto, medible y con foco, para demostrar impacto real y decidir después el escalado."
-
-## 5. Cómo posicionarlo frente a Harbiz
-
-Harbiz puede ser útil como referencia de mercado, pero el mensaje de la demo debe ser este:
-
-- `Harbiz resuelve entrenamiento y coaching`
-- `WiFit IA conecta entrenamiento con negocio, operación y monetización`
-
-Diferencias clave a remarcar:
-
-- `Datos y contexto propios`: la experiencia se apoya en sedes, clases, accesos, operaciones y hábitos del propio negocio.
-- `Conexión con captación`: la misma lógica puede tocar prueba gratis, priorización comercial y conversión.
-- `Conexión con operaciones`: la propuesta no se queda en el socio; también ayuda a gerencia y mantenimiento.
-- `Conexión con finanzas`: el valor se puede explicar en margen, eficiencia, retención y escalado.
-- `Control del activo`: WiFit controla hoja de ruta, experiencia, marca y evolución futura.
+- perfil principal de `Manuel García` como historia principal de la reunión
+- rutina del día, clase sugerida, nutrición y progreso en la misma interfaz
+- experiencia más cercana a un producto real que a un chatbot aislado
+- posibilidad de monetizar una capa premium sin depender de entrenadores humanos para todos los socios
 
 Frase útil:
 
-`Harbiz puede cubrir una necesidad estándar; WiFit IA puede convertirse en un activo estratégico propio.`
+`La propuesta no es solo responder preguntas; es acompañar al socio antes, durante y después de entrenar con una experiencia WiFit propia.`
 
-## 6. Qué datos son reales y cuáles no
+## 4. Qué enseñar en Centro de Gestión
 
-La demo mezcla dos capas:
+La parte de gestión debe contarse desde algo muy sencillo:
 
-- `Inputs públicos reales`: marca, sedes, horarios, servicios y precios visibles hoy en fuentes públicas oficiales.
-- `Datos simulados`: KPIs, proyecciones, predicciones, reparto de socios, ahorro y lógica de negocio interna.
+`Si entra una fila nueva en la hoja operativa, se dispara una secuencia útil de acciones.`
 
-Eso permite enseñar una experiencia muy creíble sin presentar cifras contractuales ni datos internos reales del cliente.
+Triggers que hoy se ven en la versión:
 
-## 7. Recomendación de arranque
+- `Cobro confirmado -> activación`
+- `Lead nuevo -> conversión`
+- `Pago fallido -> retención`
 
-La recomendación que mejor encaja con la demo actual es:
+Lo importante aquí no es vender complejidad técnica. Lo importante es enseñar capacidad real de automatización sobre el tipo de operativa que hoy ya existe en muchos gimnasios: hoja de socios, cobros, emails, seguimiento y tareas.
 
-- piloto en `WiFit Retiro` y `WiFit Chamberí`
-- foco inicial en `prueba gratis + priorización comercial + vista operativa + primera capa financiera`
-- segunda ola orientada a `IA WiFit` como producto propio y monetizable
+## 5. Cómo posicionarlo frente a Harbiz
 
-## 8. Fases y presupuesto orientativo
+La comparación correcta no es “Harbiz malo / WiFit bueno”. La comparación correcta es esta:
 
-### Fase 1. Descubrimiento + piloto
+- `Harbiz` puede resolver una capa útil para profesionales, coaching y gestión concreta.
+- `WiFit IA` es una capa propia para cadena de gimnasios, conectada a socio, captación, cobros, retención y operación.
 
-- Objetivo: IA comercial, resumen de gerencia, primera vista financiera y definición de arquitectura para 1-2 sedes piloto.
-- Duración orientativa: `4-6 semanas`
-- Presupuesto orientativo: `45K-65K EUR`
+Diferencias que conviene remarcar:
+
+- WiFit controla la experiencia y la hoja de ruta
+- la lógica se conecta a sedes, accesos, clases y operación
+- la misma capa puede tocar crecimiento, eficiencia y monetización
+- el activo final es de WiFit, no de un proveedor externo
+
+Frase útil:
+
+`Una herramienta estándar puede cubrir una necesidad puntual; una capa propia puede convertirse en un activo estratégico de la cadena.`
+
+## 6. Qué datos son públicos y cuáles sintéticos
+
+La versión mezcla dos capas de información:
+
+- `Referencias públicas reales`: marca, clubes visibles, servicios, Gym Virtual y precios publicados.
+- `Datos sintéticos`: reparto de socios, scoring, predicciones, ingresos, tareas operativas y automatizaciones.
+
+Eso permite enseñar una visión muy creíble sin usar datos internos del cliente.
+
+## 7. Arranque recomendado
+
+Recomendación comercial:
+
+- empezar por `1-2 sedes piloto`
+- usar la hoja operativa actual como punto de partida
+- demostrar primero automatización visible y valor para negocio
+- decidir después la profundidad de la capa WiFit IA como producto propio
+
+## 8. Fases orientativas
+
+### Fase 1. Descubrimiento y piloto
+
+- foco en hoja operativa, triggers, journeys y primeras automatizaciones
+- duración orientativa: `4-6 semanas`
+- presupuesto orientativo: `45K-65K EUR`
 
 ### Fase 2. Escalado operativo
 
-- Objetivo: extender automatizaciones, reporting, conectores y visibilidad a más sedes.
-- Duración orientativa: `6-10 semanas`
-- Presupuesto orientativo: `70K-110K EUR`
+- más sedes, más conectores, reporting y gobierno operativo
+- duración orientativa: `6-10 semanas`
+- presupuesto orientativo: `70K-110K EUR`
 
-### Fase 3. Producto propio IA WiFit
+### Fase 3. Producto WiFit IA
 
-- Objetivo: convertir el entrenador IA en una experiencia propia, integrada y monetizable.
-- Duración orientativa: `8-12 semanas`
-- Presupuesto orientativo: `110K-160K EUR`
+- experiencia propia del socio, personalización avanzada y monetización
+- duración orientativa: `8-12 semanas`
+- presupuesto orientativo: `110K-160K EUR`
 
 ## 9. Cierre rápido
 
-Si necesitas cerrarlo en una sola frase:
+Si hace falta resumirlo en una frase:
 
-`Este PoC no enseña solo una solución de IA; enseña cómo WiFit podría construir una plataforma propia para vender mejor, operar mejor y crecer con más control.`
+`WiFit puede convertir una operación todavía fragmentada en una plataforma propia para vender mejor, operar mejor y crecer con más control.`
 
 ## 10. Fuentes públicas usadas como base
 
 - https://wifitgyms.com/
 - https://wifitgyms.com/gimnasios/madrid/wifit-retiro/
 - https://wifitgyms.provis.es/Public/ProcesoAlta/PasoSeleccionCuota.aspx
+- https://www.harbiz.io/
 - https://www.harbiz.io/app-entrenamiento-personal
