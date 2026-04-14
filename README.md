@@ -1,4 +1,4 @@
-# WiFit Gyms x Ciklum - Guía breve de presentación
+# WiFit Gyms x Ciklum - Guía operativa del PoC
 
 Versión pública:
 https://giqciklum.github.io/wifit-poc/
@@ -6,134 +6,370 @@ https://giqciklum.github.io/wifit-poc/
 Repositorio:
 https://github.com/giqciklum/wifit-poc
 
-## 1. Qué muestra la versión actual
+Google Sheet de demo:
+https://docs.google.com/spreadsheets/d/1ew8qaFc1d0G7EjeR1xJa-llsb1o9dC2BYCdDBKcR8ek/
 
-La versión actual ya no se presenta como un dashboard genérico. Está organizada en dos recorridos muy claros:
+Web App de Apps Script:
+https://script.google.com/macros/s/AKfycbwmmgY9mg4p8o6lVboAelyR2P0WtnMYo7kDJWWLpvzHy6B2kuiatZSr1qguU2jGDLwnWg/exec
 
-1. `Experiencia del Socio`
-Una interfaz tipo app para el usuario final del gimnasio. Enseña cómo WiFit podría ofrecer entrenamiento, clases, nutrición y seguimiento con una experiencia propia y escalable.
+## 1. Lo más importante en una frase
 
-2. `Centro de Gestión`
-Una vista para dirección, operación y crecimiento. Parte de una hoja operativa tipo Excel o Google Sheets y enseña cómo un cobro, un lead o un impago pueden disparar automatizaciones útiles y fáciles de entender.
+La demo funciona así:
 
-La idea es enseñar dos frontends distintos para dos usuarios distintos, conectados por una misma capa de datos, reglas y automatización.
+`pantalla del PoC -> Apps Script -> Google Sheet`
 
-Además, esta versión ya incorpora una capa de runtime dentro de la propia demo:
+Esto significa algo muy importante para ti en reunión:
 
-- escenarios persistentes con estado guardado en navegador
-- outputs generados en tiempo real: correos, tareas, pases o documentos
-- sincronía visible entre journey del socio y centro de gestión
-- shell instalable tipo PWA para que se sienta más cercana a una aplicación real
+- `Sí` puedes demostrar una conexión real con Google Sheets.
+- `No` tienes que escribir filas a mano para que la demo funcione.
+- `No` estamos todavía en un modo "edito la hoja y la web reacciona sola".
 
-## 2. Cómo contarlo en reunión
+La dirección actual es esta:
 
-Orden recomendado:
+1. tú activas un caso en la demo
+2. la demo llama al backend de Apps Script
+3. Apps Script escribe en Google Sheets
+4. tú enseñas la hoja como evidencia de que ha ocurrido algo real
 
-1. Abrir la landing y explicar que WiFit no necesita una sola herramienta más, sino una capa conectada entre experiencia y gestión.
-2. Entrar primero en `Experiencia del Socio` para enseñar la parte aspiracional y diferencial.
-3. Después pasar a `Centro de Gestión` para aterrizar eficiencia, cobros, leads, operaciones y control.
+## 2. Qué abrir antes de la reunión
 
-Mensaje corto:
+Abre estas 2 pestañas y déjalas listas:
 
-`WiFit puede ofrecer una experiencia más premium al socio y, al mismo tiempo, operar mejor con una capa propia de automatización y control.`
+1. `Demo pública`
+   https://giqciklum.github.io/wifit-poc/
 
-## 3. Qué enseñar en Experiencia del Socio
+2. `Google Sheet`
+   https://docs.google.com/spreadsheets/d/1ew8qaFc1d0G7EjeR1xJa-llsb1o9dC2BYCdDBKcR8ek/
 
-Puntos clave:
+Opcional:
 
-- perfil principal de `Manuel García` como historia principal de la reunión
-- rutina del día, clase sugerida, nutrición y progreso en la misma interfaz
-- experiencia más cercana a un producto real que a un chatbot aislado
-- posibilidad de monetizar una capa premium sin depender de entrenadores humanos para todos los socios
+3. `Repo`
+   https://github.com/giqciklum/wifit-poc
+
+Recomendación práctica:
+
+- Pestaña 1: demo
+- Pestaña 2: Google Sheet
+- Haz la mayor parte de la reunión en la demo
+- Abre la hoja solo al final de cada trigger, como prueba de conexión real
+
+## 3. Qué es cada pieza
+
+### Demo pública
+
+Es la parte visual y presentable para cliente.
+
+Aquí enseñas:
+
+- experiencia del socio
+- centro de gestión
+- triggers de activación, lead e impago
+- outputs visuales: evidencias, eventos, tareas, artefactos
+
+### Google Sheet
+
+Es el backend ligero de la demo.
+
+No está para lucirse como frontend. Está para enseñar:
+
+- que existe una capa de datos real
+- que un evento no solo cambia la pantalla
+- que además queda registrado en una hoja operativa de verdad
+
+### Apps Script
+
+Es la capa intermedia.
+
+Su papel es:
+
+- recibir la acción desde la demo
+- escribir datos en la hoja
+- devolver un resumen JSON a la página
+
+Si el cliente pregunta qué tecnología hay detrás, puedes decir esto:
+
+`Para el PoC hemos usado una arquitectura ligera y muy cercana a su realidad actual: una interfaz de producto conectada a una capa de automatización y a una hoja operativa viva.`
+
+## 4. Qué NO tienes que hacer en la reunión
+
+No necesitas:
+
+- editar la hoja manualmente para que "parezca que funciona"
+- abrir Apps Script delante del cliente
+- explicar endpoints, JSON ni detalles técnicos
+- enseñar el repo salvo que te lo pidan
+
+La forma correcta de enseñarlo es:
+
+1. disparas el caso en la demo
+2. enseñas el cambio visual
+3. cambias a Google Sheet
+4. enseñas la evidencia creada
+
+## 5. Cómo contar la conexión sin complicarte
+
+Frase simple recomendada:
+
+`La gracia no es solo que cambie la pantalla; la gracia es que la acción deja rastro real en la capa operativa. Para esta demo hemos conectado la experiencia a una hoja viva para enseñar exactamente eso.`
+
+Otra frase útil:
+
+`Hoy el backend de demo es Google Sheets porque se parece más a la realidad operativa actual del cliente que montar algo enterprise solo para una demo.`
+
+Si te preguntan por la dirección del flujo:
+
+`Ahora mismo la demo dispara la automatización y la hoja refleja el resultado. Si el proyecto siguiera adelante, esa misma lógica podría conectarse a Stripe, CRM, ERP o la base de datos real del grupo.`
+
+## 6. Guion recomendado de 5 minutos
+
+### Paso 1. Empieza por la demo
+
+Abre:
+https://giqciklum.github.io/wifit-poc/
+
+Di esto:
+
+`Aquí estamos separando dos experiencias: una para el socio y otra para gestión. La idea es que ambas compartan la misma lógica de datos y automatización.`
+
+### Paso 2. Enseña primero la parte bonita
+
+Muévete por:
+
+- `Experiencia del Socio`
+- `Centro de Gestión`
+
+No abras Google Sheet todavía.
+
+### Paso 3. Abre el simulador
+
+Arriba verás el botón:
+
+`Abrir simulador`
+
+Haz clic ahí.
+
+### Paso 4. Activa un caso
+
+Recomendación de orden:
+
+1. `Activación premium`
+2. `Lead de prueba`
+3. `Recuperación de impago`
+
+### Paso 5. Enseña el efecto en la demo
+
+Después de activar un caso, enseña:
+
+- cambios en el estado
+- cronología de eventos
+- artefactos generados
+- impacto en socio y gestión
+
+### Paso 6. Solo entonces abre Google Sheet
+
+Di esto:
+
+`Y ahora os enseño que esto no es solo una pantalla bonita: la acción ha quedado registrada en una hoja operativa real.`
+
+## 7. Cómo enseñar Google Sheets, paso a paso
+
+Abre esta hoja:
+
+https://docs.google.com/spreadsheets/d/1ew8qaFc1d0G7EjeR1xJa-llsb1o9dC2BYCdDBKcR8ek/
+
+Las pestañas importantes son:
+
+- `socios`
+- `pagos`
+- `leads`
+- `reservas`
+- `automatizaciones`
+- `tareas`
+
+### Regla de oro
+
+Si te pierdes, ve siempre a:
+
+`automatizaciones`
+
+Es la pestaña más segura para demostrar que el trigger dejó rastro.
+
+### Caso 1. Activación premium
+
+En la demo:
+
+1. pulsa `Abrir simulador`
+2. pulsa `Activación premium`
+
+Después cambia a la hoja y enseña:
+
+1. `automatizaciones`
+   Aquí deberías ver el registro de la acción ejecutada.
+
+2. `socios`
+   Aquí puedes enseñar que el socio queda activado o añadido según la lógica del demo backend.
+
+3. `pagos`
+   Aquí puedes enseñar el cobro o la referencia asociada.
 
 Frase útil:
 
-`La propuesta no es solo responder preguntas; es acompañar al socio antes, durante y después de entrenar con una experiencia WiFit propia.`
+`Un cobro confirmado no solo activa una vista premium; también deja alta, pago y trazabilidad operativa en la capa de gestión.`
 
-## 4. Qué enseñar en Centro de Gestión
+### Caso 2. Lead de prueba
 
-La parte de gestión debe contarse desde algo muy sencillo:
+En la demo:
 
-`Si entra una fila nueva en la hoja operativa, se dispara una secuencia útil de acciones.`
+1. pulsa `Lead de prueba`
 
-Triggers que hoy se ven en la versión:
+Después cambia a la hoja y enseña:
 
-- `Cobro confirmado -> activación`
-- `Lead nuevo -> conversión`
-- `Pago fallido -> retención`
+1. `automatizaciones`
+2. `leads`
 
-Lo importante aquí no es vender complejidad técnica. Lo importante es enseñar capacidad real de automatización sobre el tipo de operativa que hoy ya existe en muchos gimnasios: hoja de socios, cobros, emails, seguimiento y tareas.
+Qué decir:
 
-La nueva capa interactiva permite además que, al activar un trigger, aparezcan evidencias concretas:
+`Aquí se ve que el lead no se queda en una lista muerta. El sistema lo registra, le da prioridad y prepara la siguiente mejor acción.`
 
-- correo o comunicación generada
-- documento o pase emitido
-- tarea operativa creada
-- secuencia de eventos de punta a punta
+### Caso 3. Recuperación de impago
 
-## 5. Cómo posicionarlo frente a Harbiz
+En la demo:
 
-La comparación correcta no es “Harbiz malo / WiFit bueno”. La comparación correcta es esta:
+1. pulsa `Recuperación de impago`
 
-- `Harbiz` puede resolver una capa útil para profesionales, coaching y gestión concreta.
-- `WiFit IA` es una capa propia para cadena de gimnasios, conectada a socio, captación, cobros, retención y operación.
+Después cambia a la hoja y enseña:
 
-Diferencias que conviene remarcar:
+1. `automatizaciones`
+2. `tareas`
 
-- WiFit controla la experiencia y la hoja de ruta
-- la lógica se conecta a sedes, accesos, clases y operación
-- la misma capa puede tocar crecimiento, eficiencia y monetización
-- el activo final es de WiFit, no de un proveedor externo
+Qué decir:
 
-Frase útil:
+`En lugar de descubrir el impago tarde y gestionarlo a mano, se genera un caso visible y accionable para el equipo.`
 
-`Una herramienta estándar puede cubrir una necesidad puntual; una capa propia puede convertirse en un activo estratégico de la cadena.`
+## 8. Dónde introducir datos
 
-## 6. Qué datos son públicos y cuáles sintéticos
+Respuesta corta:
 
-La versión mezcla dos capas de información:
+`Normalmente en ningún sitio.`
 
-- `Referencias públicas reales`: marca, clubes visibles, servicios, Gym Virtual y precios publicados.
-- `Datos sintéticos`: reparto de socios, scoring, predicciones, ingresos, tareas operativas, automatizaciones y outputs generados.
+Para la demo estándar, no tienes que escribir datos manualmente.
 
-Eso permite enseñar una visión muy creíble sin usar datos internos del cliente.
+Lo correcto es:
 
-## 7. Arranque recomendado
+1. disparar el trigger desde la web
+2. enseñar cómo cambia la web
+3. enseñar la fila o el log que aparece en la hoja
 
-Recomendación comercial:
+### Si aun así quieres tocar algo manualmente
 
-- empezar por `1-2 sedes piloto`
-- usar la hoja operativa actual como punto de partida
-- demostrar primero automatización visible y valor para negocio
-- decidir después la profundidad de la capa WiFit IA como producto propio
+Puedes abrir la hoja y editarla manualmente, pero recuerda:
 
-## 8. Fases orientativas
+`editar la hoja a mano no hace que la web reaccione sola`
 
-### Fase 1. Descubrimiento y piloto
+Eso todavía no está implementado en esta versión.
 
-- foco en hoja operativa, triggers, journeys y primeras automatizaciones
-- duración orientativa: `4-6 semanas`
-- presupuesto orientativo: `45K-65K EUR`
+Así que, si el cliente te pide "mete algo en la hoja", puedes hacerlo como apoyo visual, pero no vendas que esa edición manual dispara el frontend porque no sería verdad.
 
-### Fase 2. Escalado operativo
+## 9. Qué verás en la parte superior de la demo
 
-- más sedes, más conectores, reporting y gobierno operativo
-- duración orientativa: `6-10 semanas`
-- presupuesto orientativo: `70K-110K EUR`
+En la barra superior de la demo puedes ver:
 
-### Fase 3. Producto WiFit IA
+- `Backend en vivo`
+- o `Modo demo local`
 
-- experiencia propia del socio, personalización avanzada y monetización
-- duración orientativa: `8-12 semanas`
-- presupuesto orientativo: `110K-160K EUR`
+### Si sale `Backend en vivo`
 
-## 9. Cierre rápido
+Perfecto. Significa que la página está hablando con Apps Script y que deberías poder enseñar registros reales en Google Sheets.
 
-Si hace falta resumirlo en una frase:
+### Si sale `Modo demo local`
 
-`WiFit puede convertir una operación todavía fragmentada en una plataforma propia para vender mejor, operar mejor y crecer con más control.`
+La demo visual sigue funcionando, pero la escritura en Google Sheets puede no estar activa en ese momento.
 
-## 10. Fuentes públicas usadas como base
+Qué hacer:
+
+1. refresca la página
+2. espera unos segundos
+3. comprueba si cambia a `Backend en vivo`
+
+Si no cambia, puedes seguir la reunión igualmente porque el PoC visual no se rompe.
+
+## 10. Orden ideal para mostrarlo al cliente
+
+Mi recomendación es esta:
+
+1. `Empieza por valor`
+   Experiencia del socio y visión general.
+
+2. `Pasa a negocio`
+   Centro de gestión y operaciones.
+
+3. `Abre el simulador`
+   Un solo caso cada vez.
+
+4. `Prueba visual`
+   Enseña el cambio dentro de la demo.
+
+5. `Prueba operativa`
+   Enseña Google Sheet.
+
+No empieces por la hoja.
+
+La hoja no vende.
+La hoja demuestra.
+
+## 11. Resumen técnico en lenguaje simple
+
+Si te piden una explicación técnica breve, usa esta:
+
+`La demo está publicada en GitHub Pages. Cuando activamos una acción, la web llama a un Apps Script que actualiza una Google Sheet de demo. Luego la propia web consulta el estado resumido para mostrar indicadores de backend en vivo.`
+
+Versión todavía más corta:
+
+`Frontend estático, automatización ligera y hoja operativa viva como backend de demo.`
+
+## 12. Plan B si algo falla en directo
+
+Si Google Sheets o Apps Script no respondieran:
+
+1. sigue la demo visual
+2. no entres en detalle técnico
+3. di esto:
+
+`La capa visual y la lógica del journey siguen funcionando. La conexión a la hoja la hemos usado para demostrar trazabilidad operativa, pero la propuesta final no depende de Google Sheets; eso es solo el backend de demo.`
+
+Eso te protege y sigue dejando el mensaje correcto.
+
+## 13. Frases literales que puedes usar
+
+### Apertura
+
+`No queríamos enseñar un dashboard genérico. Queríamos enseñar dos experiencias conectadas: una para el socio y otra para gestión.`
+
+### Al enseñar automatización
+
+`Lo importante aquí no es la tecnología en sí, sino que un evento útil desencadena acciones útiles sin trabajo manual.`
+
+### Al enseñar la hoja
+
+`Aquí se ve la evidencia operativa. No solo cambia la pantalla: queda registro real.`
+
+### Al hablar de visión futura
+
+`Hoy usamos una hoja porque se parece a la realidad actual y nos permite demostrar valor rápido. Mañana la misma lógica puede vivir sobre la arquitectura definitiva del grupo.`
+
+## 14. Datos reales vs datos sintéticos
+
+Esta demo mezcla:
+
+- `Referencias públicas reales`
+  marca, sedes visibles, servicios y pricing público de WiFit
+
+- `Datos sintéticos`
+  socios, scoring, forecasting, tareas, automatizaciones, cobros y outputs generados
+
+Eso es correcto y está hecho a propósito para poder enseñar algo creíble sin usar datos internos.
+
+## 15. Fuentes públicas usadas como base
 
 - https://wifitgyms.com/
 - https://wifitgyms.com/gimnasios/madrid/wifit-retiro/
