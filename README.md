@@ -21,8 +21,9 @@ La demo funciona así:
 Esto significa algo muy importante para ti en reunión:
 
 - `Sí` puedes demostrar una conexión real con Google Sheets.
+- `Sí` los indicadores conectados de la página pueden refrescarse si cambia la hoja.
 - `No` tienes que escribir filas a mano para que la demo funcione.
-- `No` estamos todavía en un modo "edito la hoja y la web reacciona sola".
+- `No` todavía no toda la página reacciona fila a fila con cualquier cambio manual; hoy la sincronización viva está centrada en KPIs y estado conectado.
 
 La dirección actual es esta:
 
@@ -30,6 +31,7 @@ La dirección actual es esta:
 2. la demo llama al backend de Apps Script
 3. Apps Script escribe en Google Sheets
 4. tú enseñas la hoja como evidencia de que ha ocurrido algo real
+5. además, la página consulta el backend cada pocos segundos para refrescar el estado conectado
 
 ## 2. Qué abrir antes de la reunión
 
@@ -75,6 +77,7 @@ No está para lucirse como frontend. Está para enseñar:
 - que existe una capa de datos real
 - que un evento no solo cambia la pantalla
 - que además queda registrado en una hoja operativa de verdad
+- y que el PoC ya puede refrescar indicadores conectados leyendo ese estado vivo
 
 ### Apps Script
 
@@ -119,6 +122,10 @@ Otra frase útil:
 Si te preguntan por la dirección del flujo:
 
 `Ahora mismo la demo dispara la automatización y la hoja refleja el resultado. Si el proyecto siguiera adelante, esa misma lógica podría conectarse a Stripe, CRM, ERP o la base de datos real del grupo.`
+
+Si te preguntan si la web escucha la hoja en vivo, puedes decir esto:
+
+`Sí, el PoC ya refresca el estado conectado leyendo el backend de la hoja. En esta versión la sincronización viva se ve sobre todo en KPIs y estado operativo; la siguiente iteración sería reflejar también el detalle fila a fila en todas las vistas.`
 
 ## 6. Guion recomendado de 5 minutos
 
@@ -280,6 +287,7 @@ En la barra superior de la demo puedes ver:
 ### Si sale `Backend en vivo`
 
 Perfecto. Significa que la página está hablando con Apps Script y que deberías poder enseñar registros reales en Google Sheets.
+También significa que los indicadores conectados pueden actualizarse solos si cambia el estado de la hoja.
 
 ### Si sale `Modo demo local`
 
@@ -321,7 +329,7 @@ La hoja demuestra.
 
 Si te piden una explicación técnica breve, usa esta:
 
-`La demo está publicada en GitHub Pages. Cuando activamos una acción, la web llama a un Apps Script que actualiza una Google Sheet de demo. Luego la propia web consulta el estado resumido para mostrar indicadores de backend en vivo.`
+`La demo está publicada en GitHub Pages. Cuando activamos una acción, la web llama a un Apps Script que actualiza una Google Sheet de demo. Luego la propia web consulta ese backend para refrescar indicadores conectados en vivo.`
 
 Versión todavía más corta:
 
