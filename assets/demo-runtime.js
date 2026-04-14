@@ -64,7 +64,10 @@
     function renderBackendBadge() {
         var el = document.getElementById("backend-mode-badge");
         if (!el) return;
-        if (backend.mode === "live") {
+        if (backend.checking && backend.mode !== "live") {
+            el.className = "backend-badge syncing";
+            el.innerHTML = '<span class="badge-dot"></span> Conectando backend';
+        } else if (backend.mode === "live") {
             el.className = "backend-badge live";
             el.innerHTML = '<span class="badge-dot"></span> Backend en vivo';
         } else {
@@ -417,8 +420,7 @@
         events: [],
         memberSync: null,
         phoneNotice: null,
-        lastAppliedAt: null,
-        collapsed: true
+        lastAppliedAt: null
     };
 
     function replaceArray(target, source) {
@@ -434,8 +436,7 @@
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify({
                 currentScenario: runtime.currentScenario,
-                lastAppliedAt: runtime.lastAppliedAt,
-                collapsed: runtime.collapsed
+                lastAppliedAt: runtime.lastAppliedAt
             }));
         } catch (error) {
             console.warn("No se pudo guardar el estado runtime", error);
@@ -516,10 +517,11 @@
     function renderRuntimeShell() {
         const bar = document.getElementById("runtime-bar");
         const summary = document.getElementById("runtime-summary");
-        const toggle = document.getElementById("runtime-toggle");
+        const meta = document.getElementById("runtime-meta");
+        const panelCopy = document.getElementById("runtime-panel-copy");
         const actions = document.getElementById("runtime-actions");
         const status = document.getElementById("runtime-status");
-        if (!bar || !summary || !toggle || !actions || !status) return;
+        if (!bar || !summary || !meta || !panelCopy || !actions || !status) return;
 
         actions.innerHTML = Object.entries(scenarioLibrary.scenarios).map(([id, scenario]) => `
             <button class="runtime-btn ${runtime.currentScenario === id ? "activo" : ""}" type="button" onclick="applyRuntimeScenario('${id}')">
@@ -550,29 +552,55 @@
         ` : "";
 
         summary.innerHTML = (scenario ? `
-            <div class="eyebrow">Escenarios conectados</div>
+            <div class="eyebrow">Demo viva</div>
             <strong>${scenario.label}</strong>
             <p>${scenario.summary}</p>
         ` : `
-            <div class="eyebrow">Escenarios conectados</div>
-            <strong>Escenario preparado</strong>
-            <p>Selecciona un trigger para activar socio, gestión y evidencias generadas.</p>
-        `) + liveBlock;
+            <div class="eyebrow">Demo viva</div>
+            <strong>Experiencia lista para presentar</strong>
+            <p>Abre el simulador solo cuando quieras enseñar la capa de automatización y backend.</p>
+        `);
+
+        meta.innerHTML = [
+            `<span class="runtime-chip">${scenario ? scenario.status.badge : "Base lista"}</span>`,
+            `<span class="runtime-pill"><strong>${runtime.lastAppliedAt || "Listo"}</strong> ${runtime.lastAppliedAt ? "última ejecución" : "sin ejecutar"}</span>`,
+            backend.mode === "live" && liveStats
+                ? `<span class="runtime-pill"><strong>${liveStats.socios_activos}</strong> socios activos</span>`
+                : backend.checking
+                    ? `<span class="runtime-pill"><strong>Conectando</strong> backend de demo</span>`
+                    : `<span class="runtime-pill"><strong>Modo local</strong> recorrido disponible</span>`,
+            backend.mode === "live" && liveStats
+                ? `<span class="runtime-pill"><strong>${liveStats.leads_nuevos}</strong> leads nuevos</span>`
+                : `<span class="runtime-pill"><strong>Google Sheets</strong> visible al activar triggers</span>`
+        ].join("");
+
+        panelCopy.innerHTML = scenario ? `
+            <div class="eyebrow">Recorrido guiado</div>
+            <strong>${scenario.label}</strong>
+            <p>${scenario.summary}</p>
+            <p>La interfaz cambia al instante y, cuando el backend está disponible, además deja rastro real en Google Sheets para reforzar la sensación de producto conectado.</p>
+            ${liveBlock}
+        ` : `
+            <div class="eyebrow">Recorrido guiado</div>
+            <strong>Selecciona una escena cuando la quieras contar</strong>
+            <p>La portada queda limpia y el simulador aparece solo cuando necesitas enseñar cobros, captación o retención con trazabilidad real.</p>
+            <p>Así la demo se siente más cercana a producto y menos a dashboard de laboratorio.</p>
+            ${liveBlock}
+        `;
 
         status.innerHTML = scenario ? `
             <div class="status-chip">${scenario.status.badge}</div>
             <strong>${scenario.status.title}</strong>
             <p>${scenario.status.text}</p>
             <p><strong>Última ejecución:</strong> ${runtime.lastAppliedAt || "ahora mismo"}</p>
+            ${liveStats ? `<p><strong>Backend:</strong> ${liveStats.automatizaciones_en_curso} automatizaciones activas y ${liveStats.retencion_estimada} de retención estimada.</p>` : `<p><strong>Backend:</strong> el flujo local sigue disponible aunque no haya conexión en vivo.</p>`}
         ` : `
             <div class="status-chip">Base lista</div>
-            <strong>Escenario preparado para ejecutar</strong>
-            <p>Selecciona un trigger para activar comunicaciones, documentos, tareas y cambios visibles en los dos journeys.</p>
+            <strong>Simulador listo para abrirse cuando lo necesites</strong>
+            <p>La experiencia arranca limpia y sin artificios. Cuando abras el simulador podrás lanzar un caso realista y enseñar outputs, documentos y tareas coordinadas.</p>
             <p><strong>Persistencia:</strong> el estado se guarda en tu navegador para que la demo mantenga continuidad.</p>
         `;
 
-        bar.classList.toggle("compacta", runtime.collapsed);
-        toggle.textContent = runtime.collapsed ? "Mostrar panel" : "Ocultar panel";
         renderBackendBadge();
     }
 
@@ -776,17 +804,28 @@
             });
     }
 
-    function resetRuntimeScenario() {
+    function resetRuntimeScenario(options) {
+        var silent = options && options.silent;
         resetData({ keepSelection: false });
         saveRuntime();
         refreshAllViews();
-        showToast("Escenario reiniciado", "La demo ha vuelto al estado base y ha limpiado las evidencias generadas.");
+        if (!silent) {
+            showToast("Escenario reiniciado", "La demo ha vuelto al estado base y ha limpiado las evidencias generadas.");
+        }
     }
 
-    function toggleRuntimePanel(force) {
-        runtime.collapsed = typeof force === "boolean" ? force : !runtime.collapsed;
-        saveRuntime();
-        renderRuntimeShell();
+    function openRuntimeModal() {
+        var modal = document.getElementById("runtime-modal");
+        if (modal) {
+            modal.hidden = false;
+        }
+    }
+
+    function closeRuntimeModal() {
+        var modal = document.getElementById("runtime-modal");
+        if (modal) {
+            modal.hidden = true;
+        }
     }
 
     const originalRenderSocio = renderSocio;
@@ -815,27 +854,36 @@
 
     window.applyRuntimeScenario = (id) => applyScenario(id);
     window.resetRuntimeScenario = resetRuntimeScenario;
-    window.toggleRuntimePanel = (force) => toggleRuntimePanel(force);
+    window.openRuntimeModal = openRuntimeModal;
+    window.closeRuntimeModal = closeRuntimeModal;
     window.openArtifactModal = openArtifactModal;
     window.closeArtifactModal = closeArtifactModal;
 
     document.addEventListener("click", (event) => {
+        const runtimeModal = document.getElementById("runtime-modal");
         const modal = document.getElementById("artifact-modal");
+        if (runtimeModal && event.target === runtimeModal) {
+            closeRuntimeModal();
+        }
         if (modal && event.target === modal) {
             closeArtifactModal();
         }
     });
 
+    document.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        closeRuntimeModal();
+        closeArtifactModal();
+    });
+
     const saved = loadRuntime();
     renderRuntimeShell();
     if (saved && saved.currentScenario && scenarioLibrary.scenarios[saved.currentScenario]) {
-        runtime.collapsed = typeof saved.collapsed === "boolean" ? saved.collapsed : true;
         applyScenario(saved.currentScenario, { silent: true });
         runtime.lastAppliedAt = saved.lastAppliedAt || runtime.lastAppliedAt;
         renderRuntimeShell();
     } else {
-        runtime.collapsed = true;
-        applyScenario(scenarioLibrary.defaultScenario, { silent: true });
+        resetRuntimeScenario({ silent: true });
     }
 
     probeBackend();

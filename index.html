@@ -143,59 +143,118 @@
             position: sticky;
             top: 12px;
             z-index: 10;
-            padding: 18px 20px;
-            margin-bottom: 18px;
+            padding: 12px 16px;
+            margin-bottom: 12px;
             background: rgba(255, 255, 255, 0.92);
             border: 1px solid rgba(210, 216, 192, 0.9);
-            box-shadow: 0 18px 40px rgba(35, 42, 4, 0.1);
+            box-shadow: 0 14px 30px rgba(35, 42, 4, 0.08);
             backdrop-filter: blur(18px);
         }
 
-        .runtime-top {
+        .runtime-strip {
             display: flex;
             justify-content: space-between;
             gap: 16px;
-            align-items: flex-start;
+            align-items: center;
         }
 
         .runtime-summary {
-            display: grid;
-            gap: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px 14px;
         }
 
         .runtime-summary strong {
             display: block;
-            font-size: 1.02rem;
-            line-height: 1.35;
+            font-size: 0.96rem;
+            line-height: 1.25;
         }
 
         .runtime-summary p {
             color: var(--oliva-texto);
-            font-size: 0.86rem;
-            line-height: 1.55;
+            font-size: 0.82rem;
+            line-height: 1.45;
+            max-width: 64ch;
+        }
+
+        .runtime-summary .eyebrow,
+        .runtime-panel-copy .eyebrow {
+            padding: 6px 10px;
+            font-size: 0.66rem;
         }
 
         .runtime-controls {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
+            margin-left: auto;
             justify-content: flex-end;
             align-items: center;
         }
 
-        .runtime-body {
+        .runtime-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(210, 216, 192, 0.72);
+        }
+
+        .runtime-pill,
+        .runtime-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 10px;
+            border-radius: 999px;
+            background: rgba(247, 249, 241, 0.96);
+            border: 1px solid var(--borde-suave);
+            color: var(--oliva-texto);
+            font-size: 0.76rem;
+            white-space: nowrap;
+        }
+
+        .runtime-chip {
+            background: rgba(153, 185, 18, 0.12);
+            border-color: rgba(153, 185, 18, 0.18);
+            color: var(--oliva-oscuro);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .runtime-pill strong {
+            color: var(--oliva-oscuro);
+            font-size: 0.8rem;
+        }
+
+        .runtime-panel-grid {
             display: grid;
-            grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr) minmax(220px, 0.9fr);
+            grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.85fr);
             gap: 14px;
-            margin-top: 16px;
         }
 
-        .runtime-bar.compacta .runtime-body {
-            display: none;
+        .runtime-panel-main {
+            display: grid;
+            gap: 14px;
         }
 
-        .runtime-bar.compacta {
-            padding-bottom: 16px;
+        .runtime-panel-copy {
+            display: grid;
+            align-content: start;
+            gap: 12px;
+            padding: 20px;
+            border-radius: 22px;
+            background: rgba(247, 249, 241, 0.92);
+            border: 1px solid var(--borde-suave);
+        }
+
+        .runtime-panel-copy p {
+            color: var(--oliva-texto);
+            font-size: 0.88rem;
+            line-height: 1.6;
         }
 
         .runtime-copy strong {
@@ -213,8 +272,8 @@
         }
 
         .runtime-actions {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 10px;
             align-content: start;
         }
@@ -222,7 +281,8 @@
         .runtime-btn {
             display: grid;
             gap: 6px;
-            min-width: 160px;
+            min-width: 0;
+            width: 100%;
             padding: 14px 16px;
             border-radius: 18px;
             background: rgba(247, 249, 241, 0.96);
@@ -298,6 +358,10 @@
             letter-spacing: 0.12em;
         }
 
+        .runtime-modal-card {
+            width: min(1120px, 100%);
+        }
+
         .backend-badge {
             display: inline-flex;
             align-items: center;
@@ -331,6 +395,14 @@
         .backend-badge.local .badge-dot {
             background: #b0a880;
         }
+        .backend-badge.syncing {
+            background: rgba(0, 127, 104, 0.08);
+            color: var(--teal);
+        }
+        .backend-badge.syncing .badge-dot {
+            background: var(--teal);
+            box-shadow: 0 0 0 3px rgba(0, 127, 104, 0.12);
+        }
 
         .live-stats {
             margin-top: 10px;
@@ -361,7 +433,7 @@
         }
 
         .runtime-toggle {
-            min-width: 140px;
+            min-width: 126px;
         }
 
         .brand-wordmark {
@@ -2398,7 +2470,7 @@
                 grid-template-columns: 1fr;
             }
 
-            .runtime-body {
+            .runtime-panel-grid {
                 grid-template-columns: 1fr;
             }
 
@@ -2433,20 +2505,19 @@
 
             .runtime-bar {
                 top: 8px;
-                padding: 16px;
-            }
-
-            .runtime-controls {
-                width: 100%;
-                justify-content: flex-start;
+                padding: 14px;
             }
 
             .landing-topbar,
             .journey-header,
             .modal-top,
-            .runtime-top,
+            .runtime-strip,
             .section-head {
                 flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .runtime-summary {
                 align-items: flex-start;
             }
 
@@ -2459,6 +2530,15 @@
             }
 
             .runtime-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .runtime-controls {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .runtime-meta {
                 flex-wrap: nowrap;
                 overflow-x: auto;
                 padding-bottom: 4px;
@@ -2475,10 +2555,6 @@
                 flex-wrap: nowrap;
                 overflow-x: auto;
                 padding-bottom: 4px;
-            }
-
-            .runtime-btn {
-                min-width: 220px;
             }
 
             .btn-tab,
@@ -2551,27 +2627,39 @@
 </head>
 <body>
     <div class="site-shell">
-        <div class="runtime-bar panel compacta" id="runtime-bar">
-            <div class="runtime-top">
+        <div class="runtime-bar panel" id="runtime-bar">
+            <div class="runtime-strip">
                 <div class="runtime-summary" id="runtime-summary">
-                    <div class="eyebrow">Escenarios conectados</div>
-                    <strong>Escenario activo</strong>
-                    <p>La demo mantiene estado, sincroniza journeys y deja trazabilidad operativa.</p>
+                    <div class="eyebrow">Demo viva</div>
+                    <strong>Socio y gestión sincronizados</strong>
+                    <p>Activa un caso solo cuando quieras enseñar impacto real, sin cargar la portada.</p>
                 </div>
                 <div class="runtime-controls">
                     <span class="backend-badge local" id="backend-mode-badge"><span class="badge-dot"></span> Modo demo local</span>
                     <button class="btn-soft" type="button" onclick="resetRuntimeScenario()">Reiniciar</button>
-                    <button class="btn-primary runtime-toggle" id="runtime-toggle" type="button" onclick="toggleRuntimePanel()">Mostrar panel</button>
+                    <button class="btn-primary runtime-toggle" id="runtime-toggle" type="button" onclick="openRuntimeModal()">Abrir simulador</button>
                 </div>
             </div>
-            <div class="runtime-body" id="runtime-body">
-                <div class="runtime-copy">
-                    <div class="eyebrow">Escenarios conectados</div>
-                    <strong>Activa un trigger y verás cambios reales en socio, gestión y evidencias generadas.</strong>
-                    <p>La demo ya no se queda en una pantalla estática: persiste el estado, sincroniza journeys y deja rastro operativo de cada acción.</p>
+            <div class="runtime-meta" id="runtime-meta"></div>
+        </div>
+
+        <div class="modal-backdrop" id="runtime-modal" hidden>
+            <div class="modal-card runtime-modal-card">
+                <div class="modal-top">
+                    <div>
+                        <div class="eyebrow">Demo viva</div>
+                        <h2>Simulador de journeys y automatizaciones</h2>
+                        <p>Activa solo el caso que quieras enseñar y verás cómo se sincronizan socio, gestión y evidencias operativas sin saturar la página principal.</p>
+                    </div>
+                    <button class="btn-soft" type="button" onclick="closeRuntimeModal()">Cerrar</button>
                 </div>
-                <div class="runtime-actions" id="runtime-actions"></div>
-                <div class="runtime-status" id="runtime-status"></div>
+                <div class="runtime-panel-grid">
+                    <div class="runtime-panel-main">
+                        <div class="runtime-panel-copy" id="runtime-panel-copy"></div>
+                        <div class="runtime-actions" id="runtime-actions"></div>
+                    </div>
+                    <div class="runtime-status" id="runtime-status"></div>
+                </div>
             </div>
         </div>
 
