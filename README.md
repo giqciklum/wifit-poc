@@ -18,6 +18,13 @@ Una vista para dirección, operación y crecimiento. Parte de una hoja operativa
 
 La idea es enseñar dos frontends distintos para dos usuarios distintos, conectados por una misma capa de datos, reglas y automatización.
 
+Además, esta versión ya incorpora una capa de runtime dentro de la propia demo:
+
+- escenarios persistentes con estado guardado en navegador
+- outputs generados en tiempo real: correos, tareas, pases o documentos
+- sincronía visible entre journey del socio y centro de gestión
+- shell instalable tipo PWA para que se sienta más cercana a una aplicación real
+
 ## 2. Cómo contarlo en reunión
 
 Orden recomendado:
@@ -57,6 +64,13 @@ Triggers que hoy se ven en la versión:
 
 Lo importante aquí no es vender complejidad técnica. Lo importante es enseñar capacidad real de automatización sobre el tipo de operativa que hoy ya existe en muchos gimnasios: hoja de socios, cobros, emails, seguimiento y tareas.
 
+La nueva capa interactiva permite además que, al activar un trigger, aparezcan evidencias concretas:
+
+- correo o comunicación generada
+- documento o pase emitido
+- tarea operativa creada
+- secuencia de eventos de punta a punta
+
 ## 5. Cómo posicionarlo frente a Harbiz
 
 La comparación correcta no es “Harbiz malo / WiFit bueno”. La comparación correcta es esta:
@@ -80,7 +94,7 @@ Frase útil:
 La versión mezcla dos capas de información:
 
 - `Referencias públicas reales`: marca, clubes visibles, servicios, Gym Virtual y precios publicados.
-- `Datos sintéticos`: reparto de socios, scoring, predicciones, ingresos, tareas operativas y automatizaciones.
+- `Datos sintéticos`: reparto de socios, scoring, predicciones, ingresos, tareas operativas, automatizaciones y outputs generados.
 
 Eso permite enseñar una visión muy creíble sin usar datos internos del cliente.
 

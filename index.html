@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WiFit Gyms × Ciklum | Plataforma conectada de crecimiento y operación</title>
     <meta name="description" content="Plataforma conectada para WiFit Gyms: experiencia de socio, automatización operativa, captación y finanzas con una narrativa clara para dirección y expansión.">
+    <meta name="theme-color" content="#99b912">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -134,6 +137,121 @@
 
         .panel-pad {
             padding: 24px;
+        }
+
+        .runtime-bar {
+            position: sticky;
+            top: 12px;
+            z-index: 10;
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr) minmax(220px, 0.9fr);
+            gap: 14px;
+            padding: 18px 20px;
+            margin-bottom: 18px;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(210, 216, 192, 0.9);
+            box-shadow: 0 18px 40px rgba(35, 42, 4, 0.1);
+            backdrop-filter: blur(18px);
+        }
+
+        .runtime-copy strong {
+            display: block;
+            font-size: 1rem;
+            line-height: 1.4;
+            margin: 10px 0 6px;
+        }
+
+        .runtime-copy p,
+        .runtime-status p {
+            color: var(--oliva-texto);
+            font-size: 0.86rem;
+            line-height: 1.55;
+        }
+
+        .runtime-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-content: start;
+        }
+
+        .runtime-btn {
+            display: grid;
+            gap: 6px;
+            min-width: 160px;
+            padding: 14px 16px;
+            border-radius: 18px;
+            background: rgba(247, 249, 241, 0.96);
+            border: 1px solid var(--borde-suave);
+            text-align: left;
+            transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+        }
+
+        .runtime-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 28px rgba(35, 42, 4, 0.08);
+        }
+
+        .runtime-btn.activo {
+            border-color: rgba(153, 185, 18, 0.3);
+            background: linear-gradient(180deg, rgba(153, 185, 18, 0.14), rgba(255, 255, 255, 0.98));
+        }
+
+        .runtime-btn small {
+            display: inline-flex;
+            justify-self: start;
+            padding: 6px 9px;
+            border-radius: 999px;
+            background: rgba(0, 127, 104, 0.08);
+            border: 1px solid rgba(0, 127, 104, 0.12);
+            color: var(--teal);
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+        }
+
+        .runtime-btn strong {
+            display: block;
+            font-size: 0.96rem;
+            line-height: 1.35;
+        }
+
+        .runtime-btn span {
+            color: var(--oliva-texto);
+            font-size: 0.82rem;
+            line-height: 1.45;
+        }
+
+        .runtime-status {
+            display: grid;
+            gap: 10px;
+            align-content: start;
+            padding: 16px;
+            border-radius: 20px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 249, 241, 0.96));
+            border: 1px solid var(--borde-suave);
+        }
+
+        .runtime-status strong {
+            display: block;
+            font-size: 1rem;
+        }
+
+        .runtime-status .status-chip {
+            display: inline-flex;
+            justify-self: start;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 10px;
+            border-radius: 999px;
+            background: rgba(153, 185, 18, 0.12);
+            border: 1px solid rgba(153, 185, 18, 0.18);
+            color: var(--oliva-oscuro);
+            font-size: 0.74rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
         }
 
         .brand-wordmark {
@@ -1111,6 +1229,71 @@
             line-height: 1.58;
         }
 
+        .member-sync-card {
+            padding: 18px;
+            border-radius: 22px;
+            background: rgba(247, 249, 241, 0.92);
+            border: 1px solid var(--borde-suave);
+            box-shadow: var(--sombra-suave);
+        }
+
+        .member-sync-card.success {
+            background: linear-gradient(180deg, rgba(153, 185, 18, 0.14), rgba(255, 255, 255, 0.96));
+            border-color: rgba(153, 185, 18, 0.28);
+        }
+
+        .member-sync-card.warning {
+            background: linear-gradient(180deg, rgba(194, 102, 37, 0.08), rgba(255, 255, 255, 0.96));
+            border-color: rgba(194, 102, 37, 0.18);
+        }
+
+        .member-sync-card.info {
+            background: linear-gradient(180deg, rgba(0, 127, 104, 0.1), rgba(255, 255, 255, 0.96));
+            border-color: rgba(0, 127, 104, 0.18);
+        }
+
+        .member-sync-card span {
+            display: inline-flex;
+            padding: 7px 10px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.94);
+            border: 1px solid var(--borde-suave);
+            color: var(--oliva-texto);
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 10px;
+        }
+
+        .member-sync-card strong {
+            display: block;
+            font-size: 1.02rem;
+            line-height: 1.35;
+            margin-bottom: 8px;
+        }
+
+        .member-sync-card p {
+            color: var(--oliva-texto);
+            font-size: 0.88rem;
+            line-height: 1.58;
+        }
+
+        .member-sync-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .member-sync-actions span {
+            margin: 0;
+            padding: 8px 10px;
+            font-size: 0.76rem;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
         .info-list {
             list-style: none;
             display: grid;
@@ -1384,6 +1567,242 @@
             border: 1px solid var(--borde-suave);
             color: var(--oliva-texto);
             font-size: 0.76rem;
+        }
+
+        .artifact-grid,
+        .event-feed {
+            display: grid;
+            gap: 12px;
+        }
+
+        .artifact-card {
+            display: grid;
+            gap: 10px;
+            padding: 18px;
+            border-radius: 22px;
+            background: rgba(255, 255, 255, 0.96);
+            border: 1px solid var(--borde-suave);
+            box-shadow: var(--sombra-suave);
+            text-align: left;
+        }
+
+        .artifact-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: start;
+        }
+
+        .artifact-card small {
+            display: inline-flex;
+            justify-self: start;
+            padding: 6px 9px;
+            border-radius: 999px;
+            background: rgba(0, 127, 104, 0.08);
+            border: 1px solid rgba(0, 127, 104, 0.12);
+            color: var(--teal);
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+        }
+
+        .artifact-card strong {
+            display: block;
+            font-size: 1rem;
+            line-height: 1.35;
+            margin-bottom: 6px;
+        }
+
+        .artifact-card p {
+            color: var(--oliva-texto);
+            font-size: 0.88rem;
+            line-height: 1.58;
+        }
+
+        .artifact-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .artifact-meta span {
+            display: inline-flex;
+            padding: 7px 10px;
+            border-radius: 999px;
+            background: rgba(247, 249, 241, 0.94);
+            border: 1px solid var(--borde-suave);
+            color: var(--oliva-texto);
+            font-size: 0.76rem;
+        }
+
+        .event-item {
+            position: relative;
+            padding: 16px 16px 16px 30px;
+            border-radius: 20px;
+            background: rgba(247, 249, 241, 0.92);
+            border: 1px solid var(--borde-suave);
+        }
+
+        .event-item::before {
+            content: "";
+            position: absolute;
+            left: 14px;
+            top: 24px;
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: var(--verde);
+            box-shadow: 0 0 0 5px rgba(153, 185, 18, 0.12);
+        }
+
+        .event-item time {
+            display: block;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--teal);
+            margin-bottom: 8px;
+        }
+
+        .event-item strong {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.96rem;
+        }
+
+        .event-item p {
+            color: var(--oliva-texto);
+            font-size: 0.86rem;
+            line-height: 1.55;
+        }
+
+        .phone-notice {
+            display: grid;
+            gap: 8px;
+            margin-bottom: 12px;
+            padding: 14px;
+            border-radius: 20px;
+            background: rgba(153, 185, 18, 0.12);
+            border: 1px solid rgba(153, 185, 18, 0.22);
+        }
+
+        .phone-notice.info {
+            background: rgba(0, 127, 104, 0.08);
+            border-color: rgba(0, 127, 104, 0.18);
+        }
+
+        .phone-notice.warning {
+            background: rgba(194, 102, 37, 0.1);
+            border-color: rgba(194, 102, 37, 0.18);
+        }
+
+        .phone-notice strong {
+            display: block;
+            font-size: 0.96rem;
+            line-height: 1.35;
+        }
+
+        .phone-notice p {
+            color: var(--oliva-texto);
+            font-size: 0.86rem;
+            line-height: 1.55;
+        }
+
+        .runtime-toast {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            z-index: 30;
+            width: min(360px, calc(100vw - 32px));
+            padding: 16px 18px;
+            border-radius: 22px;
+            background: rgba(35, 42, 4, 0.94);
+            color: var(--blanco);
+            box-shadow: 0 18px 40px rgba(35, 42, 4, 0.22);
+            opacity: 0;
+            transform: translateY(16px);
+            pointer-events: none;
+            transition: opacity 180ms ease, transform 180ms ease;
+        }
+
+        .runtime-toast.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .runtime-toast strong {
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .runtime-toast p {
+            color: rgba(255, 255, 255, 0.88);
+            font-size: 0.86rem;
+            line-height: 1.55;
+        }
+
+        .modal-backdrop[hidden] {
+            display: none;
+        }
+
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 40;
+            display: grid;
+            place-items: center;
+            padding: 18px;
+            background: rgba(35, 42, 4, 0.42);
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-card {
+            width: min(760px, 100%);
+            max-height: min(88vh, 980px);
+            overflow: auto;
+            padding: 24px;
+            border-radius: 28px;
+            background: rgba(255, 255, 255, 0.98);
+            border: 1px solid var(--borde-suave);
+            box-shadow: 0 30px 80px rgba(35, 42, 4, 0.22);
+        }
+
+        .modal-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: start;
+            margin-bottom: 16px;
+        }
+
+        .modal-top p {
+            color: var(--oliva-texto);
+            line-height: 1.6;
+            margin-top: 8px;
+        }
+
+        .doc-preview {
+            display: grid;
+            gap: 12px;
+            padding: 20px;
+            border-radius: 22px;
+            background: rgba(247, 249, 241, 0.92);
+            border: 1px solid var(--borde-suave);
+        }
+
+        .doc-preview h4 {
+            font-size: 1.05rem;
+        }
+
+        .doc-preview p,
+        .doc-preview li {
+            color: var(--oliva-texto);
+            line-height: 1.65;
+        }
+
+        .doc-preview ul {
+            padding-left: 18px;
         }
 
         .flow-card {
@@ -1861,6 +2280,7 @@
         }
 
         @media (max-width: 1260px) {
+            .runtime-bar,
             .landing-hero,
             .choice-grid,
             .bridge-grid,
@@ -1898,8 +2318,14 @@
                 padding: 16px;
             }
 
+            .runtime-bar {
+                top: 8px;
+                padding: 16px;
+            }
+
             .landing-topbar,
             .journey-header,
+            .modal-top,
             .section-head {
                 flex-direction: column;
                 align-items: flex-start;
@@ -1908,8 +2334,15 @@
             .landing-copy,
             .landing-stack,
             .journey-header,
+            .modal-card,
             .panel-pad {
                 padding: 20px;
+            }
+
+            .runtime-actions {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                padding-bottom: 4px;
             }
 
             .header-chips,
@@ -1923,6 +2356,10 @@
                 flex-wrap: nowrap;
                 overflow-x: auto;
                 padding-bottom: 4px;
+            }
+
+            .runtime-btn {
+                min-width: 220px;
             }
 
             .btn-tab,
@@ -1995,6 +2432,16 @@
 </head>
 <body>
     <div class="site-shell">
+        <div class="runtime-bar panel">
+            <div class="runtime-copy">
+                <div class="eyebrow">Escenarios conectados</div>
+                <strong>Activa un trigger y verás cambios reales en socio, gestión y evidencias generadas.</strong>
+                <p>La demo ya no se queda en una pantalla estática: persiste el estado, sincroniza journeys y deja rastro operativo de cada acción.</p>
+            </div>
+            <div class="runtime-actions" id="runtime-actions"></div>
+            <div class="runtime-status" id="runtime-status"></div>
+        </div>
+
         <section class="screen activa" id="screen-inicio">
             <div class="landing-topbar">
                 <div class="brand-wordmark">
@@ -2224,6 +2671,16 @@
                     <div class="panel panel-pad">
                         <div class="section-head" style="margin-bottom: 14px;">
                             <div>
+                                <h2>Estado vivo del servicio</h2>
+                                <p>Este bloque cambia según el trigger activo para enseñar cómo gestión y experiencia del socio quedan conectadas.</p>
+                            </div>
+                        </div>
+                        <div id="member-sync"></div>
+                    </div>
+
+                    <div class="panel panel-pad">
+                        <div class="section-head" style="margin-bottom: 14px;">
+                            <div>
                                 <h2>Lo que ve dirección detrás</h2>
                             </div>
                         </div>
@@ -2331,6 +2788,30 @@
                         <span>Retención</span>
                         <strong>El impago deja de ser un punto ciego</strong>
                         <p>El sistema detecta, comunica y abre seguimiento sin esperar a una revisión manual tardía.</p>
+                    </div>
+                </div>
+
+                <div class="split-grid" style="margin-top: 18px;">
+                    <div class="panel panel-pad">
+                        <div class="section-head">
+                            <div>
+                                <div class="eyebrow">Evidencias generadas</div>
+                                <h2>Comunicaciones, documentos y acciones listas</h2>
+                                <p>Cada escenario genera salidas concretas que refuerzan la sensación de producto: email, factura, tarea o plan generado.</p>
+                            </div>
+                        </div>
+                        <div class="artifact-grid" id="artifact-grid"></div>
+                    </div>
+
+                    <div class="panel panel-pad">
+                        <div class="section-head">
+                            <div>
+                                <div class="eyebrow">Event Stream</div>
+                                <h2>Secuencia orquestada de punta a punta</h2>
+                                <p>La cronología muestra cómo el trigger inicial mueve cobros, comunicación, IA y operación en la misma historia.</p>
+                            </div>
+                        </div>
+                        <div class="event-feed" id="event-feed"></div>
                     </div>
                 </div>
             </section>
@@ -2605,6 +3086,22 @@
         </section>
     </div>
 
+    <div class="runtime-toast" id="runtime-toast" aria-live="polite"></div>
+
+    <div class="modal-backdrop" id="artifact-modal" hidden>
+        <div class="modal-card">
+            <div class="modal-top">
+                <div>
+                    <div class="eyebrow">Vista generada</div>
+                    <h2 id="modal-title">Documento</h2>
+                    <p id="modal-subtitle"></p>
+                </div>
+                <button class="btn-soft" type="button" onclick="closeArtifactModal()">Cerrar</button>
+            </div>
+            <div class="doc-preview" id="modal-body"></div>
+        </div>
+    </div>
+
     <script>
         const sedes = [
             { id: "guindalera", nombre: "WiFit Guindalera", direccion: "Calle Cartagena, 16 · Madrid", miembros: 1860, estado: "Operativa" },
@@ -2723,7 +3220,7 @@
         };
 
         const sociosGestion = [
-            ["001", "Manuel", "García López", "manuel@miwifit.app", "Retiro", "Mensual", "2024-03-15", "Activo", "41,90 €", "12/04/2026", "Sí"],
+            ["001", "Manuel", "García López", "manuel@miwifit.app", "Retiro", "Mensual", "2024-03-15", "Activo", "41,90 €", "12/04/2026", "No"],
             ["002", "Laura", "Sánchez Ruiz", "laura@miwifit.app", "Chamberí", "Trimestral", "2024-06-22", "Activo", "116,70 €", "01/04/2026", "No"],
             ["003", "Carlos", "Fernández Torres", "carlos@miwifit.app", "Humanes", "Mensual", "2024-01-10", "Impago", "41,90 €", "15/03/2026", "Sí"],
             ["004", "Marta", "Pérez León", "marta@miwifit.app", "Guindalera", "Anual", "2023-11-02", "Activo", "394,80 €", "02/01/2026", "Sí"],
@@ -3235,7 +3732,7 @@
                 </div>
             `;
 
-            const filaDestacada = estado.automationActive === "activation" ? "002" : (estado.automationActive === "retention" ? "003" : null);
+            const filaDestacada = estado.automationActive === "activation" ? "001" : (estado.automationActive === "retention" ? "003" : null);
             document.getElementById("member-table").innerHTML = sociosGestion.map((fila) => {
                 const estadoSocio = fila[7];
                 const badgeClass = estadoSocio === "Activo" ? "activo" : (estadoSocio === "Impago" ? "impago" : "pendiente");
@@ -3287,8 +3784,8 @@
                 const nuevos = {
                     activation: {
                         tipo: "Cobros",
-                        titulo: "Ahora mismo · Laura Sánchez -> activación completa",
-                        texto: "Pago validado, acceso activo, bienvenida enviada, IA marcada y plan de semana 1 generado."
+                        titulo: "Ahora mismo · Manuel García -> activación IA completada",
+                        texto: "Pago validado, servicio premium activado, bienvenida enviada y plan de semana 1 generado."
                     },
                     lead: {
                         tipo: "Leads",
@@ -3744,5 +4241,6 @@
         renderSocio();
         renderGestion();
     </script>
+    <script src="assets/demo-runtime.js"></script>
 </body>
 </html>

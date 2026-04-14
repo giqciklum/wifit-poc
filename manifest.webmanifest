@@ -1,0 +1,17 @@
+{
+  "name": "WiFit IA x Ciklum",
+  "short_name": "WiFit IA",
+  "description": "Demo interactiva de experiencia de socio, automatización y gestión para WiFit Gyms.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f7f9f1",
+  "theme_color": "#99b912",
+  "icons": [
+    {
+      "src": "assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
