@@ -618,7 +618,45 @@
         }
 
         .landing-copy {
+            position: relative;
+            overflow: hidden;
             padding: 30px;
+            min-height: 100%;
+            background:
+                radial-gradient(circle at top left, rgba(153, 185, 18, 0.22), transparent 38%),
+                radial-gradient(circle at bottom right, rgba(0, 127, 104, 0.12), transparent 34%),
+                linear-gradient(160deg, rgba(255, 255, 255, 0.98), rgba(246, 249, 238, 0.96));
+            border: 1px solid rgba(210, 216, 192, 0.92);
+            box-shadow: 0 34px 80px rgba(35, 42, 4, 0.12);
+        }
+
+        .landing-copy::before,
+        .landing-copy::after {
+            content: "";
+            position: absolute;
+            pointer-events: none;
+            border-radius: 999px;
+        }
+
+        .landing-copy::before {
+            width: 280px;
+            height: 280px;
+            top: -110px;
+            right: -60px;
+            background: radial-gradient(circle, rgba(153, 185, 18, 0.22), transparent 68%);
+        }
+
+        .landing-copy::after {
+            width: 220px;
+            height: 220px;
+            bottom: -100px;
+            left: -50px;
+            background: radial-gradient(circle, rgba(0, 127, 104, 0.14), transparent 72%);
+        }
+
+        .landing-copy > * {
+            position: relative;
+            z-index: 1;
         }
 
         .landing-copy h1 {
@@ -627,6 +665,7 @@
             line-height: 0.9;
             letter-spacing: -0.03em;
             margin: 18px 0 16px;
+            text-wrap: balance;
         }
 
         .landing-copy h1 span {
@@ -640,34 +679,189 @@
             color: var(--oliva-texto);
         }
 
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .hero-proof-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 22px;
+        }
+
+        .hero-proof-item {
+            padding: 14px 16px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.82);
+            border: 1px solid rgba(210, 216, 192, 0.86);
+            box-shadow: 0 16px 28px rgba(35, 42, 4, 0.06);
+        }
+
+        .hero-proof-item span {
+            display: block;
+            font-size: 0.68rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--oliva-texto);
+            margin-bottom: 8px;
+        }
+
+        .hero-proof-item strong {
+            display: block;
+            font-size: 0.94rem;
+            line-height: 1.35;
+            margin-bottom: 6px;
+        }
+
+        .hero-proof-item p {
+            font-size: 0.82rem;
+            line-height: 1.5;
+            color: var(--oliva-texto);
+        }
+
         .landing-stack {
+            position: relative;
+            overflow: hidden;
             display: grid;
             gap: 14px;
-            padding: 22px;
+            padding: 24px;
+            background:
+                radial-gradient(circle at top right, rgba(153, 185, 18, 0.16), transparent 34%),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(245, 248, 237, 0.96));
+            border: 1px solid rgba(210, 216, 192, 0.9);
+            box-shadow: 0 28px 68px rgba(35, 42, 4, 0.1);
+        }
+
+        .landing-stack > * {
+            position: relative;
+            z-index: 1;
         }
 
         .preview-card {
             position: relative;
             overflow: hidden;
-            padding: 20px;
-            min-height: 168px;
-            border-radius: 22px;
+            padding: 24px;
+            min-height: 208px;
+            border-radius: 26px;
             color: var(--blanco);
             background:
-                linear-gradient(180deg, rgba(0, 0, 0, 0.16), rgba(0, 0, 0, 0.56)),
+                linear-gradient(180deg, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.6)),
                 url("https://wifitgyms.com/wp-content/uploads/2024/11/wifit_home-gimnasios-retiro-1.jpg") center/cover;
-            box-shadow: var(--sombra-media);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            box-shadow: 0 28px 52px rgba(35, 42, 4, 0.18);
+        }
+
+        .preview-card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, rgba(255, 255, 255, 0.18), transparent 24%, transparent 72%, rgba(255, 255, 255, 0.1));
+            pointer-events: none;
         }
 
         .preview-card h3 {
-            font-size: 1.6rem;
+            font-size: 1.9rem;
             margin-bottom: 10px;
+            max-width: 12ch;
         }
 
         .preview-card p {
             max-width: 38ch;
             line-height: 1.6;
             color: rgba(255, 255, 255, 0.92);
+        }
+
+        .preview-signal-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 12px;
+            align-items: end;
+            margin-top: 18px;
+        }
+
+        .preview-story {
+            display: grid;
+            gap: 10px;
+        }
+
+        .preview-story small {
+            display: block;
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: rgba(255, 255, 255, 0.84);
+            margin-bottom: 8px;
+        }
+
+        .preview-story strong {
+            display: block;
+            font-size: 1rem;
+            line-height: 1.35;
+        }
+
+        .preview-story p {
+            font-size: 0.86rem;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.88);
+        }
+
+        .preview-tags {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .preview-tags span {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 11px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            font-size: 0.74rem;
+            color: rgba(255, 255, 255, 0.92);
+        }
+
+        .preview-note {
+            display: grid;
+            gap: 10px;
+            padding: 16px 18px;
+            border-radius: 20px;
+            background: linear-gradient(180deg, rgba(35, 42, 4, 0.04), rgba(255, 255, 255, 0.94));
+            border: 1px solid rgba(210, 216, 192, 0.9);
+        }
+
+        .preview-note span {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            justify-self: start;
+            padding: 7px 10px;
+            border-radius: 999px;
+            background: rgba(0, 127, 104, 0.08);
+            border: 1px solid rgba(0, 127, 104, 0.12);
+            color: var(--teal);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-weight: 700;
+        }
+
+        .preview-note strong {
+            display: block;
+            font-size: 1rem;
+            line-height: 1.35;
+        }
+
+        .preview-note p {
+            font-size: 0.88rem;
+            line-height: 1.6;
+            color: var(--oliva-texto);
         }
 
         .preview-metrics {
@@ -680,8 +874,8 @@
             padding: 16px;
             border-radius: 18px;
             border: 1px solid var(--borde-suave);
-            background: rgba(255, 255, 255, 0.94);
-            box-shadow: var(--sombra-suave);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 249, 241, 0.94));
+            box-shadow: 0 18px 32px rgba(35, 42, 4, 0.07);
         }
 
         .preview-metric span {
@@ -718,13 +912,13 @@
             overflow: hidden;
             display: grid;
             gap: 16px;
-            min-height: 340px;
-            padding: 28px;
+            min-height: 360px;
+            padding: 30px;
             border-radius: var(--radio-xl);
             text-align: left;
             background: var(--panel-intenso);
             border: 1px solid var(--borde-suave);
-            box-shadow: var(--sombra);
+            box-shadow: 0 30px 72px rgba(35, 42, 4, 0.11);
             transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
         }
 
@@ -763,6 +957,7 @@
             background:
                 radial-gradient(circle at top right, rgba(153, 185, 18, 0.3), transparent 30%),
                 radial-gradient(circle at bottom left, rgba(0, 127, 104, 0.22), transparent 34%),
+                repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.44) 0, rgba(255, 255, 255, 0.44) 1px, transparent 1px, transparent 18px),
                 linear-gradient(160deg, rgba(255, 255, 255, 0.96), rgba(247, 249, 241, 0.98));
         }
 
@@ -799,6 +994,7 @@
             font-size: clamp(2rem, 3vw, 2.8rem);
             line-height: 1;
             letter-spacing: -0.04em;
+            margin-bottom: 8px;
         }
 
         .choice-card.socio h2,
@@ -838,11 +1034,35 @@
             background: var(--verde);
         }
 
+        .choice-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: auto;
+            padding-top: 6px;
+        }
+
+        .choice-footer span {
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-weight: 700;
+            color: inherit;
+            opacity: 0.78;
+        }
+
+        .choice-footer strong {
+            font-size: 0.95rem;
+            line-height: 1.2;
+        }
+
         .mini-sheet {
-            border-radius: 18px;
+            border-radius: 20px;
             overflow: hidden;
             border: 1px solid rgba(0, 127, 104, 0.12);
-            background: rgba(255, 255, 255, 0.92);
+            background: rgba(255, 255, 255, 0.94);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
         }
 
         .mini-sheet-header,
@@ -892,26 +1112,36 @@
             color: var(--oliva-texto);
             font-size: 0.88rem;
             line-height: 1.6;
+            max-width: 62ch;
+            margin: 0 auto;
         }
 
         .bridge-panel {
+            position: relative;
+            overflow: hidden;
             padding: 22px;
             margin-bottom: 16px;
+            background:
+                radial-gradient(circle at top left, rgba(153, 185, 18, 0.18), transparent 28%),
+                radial-gradient(circle at bottom right, rgba(0, 127, 104, 0.1), transparent 30%),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(246, 249, 239, 0.96));
+            border: 1px solid rgba(210, 216, 192, 0.94);
+            box-shadow: 0 30px 70px rgba(35, 42, 4, 0.1);
         }
 
         .bridge-grid {
             display: grid;
             grid-template-columns: 1fr minmax(260px, 0.88fr) 1fr;
-            gap: 14px;
+            gap: 16px;
             align-items: stretch;
         }
 
         .bridge-card,
         .bridge-core {
-            border-radius: 24px;
-            padding: 20px;
+            border-radius: 26px;
+            padding: 22px;
             border: 1px solid var(--borde-suave);
-            box-shadow: var(--sombra-suave);
+            box-shadow: 0 20px 40px rgba(35, 42, 4, 0.08);
         }
 
         .bridge-card.member {
@@ -2495,6 +2725,11 @@
                 grid-template-columns: 1fr;
             }
 
+            .hero-proof-grid,
+            .preview-metrics {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
             .runtime-panel-grid {
                 grid-template-columns: 1fr;
             }
@@ -2537,7 +2772,8 @@
             .journey-header,
             .modal-top,
             .runtime-strip,
-            .section-head {
+            .section-head,
+            .brand-lockup {
                 flex-direction: column;
                 align-items: flex-start;
             }
@@ -2559,6 +2795,12 @@
             }
 
             .runtime-controls {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .hero-actions,
+            .preview-tags {
                 width: 100%;
                 justify-content: flex-start;
             }
@@ -2590,6 +2832,17 @@
 
             .landing-copy h1 {
                 font-size: clamp(3rem, 14vw, 5rem);
+            }
+
+            .hero-proof-grid,
+            .preview-metrics {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-signal-row,
+            .choice-footer {
+                grid-template-columns: 1fr;
+                display: grid;
             }
 
             .phone-shell {
@@ -2708,10 +2961,10 @@
             <div class="landing-hero">
                 <div class="panel landing-copy">
                     <div class="eyebrow">Plataforma conectada</div>
-                    <h1>Dos experiencias claras para <span>crecer, operar y fidelizar mejor</span>.</h1>
+                    <h1>Una experiencia premium para el socio. <span>Un centro de control claro para el negocio.</span></h1>
                     <p>
-                        WiFit ya tiene la base para dar un salto diferencial: una experiencia de socio más personalizada y una capa de gestión que reduzca fricción
-                        en captación, cobros, operaciones y seguimiento. La clave es enseñarlo con dos recorridos muy claros, sin mezclar usuarios ni abrumar.
+                        WiFit ya tiene base de marca, pricing accesible y una red en expansión. Este PoC convierte esa base en algo que se siente mucho más
+                        aspiracional y mucho más controlable: una capa digital propia para elevar la experiencia del socio y otra para dar visibilidad operativa a dirección.
                     </p>
                     <div class="header-chips" style="margin-top: 18px;">
                         <div class="chip">Precios públicos actuales</div>
@@ -2719,13 +2972,60 @@
                         <div class="chip">Pulsera / acceso</div>
                         <div class="chip">Entrenamiento + gestión conectados</div>
                     </div>
+                    <div class="hero-actions">
+                        <button class="btn-primary" type="button" onclick="setScreen('socio')">Explorar experiencia</button>
+                        <button class="btn-secondary" type="button" onclick="setScreen('gestion')">Explorar gestión</button>
+                        <button class="btn-soft" type="button" onclick="openRuntimeModal()">Ver casos en vivo</button>
+                    </div>
+                    <div class="hero-proof-grid">
+                        <div class="hero-proof-item">
+                            <span>Socio</span>
+                            <strong>Coach IA, clases y progreso</strong>
+                            <p>Una interfaz más premium y más útil desde el minuto uno.</p>
+                        </div>
+                        <div class="hero-proof-item">
+                            <span>Gestión</span>
+                            <strong>Cobros, leads e impagos orquestados</strong>
+                            <p>Automatizaciones visibles y entendibles para negocio.</p>
+                        </div>
+                        <div class="hero-proof-item">
+                            <span>Marca</span>
+                            <strong>Experiencia propia de WiFit</strong>
+                            <p>No parece una herramienta genérica ni un plugin externo.</p>
+                        </div>
+                        <div class="hero-proof-item">
+                            <span>Escala</span>
+                            <strong>Base lista para crecer</strong>
+                            <p>Un mismo núcleo digital para acompañar la expansión de la cadena.</p>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="panel landing-stack">
                     <div class="preview-card">
                         <div class="eyebrow" style="background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.2); color: var(--blanco);">Visión WiFit</div>
-                        <h3>Experiencia premium sobre una cuota accesible</h3>
-                        <p>Entrenador IA, automatización de gestión y una lectura más clara de crecimiento, retención y expansión.</p>
+                        <h3>Premium percibido sin premium pricing</h3>
+                        <p>La misma capa conecta entrenador IA, activación premium, cobros y retención para que cada interacción tenga impacto visible.</p>
+                        <div class="preview-signal-row">
+                            <div class="preview-story">
+                                <div>
+                                    <small>Lo que cambia</small>
+                                    <strong>WiFit se siente más potente, más cuidada y más preparada para escalar.</strong>
+                                </div>
+                                <p>Cuando el socio interactúa, también se activan datos, automatizaciones y decisiones operativas en segundo plano.</p>
+                            </div>
+                            <div class="preview-tags">
+                                <span>WiFit IA</span>
+                                <span>Cobros</span>
+                                <span>Leads</span>
+                                <span>Retención</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="preview-note">
+                        <span>Señal conectada</span>
+                        <strong>Un mismo núcleo mueve experiencia, operación y lectura ejecutiva.</strong>
+                        <p>No son módulos aislados: la propuesta funciona mejor porque conecta journeys, automatizaciones y capa operativa bajo una misma lógica.</p>
                     </div>
                     <div class="preview-metrics">
                         <div class="preview-metric">
@@ -2760,6 +3060,10 @@
                         <li>Clase sugerida con baja ocupación</li>
                         <li>Plan de semana y progreso visible</li>
                     </ul>
+                    <div class="choice-footer">
+                        <span>Journey socio</span>
+                        <strong>Entrar en experiencia WiFit IA</strong>
+                    </div>
                 </button>
 
                 <button class="choice-card gestion" type="button" onclick="setScreen('gestion')">
@@ -2801,6 +3105,10 @@
                         <span>IA</span>
                         <span>Plan</span>
                     </div>
+                    <div class="choice-footer">
+                        <span>Journey gestión</span>
+                        <strong>Entrar en centro de control</strong>
+                    </div>
                 </button>
             </div>
 
@@ -2838,7 +3146,7 @@
                 </div>
             </div>
 
-            <p class="landing-footnote">Visión de producto para WiFit: experiencia de socio y centro de gestión conectados sobre una misma capa operativa.</p>
+            <p class="landing-footnote">Visión de producto para WiFit: dos interfaces distintas, un mismo sistema de orquestación y una presentación que ya se siente mucho más cerca de producto que de demo.</p>
         </section>
 
         <section class="screen" id="screen-socio">
