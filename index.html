@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WiFit Gyms × Ciklum | Plataforma Inteligente</title>
-    <meta name="description" content="PoC estratégico para WiFit Gyms: IA para socios, operaciones, finanzas y captación, con identidad real de marca y narrativa de negocio lista para cliente.">
+    <title>WiFit Gyms × Ciklum | Plataforma conectada de crecimiento y operación</title>
+    <meta name="description" content="Plataforma estratégica para WiFit Gyms: experiencia de socio, operaciones, finanzas y captación conectadas con identidad real de marca y narrativa de negocio preparada para dirección.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -45,6 +45,7 @@
                 radial-gradient(circle at bottom right, rgba(0, 127, 104, 0.08), transparent 28%),
                 linear-gradient(180deg, #fbfcf7 0%, #f4f7ed 42%, #ffffff 100%);
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         img {
@@ -180,6 +181,26 @@
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
+        }
+
+        .menu,
+        .chips,
+        .chips-resumen,
+        .acciones-rapidas,
+        .selector,
+        .selector-compacto,
+        .resaltado-lateral {
+            scrollbar-width: none;
+        }
+
+        .menu::-webkit-scrollbar,
+        .chips::-webkit-scrollbar,
+        .chips-resumen::-webkit-scrollbar,
+        .acciones-rapidas::-webkit-scrollbar,
+        .selector::-webkit-scrollbar,
+        .selector-compacto::-webkit-scrollbar,
+        .resaltado-lateral::-webkit-scrollbar {
+            display: none;
         }
 
         .chip {
@@ -1246,6 +1267,19 @@
             font-size: 0.86rem;
         }
 
+        .tabla-scroll {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-top: 14px;
+        }
+
+        .tabla-scroll .tabla-comparativa,
+        .tabla-scroll .tabla-anomalias,
+        .tabla-scroll .tabla-matriz {
+            min-width: 700px;
+            margin-top: 0;
+        }
+
         .tabla-matriz th,
         .tabla-matriz td {
             padding: 14px 10px;
@@ -1320,6 +1354,10 @@
                 height: auto;
             }
 
+            .menu {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
             .rejilla-metricas,
             .precios-reales,
             .rejilla-fin,
@@ -1340,7 +1378,41 @@
             }
 
             .barra-lateral {
+                padding: 20px 16px 18px;
+                gap: 16px;
                 border-radius: 0 0 28px 28px;
+            }
+
+            .marca {
+                padding: 16px;
+            }
+
+            .marca img {
+                width: 132px;
+                margin-bottom: 10px;
+            }
+
+            .menu {
+                display: flex;
+                grid-template-columns: none;
+                overflow-x: auto;
+                gap: 10px;
+                padding-bottom: 4px;
+            }
+
+            .boton-menu {
+                width: auto;
+                min-width: max-content;
+                white-space: nowrap;
+            }
+
+            .resaltado-lateral {
+                display: grid;
+                grid-auto-flow: column;
+                grid-auto-columns: minmax(220px, 82vw);
+                overflow-x: auto;
+                gap: 10px;
+                padding-bottom: 4px;
             }
 
             .contenido {
@@ -1368,8 +1440,98 @@
                 grid-template-columns: 1fr;
             }
 
+            .chips,
+            .chips-resumen,
+            .acciones-rapidas,
+            .selector,
+            .selector-compacto {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                padding-bottom: 4px;
+            }
+
+            .chip,
+            .boton-selector,
+            .boton-rapido {
+                white-space: nowrap;
+            }
+
+            .panel.contenido-panel,
+            .perfil-socio,
+            .lienzo-chat,
+            .panel-resumen,
+            .detalle-lead {
+                padding: 18px;
+            }
+
+            .hero h1 {
+                font-size: clamp(2.3rem, 12vw, 3.4rem);
+            }
+
+            .hero p,
+            .encabezado-vista p {
+                font-size: 0.96rem;
+                line-height: 1.65;
+            }
+
+            .hero-imagen {
+                min-height: 300px;
+            }
+
+            .tarjeta-sobre-imagen {
+                left: 16px;
+                right: 16px;
+                bottom: 16px;
+                padding: 16px;
+            }
+
+            .tarjeta-sobre-imagen strong {
+                font-size: 1.08rem;
+            }
+
+            .conversacion {
+                min-height: 320px;
+                max-height: 320px;
+            }
+
             .entrada-chat {
                 flex-direction: column;
+            }
+
+            .acciones-principales {
+                display: grid;
+            }
+
+            .acciones-principales .boton-principal,
+            .acciones-principales .boton-secundario,
+            .entrada-chat .boton-principal {
+                width: 100%;
+                text-align: center;
+            }
+
+            .chart-box {
+                padding: 18px 0 0;
+            }
+
+            .chart-box canvas {
+                height: 240px !important;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .hero-imagen,
+            .hero-sede {
+                min-height: 260px;
+            }
+
+            .metrica strong,
+            .precio strong,
+            .bloque-fin strong {
+                font-size: 1.45rem;
+            }
+
+            .chart-box canvas {
+                height: 220px !important;
             }
         }
     </style>
@@ -1379,7 +1541,7 @@
         <aside class="barra-lateral">
             <div class="marca">
                 <img src="https://wifitgyms.com/wp-content/uploads/2024/08/logo-wifit_blanco_menu.png" alt="WiFit Gyms">
-                <p>PoC estratégico construido para que el cliente vea algo más cercano a producto real que a una simple landing de demo.</p>
+                <p>Propuesta digital pensada para acompañar la siguiente fase de crecimiento de WiFit con una experiencia más conectada, operativa y medible.</p>
             </div>
 
             <nav class="menu" aria-label="Secciones">
@@ -1393,19 +1555,19 @@
 
             <div class="resaltado-lateral">
                 <div class="tarjeta-lateral">
-                    <span>Huella real de marca</span>
-                    <strong>Colores, tipografía y activos oficiales de WiFit</strong>
-                    <p>Basado en la web pública actual, con DM Sans, paleta original y sedes reales activas.</p>
+                    <span>Experiencia WiFit</span>
+                    <strong>Marca, sedes y servicios alineados con la red actual</strong>
+                    <p>Identidad visual, horarios, pricing y activos públicos llevados a una experiencia más cercana a producción.</p>
                 </div>
                 <div class="tarjeta-lateral">
-                    <span>Diferencial</span>
-                    <strong>Más allá de Harbiz</strong>
-                    <p>No solo entrena al socio: conecta captación, operaciones, finanzas y responsables de sede en una misma plataforma.</p>
+                    <span>Plataforma conectada</span>
+                    <strong>Socio, captación, operación y finanzas en un mismo flujo</strong>
+                    <p>La experiencia acompaña al socio y también da visibilidad a responsables de club, dirección y expansión.</p>
                 </div>
                 <div class="tarjeta-lateral">
-                    <span>Transparencia</span>
-                    <strong>Datos de negocio sintéticos</strong>
-                    <p>Precios, sedes, horarios y servicios vienen de fuentes oficiales; KPIs internos y proyecciones son simulados.</p>
+                    <span>Escenario de crecimiento</span>
+                    <strong>Visualización preparada para expansión, eficiencia y retención</strong>
+                    <p>La plataforma refleja cómo WiFit puede escalar con mayor control comercial, operativo y financiero.</p>
                 </div>
             </div>
         </aside>
@@ -1413,9 +1575,9 @@
         <main class="contenido">
             <header class="barra-superior">
                 <div class="chips">
-                    <div class="chip fuerte">Demo estratégica para cliente</div>
-                    <div class="chip secundario">Inputs oficiales WiFit</div>
-                    <div class="chip">Hoja de ruta comercial: 7 clubes → 10</div>
+                    <div class="chip fuerte">Plataforma WiFit x Ciklum</div>
+                    <div class="chip secundario">Base pública WiFit</div>
+                    <div class="chip">Ruta de crecimiento: 7 clubes → 10</div>
                 </div>
                 <div class="chips-resumen">
                     <div class="chip">Prueba gratis</div>
@@ -1427,12 +1589,11 @@
             <section class="vista activa" id="vista-general">
                 <div class="hero">
                     <div class="panel contenido-panel">
-                        <div class="eyebrow">PoC WiFit Gyms × Ciklum</div>
-                        <h1>Una plataforma que <span>sí parece WiFit</span> y no una demo cualquiera.</h1>
+                        <div class="eyebrow">WiFit Gyms × Ciklum</div>
+                        <h1>La experiencia WiFit preparada para crecer con <span>más inteligencia y control</span>.</h1>
                         <p>
-                            Este PoC rehace la propuesta desde la identidad real de WiFit: sedes activas actuales, precios oficiales, horarios reales y una narrativa
-                            pensada para competir de verdad. La idea no es enseñar “otra plataforma genérica”, sino la plataforma que WiFit podría tener para vender mejor, operar mejor
-                            y escalar con más control.
+                            Esta propuesta toma como base la identidad real de WiFit y la proyecta hacia una plataforma conectada de experiencia de socio, operación,
+                            finanzas y captación. La ambición es clara: acompañar la expansión de la red con una capa digital más coherente, más útil y más diferencial.
                         </p>
                         <div class="acciones-principales">
                             <button class="boton-principal" type="button" onclick="mostrarVista('entrenador')">Ver el Entrenador IA</button>
@@ -1447,7 +1608,7 @@
 
                     <div class="panel hero-imagen">
                         <div class="tarjeta-sobre-imagen">
-                            <strong>El argumento para el fondo y para dirección es claro</strong>
+                            <strong>La lectura para dirección y expansión es clara</strong>
                             <p>WiFit ya tiene suficiente escala para convertir IA y datos en una palanca visible de crecimiento, margen y experiencia del socio.</p>
                         </div>
                     </div>
@@ -1462,7 +1623,7 @@
                     <div class="metrica">
                         <span>Base comercial</span>
                         <strong>12.000</strong>
-                        <p>Volumen de socios utilizado en la conversación comercial para simular un negocio ya con masa crítica.</p>
+                        <p>Referencia de escala empleada para dimensionar el caso de negocio y su potencial de crecimiento.</p>
                     </div>
                     <div class="metrica">
                         <span>Precio mensual oficial</span>
@@ -1486,19 +1647,19 @@
                         </div>
                         <div class="rejilla-tres">
                             <div class="modulo">
-                                <small>Hoy</small>
+                                <small>Situación actual</small>
                                 <strong>Captación y seguimiento fragmentados</strong>
                                 <p>Oportunidades, prueba gratis, seguimiento comercial y visión de conversión no viven en una misma capa inteligente.</p>
                             </div>
                             <div class="modulo">
-                                <small>Con Ciklum</small>
+                                <small>Plataforma conectada</small>
                                 <strong>Socio, gerencia y finanzas en una sola historia</strong>
                                 <p>La IA entiende al socio, al club, al embudo comercial y a la cuenta de resultados, no solo un caso aislado.</p>
                             </div>
                             <div class="modulo">
-                                <small>Lo que vende</small>
+                                <small>Impacto esperado</small>
                                 <strong>Un activo propio difícil de copiar</strong>
-                                <p>Ese es el mensaje frente a una herramienta genérica o un competidor que enseñe una demo más superficial.</p>
+                                <p>WiFit gana control sobre experiencia, evolución de producto y una ventaja más defendible en crecimiento y retención.</p>
                             </div>
                         </div>
                     </div>
@@ -1506,15 +1667,15 @@
                     <div class="panel contenido-panel">
                         <div class="cabecera-modulo">
                             <div>
-                                <h3>Qué hará que el cliente diga “esto sí”</h3>
-                                <p>La demo tiene que sentirse como WiFit, hablar como WiFit y resolver problemas de WiFit.</p>
+                                <h3>Qué aporta esta plataforma</h3>
+                                <p>La propuesta se apoya en elementos reconocibles de WiFit y los conecta con decisiones reales de negocio.</p>
                             </div>
                         </div>
                         <ul class="lista-check">
                             <li>Todo en español y con lenguaje real de negocio, sin mezcla extraña con etiquetas en inglés.</li>
-                            <li>Imágenes, precios, sedes y servicios reconocibles por el propio cliente.</li>
-                            <li>Interacciones con sensación de producto: conversación guiada, informes, simuladores y actualizaciones reales en pantalla.</li>
-                            <li>Un discurso comercial claro frente a Harbiz: WiFit necesita algo conectado a su operación, no solo una solución genérica para entrenar.</li>
+                            <li>Imágenes, precios, sedes y servicios alineados con la red pública actual.</li>
+                            <li>Interacciones con sensación de producto: conversación guiada, informes, herramientas de decisión y actualizaciones reales en pantalla.</li>
+                            <li>Una visión conectada entre experiencia del socio, operación del club, dirección financiera y crecimiento de la red.</li>
                         </ul>
                     </div>
                 </div>
@@ -1523,7 +1684,7 @@
                     <div class="cabecera-modulo">
                         <div>
                             <h3>Sedes reales de la red WiFit</h3>
-                            <p>La demo usa la red pública actual de WiFit en lugar de centros inventados, para que el cliente sienta que está viendo su propia plataforma.</p>
+                            <p>La plataforma toma como base la red pública actual de WiFit para que la experiencia resulte reconocible desde el primer vistazo.</p>
                         </div>
                     </div>
                     <div class="rejilla-clubes" id="lista-sedes"></div>
@@ -1532,8 +1693,8 @@
                 <div class="panel contenido-panel">
                     <div class="cabecera-modulo">
                         <div>
-                            <h3>Módulos de la demo</h3>
-                            <p>Seis pantallas conectadas entre sí para enseñar producto, operación, caso financiero y hoja de ruta.</p>
+                            <h3>Módulos de la plataforma</h3>
+                            <p>Seis vistas conectadas entre sí para enseñar experiencia de socio, operación, caso financiero y hoja de ruta.</p>
                         </div>
                     </div>
                     <div class="rejilla-tres">
@@ -1564,8 +1725,8 @@
                         </button>
                         <div class="modulo">
                             <small>Módulo 06</small>
-                            <strong>Argumento competitivo</strong>
-                            <p>La IA no vive aparte del negocio. Ese es el motivo por el que esta propuesta puede ganar frente a otras.</p>
+                            <strong>Valor estratégico</strong>
+                            <p>La IA no vive aparte del negocio: acompaña la expansión, mejora la operación y refuerza la experiencia del socio.</p>
                         </div>
                     </div>
                 </div>
@@ -1585,8 +1746,8 @@
                     <div class="panel perfil-socio">
                         <div class="cabecera-modulo">
                             <div>
-                                <h3>Socios demo</h3>
-                                <p>Perfiles construidos para enseñar tres necesidades distintas dentro de WiFit.</p>
+                                <h3>Perfiles de socio</h3>
+                                <p>Tres perfiles pensados para mostrar necesidades distintas dentro de la experiencia WiFit.</p>
                             </div>
                         </div>
                         <div class="ficha-socio" id="lista-socios"></div>
@@ -1629,6 +1790,7 @@
                                 <p>Harbiz resuelve la capa de entrenamiento. WiFit IA conecta entrenamiento con negocio y operación.</p>
                             </div>
                         </div>
+                        <div class="tabla-scroll">
                         <table class="tabla-comparativa">
                             <thead>
                                 <tr>
@@ -1660,6 +1822,7 @@
                                 </tr>
                             </tbody>
                         </table>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -1669,7 +1832,7 @@
                     <div>
                         <div class="eyebrow">Operación conectada</div>
                         <h2>Copiloto de operaciones</h2>
-                        <p>Menos humo y más realidad: mantenimiento predictivo, tareas por sede, ahorro preventivo y un informe listo para gerencia sin montar presentaciones manuales.</p>
+                        <p>Mantenimiento predictivo, tareas por sede, ahorro preventivo y una lectura ejecutiva lista para gerencia sin depender de consolidación manual.</p>
                     </div>
                     <div class="selector" id="selector-sedes-ops"></div>
                 </div>
@@ -1721,7 +1884,7 @@
                     <div>
                         <div class="eyebrow">Caso financiero</div>
                         <h2>Inteligencia financiera</h2>
-                        <p>La propuesta deja de ser “una demo de IA” y pasa a ser un caso de negocio medible: precio oficial, mezcla realista de planes, proyección y sensibilidad a sedes, bajas y suscripción avanzada.</p>
+                        <p>La propuesta se presenta como un caso de negocio medible: precio oficial, mezcla realista de planes, proyección y sensibilidad a sedes, bajas y suscripción avanzada.</p>
                     </div>
                 </div>
 
@@ -1780,7 +1943,7 @@
                         </div>
                         <ul class="lista" id="lectura-financiera"></ul>
                         <div class="nota-final">
-                            La simulación usa una mezcla de planes basada en los precios actuales de WiFit Madrid y en el volumen de socios compartido durante la reunión comercial.
+                            La lectura financiera parte de una mezcla de planes basada en los precios actuales de WiFit Madrid y en una referencia de escala compartida en la conversación comercial.
                         </div>
                     </div>
                 </div>
@@ -1800,7 +1963,7 @@
                         <div class="cabecera-modulo">
                             <div>
                                 <h3>Facturación mensual por sede</h3>
-                                <p>Distribución actual estimada a partir de la red real y un reparto simulado de socios.</p>
+                                <p>Distribución estimada a partir de la red real y una modelización homogénea de la base de socios.</p>
                             </div>
                         </div>
                         <canvas id="grafico-sedes"></canvas>
@@ -1814,6 +1977,7 @@
                             <p>Lo diferencial aquí es enseñar que finanzas y operación comparten la misma inteligencia.</p>
                         </div>
                     </div>
+                    <div class="tabla-scroll">
                     <table class="tabla-anomalias">
                         <thead>
                             <tr>
@@ -1844,6 +2008,7 @@
                             </tr>
                         </tbody>
                     </table>
+                    </div>
                 </div>
             </section>
 
@@ -1903,7 +2068,7 @@
                         <div class="cabecera-modulo">
                             <div>
                                 <h3>Camino recomendado</h3>
-                                <p>Arrancar por donde WiFit puede ver impacto rápido y guardar la construcción del activo propio donde más valor crea.</p>
+                                <p>Arrancar por donde WiFit puede ver impacto rápido y construir después la capa propia donde más valor crea.</p>
                             </div>
                         </div>
                         <ul class="lista-check">
@@ -1929,9 +2094,10 @@
                     <div class="cabecera-modulo">
                         <div>
                             <h3>Matriz construir vs comprar vs híbrido</h3>
-                            <p>La demo necesita explicar por qué WiFit no debería quedarse solo en una solución estándar.</p>
+                            <p>La comparación ayuda a visualizar por qué una plataforma conectada puede aportar más valor que una solución estándar aislada.</p>
                         </div>
                     </div>
+                    <div class="tabla-scroll">
                     <table class="tabla-matriz">
                         <thead>
                             <tr>
@@ -1968,6 +2134,7 @@
                             </tr>
                         </tbody>
                     </table>
+                    </div>
                 </div>
 
                 <div class="panel contenido-panel" style="margin-top: 18px;">
@@ -1999,7 +2166,7 @@
                             <p>Resultados, decisión de escalado y siguiente paso hacia IA WiFit como producto.</p>
                         </div>
                     </div>
-                    <p class="nota-final">La demostración usa datos sintéticos para KPIs y predicciones, pero los inputs de marca, sedes, horarios, servicios y precios están tomados de fuentes públicas oficiales actuales de WiFit y Harbiz.</p>
+                    <p class="nota-final">La experiencia combina inputs públicos oficiales de marca, sedes, horarios, servicios y precios con escenarios ilustrativos de negocio para visualizar el potencial de crecimiento, eficiencia y retención.</p>
                 </div>
             </section>
         </main>
@@ -2126,8 +2293,8 @@
                     texto: "El patrón de vibración coincide con averías previas. Actuar ahora cuesta 180 €; dejarlo caer eleva el riesgo a una reparación correctiva estimada de 1.200 €."
                 },
                 metricas: [
-                    ["Tareas activas", "14", "Backlog operativo de la semana"],
-                    ["SLA", "95%", "Muy por encima del mínimo acordado"],
+                    ["Tareas activas", "14", "Carga operativa de la semana"],
+                    ["Cumplimiento SLA", "95%", "Muy por encima del mínimo acordado"],
                     ["Ahorro preventivo", "12,4K €", "Acumulado trimestral estimado"],
                     ["Alertas críticas", "2", "Una de cardio y una de accesos"]
                 ],
@@ -2167,11 +2334,11 @@
                 alerta: {
                     etiqueta: "Desgaste funcional",
                     titulo: "Zona funcional e HIIT con sobreuso en hora pico",
-                    texto: "La mezcla de WiHiit, trabajo funcional y alto flujo de tarde está acelerando el desgaste de suelo y material ligero. Recomendación: reposición escalonada y redistribución de slots."
+                    texto: "La mezcla de WiHiit, trabajo funcional y alto flujo de tarde está acelerando el desgaste de suelo y material ligero. Recomendación: reposición escalonada y redistribución de franjas."
                 },
                 metricas: [
-                    ["Tareas activas", "11", "Menor backlog que Retiro"],
-                    ["SLA", "93%", "Dentro de objetivo"],
+                    ["Tareas activas", "11", "Menor carga operativa que Retiro"],
+                    ["Cumplimiento SLA", "93%", "Dentro de objetivo"],
                     ["Ahorro preventivo", "8,9K €", "Estimación trimestral"],
                     ["Alertas críticas", "1", "Zona funcional"]
                 ],
@@ -2186,7 +2353,7 @@
                         ["WF-311", "Calendario de limpieza reforzado", "Operación · prioridad media"]
                     ],
                     curso: [
-                        ["WF-299", "Reordenación de slots WiHiit", "IA + gerencia"],
+                        ["WF-299", "Reordenación de franjas WiHiit", "IA + gerencia"],
                         ["WF-301", "Reposición de kettlebells", "Aprobación pendiente"]
                     ],
                     listo: [
@@ -2215,7 +2382,7 @@
                 },
                 metricas: [
                     ["Tareas activas", "9", "Sede estable"],
-                    ["SLA", "94%", "Ritmo operativo correcto"],
+                    ["Cumplimiento SLA", "94%", "Ritmo operativo correcto"],
                     ["Ahorro preventivo", "9,7K €", "Incluye energía y clima"],
                     ["Alertas críticas", "2", "Clima y spinning"]
                 ],
@@ -2235,7 +2402,7 @@
                     ],
                     listo: [
                         ["WF-390", "Resumen semanal central", "Enviado"],
-                        ["WF-392", "Check-list apertura", "Cerrado"]
+                        ["WF-392", "Lista de apertura", "Cerrado"]
                     ]
                 },
                 activos: [
@@ -2304,7 +2471,7 @@
                 estado: "Nuevo",
                 score: 81,
                 detalle: "Búsqueda de alta intención: gimnasio cerca + fuerza + horario temprano.",
-                siguiente: "Llamada en menos de 20 minutos y demo de franja de baja ocupación.",
+                siguiente: "Llamada en menos de 20 minutos y recomendación de franja de baja ocupación.",
                 drivers: [["Intención de búsqueda", 93], ["Cercanía", 78], ["Horario compatible", 82]]
             },
             {
@@ -2327,9 +2494,9 @@
                     ["Oportunidades semanales", "126", "El día gratis funciona muy bien en creatividades de prueba."],
                     ["Puntuación media", "80", "Muy buen encaje en Retiro, Humanes y Chamberí."],
                     ["Conversión", "24,8%", "El mejor canal para clases y experiencia."],
-                    ["CPL", "3,10 €", "Rentable si el contacto es rápido."]
+                    ["Coste por oportunidad", "3,10 €", "Rentable si el contacto es rápido."]
                 ],
-                recomendacion: "Escalar piezas de prueba gratis con clases concretas por sede y mantener SLA de contacto por debajo de 30 minutos."
+                recomendacion: "Escalar piezas de prueba gratis con clases concretas por sede y mantener el tiempo de contacto por debajo de 30 minutos."
             },
             meta: {
                 nombre: "Meta / Facebook",
@@ -2337,9 +2504,9 @@
                     ["Oportunidades semanales", "74", "Canal más sensible a oferta y cercanía."],
                     ["Puntuación media", "70", "Convierte mejor con mensaje humano y simple."],
                     ["Conversión", "16,9%", "Útil para campañas locales y promociones."],
-                    ["CPL", "4,20 €", "Mejora cuando se segmenta por club."]
+                    ["Coste por oportunidad", "4,20 €", "Mejora cuando se segmenta por club."]
                 ],
-                recomendacion: "Usar campañas por proximidad y argumentos concretos de matrícula gratuita, horarios y acceso al club."
+                recomendacion: "Usar campañas por proximidad y mensajes concretos de matrícula gratuita, horarios y acceso al club."
             },
             google: {
                 nombre: "Google Ads",
@@ -2347,7 +2514,7 @@
                     ["Oportunidades semanales", "58", "Menor volumen, mayor intención."],
                     ["Puntuación media", "82", "Muy útil para aperturas y búsquedas locales."],
                     ["Conversión", "29,6%", "Canal más fuerte si la velocidad de respuesta comercial es alta."],
-                    ["CPL", "5,40 €", "Más caro, pero con mejor señal de compra."]
+                    ["Coste por oportunidad", "5,40 €", "Más caro, pero con mejor señal de compra."]
                 ],
                 recomendacion: "Priorizar respuesta inmediata y llevar el mensaje a visita de prueba o alta directa según intención declarada."
             }
@@ -2681,7 +2848,7 @@
                 <div class="bloque-fin">
                     <span>Ingreso medio por socio</span>
                     <strong>${datos.arpu.toFixed(1).replace(".", ",")} €</strong>
-                    <p>Promedio mensual ponderado según el mix comercial simulado.</p>
+                    <p>Promedio mensual ponderado según la mezcla comercial modelizada.</p>
                 </div>
                 <div class="bloque-fin">
                     <span>Ingreso adicional por IA</span>
@@ -2699,7 +2866,7 @@
                 <li>Con los precios oficiales actuales, WiFit ya tiene una base suficiente para justificar un caso de IA con retorno visible.</li>
                 <li>La monetización avanzada del Entrenador IA es solo una parte del valor; la otra parte está en retención y eficiencia operativa.</li>
                 <li>El fondo verá mejor esta propuesta si se presenta como mejora de margen y capacidad de escalado, no solo como innovación.</li>
-                <li>La clave comercial es que el mismo PoC une crecimiento, operación y finanzas en un único relato.</li>
+                <li>La clave comercial es que la misma plataforma une crecimiento, operación y finanzas en un único relato.</li>
             `;
 
             renderGraficoFinanzas(datos);
