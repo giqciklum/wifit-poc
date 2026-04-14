@@ -1,383 +1,384 @@
-# WiFit Gyms x Ciklum - Guía operativa del PoC
+# WiFit Gyms x Ciklum - Guía maestra del PoC
 
-Versión pública:
+Esta guía está pensada para una persona que tiene que enseñar la demo en reunión sin perder tiempo pensando qué abrir, qué decir o qué hacer si algo falla.
+
+## Enlaces clave
+
+Demo pública  
 https://giqciklum.github.io/wifit-poc/
 
-Repositorio:
+Repositorio  
 https://github.com/giqciklum/wifit-poc
 
-Google Sheet de demo:
+Google Sheet de demo  
 https://docs.google.com/spreadsheets/d/1ew8qaFc1d0G7EjeR1xJa-llsb1o9dC2BYCdDBKcR8ek/
 
-Web App de Apps Script:
+Web App de Apps Script  
 https://script.google.com/macros/s/AKfycbwmmgY9mg4p8o6lVboAelyR2P0WtnMYo7kDJWWLpvzHy6B2kuiatZSr1qguU2jGDLwnWg/exec
 
-## 1. Lo más importante en una frase
+Código fuente del Apps Script guardado en el repo  
+[apps-script/Code.gs](/Users/computerxperts/Documents/POC/apps-script/Code.gs)
 
-La demo funciona así:
+## 1. Resumen en 20 segundos
 
-`pantalla del PoC -> Apps Script -> Google Sheet`
+La demo enseña dos cosas a la vez:
 
-Esto significa algo muy importante para ti en reunión:
+- una `experiencia de socio` tipo producto
+- una `capa de gestión y automatización` conectada a una hoja operativa real
 
-- `Sí` puedes demostrar una conexión real con Google Sheets.
-- `Sí` los indicadores conectados de la página pueden refrescarse si cambia la hoja.
-- `No` tienes que escribir filas a mano para que la demo funcione.
-- `No` todavía no toda la página reacciona fila a fila con cualquier cambio manual; hoy la sincronización viva está centrada en KPIs y estado conectado.
+El flujo real hoy es este:
 
-La dirección actual es esta:
+`PoC web -> Apps Script -> Google Sheet -> refresco live del frontend`
 
-1. tú activas un caso en la demo
-2. la demo llama al backend de Apps Script
-3. Apps Script escribe en Google Sheets
-4. tú enseñas la hoja como evidencia de que ha ocurrido algo real
-5. además, la página consulta el backend cada pocos segundos para refrescar el estado conectado
+Qué significa eso:
 
-## 2. Qué abrir antes de la reunión
+- `Sí` la demo puede escribir en Google Sheets
+- `Sí` la demo puede leer en vivo el backend y refrescar `socios`, `leads`, `logs` y KPIs
+- `No` hace falta tocar código ni Apps Script en reunión
+- `No` hace falta editar filas a mano para que “parezca” que funciona
 
-Abre estas 2 pestañas y déjalas listas:
+## 2. Qué hace exactamente el PoC hoy
 
-1. `Demo pública`
+### Lo que sí hace
+
+- muestra un frontend presentable para cliente
+- conecta con un backend real de demo
+- ejecuta triggers de negocio
+- deja trazabilidad en Google Sheets
+- refresca estado conectado en vivo
+- soporta fallback local si el backend falla
+
+### Lo que NO hace
+
+- no es todavía un producto en producción
+- no usa datos reales del cliente
+- no sustituye a un CRM/ERP real
+- no depende de Google Sheets como arquitectura final
+
+Google Sheets aquí cumple un papel muy concreto:
+
+`demostrar conexión real y automatización real con un backend sencillo y entendible`
+
+## 3. Qué abrir antes de la reunión
+
+Abre estas 3 pestañas y déjalas listas:
+
+1. `Demo`
    https://giqciklum.github.io/wifit-poc/
 
 2. `Google Sheet`
    https://docs.google.com/spreadsheets/d/1ew8qaFc1d0G7EjeR1xJa-llsb1o9dC2BYCdDBKcR8ek/
 
-Opcional:
-
 3. `Repo`
    https://github.com/giqciklum/wifit-poc
 
-Recomendación práctica:
+Orden recomendado de uso:
 
-- Pestaña 1: demo
-- Pestaña 2: Google Sheet
-- Haz la mayor parte de la reunión en la demo
-- Abre la hoja solo al final de cada trigger, como prueba de conexión real
+- durante casi toda la reunión: `demo`
+- como prueba de conexión: `Google Sheet`
+- solo si alguien pide detalle técnico: `repo`
 
-## 3. Qué es cada pieza
+## 4. Chuleta rápida de 30 segundos
 
-### Demo pública
+Si te bloqueas, haz exactamente esto:
 
-Es la parte visual y presentable para cliente.
+1. abre la demo
+2. enseña primero la experiencia, no la hoja
+3. pulsa `Abrir simulador`
+4. lanza `Activación premium`
+5. enseña el cambio en pantalla
+6. cambia a Google Sheet
+7. abre `automatizaciones`
+8. luego enseña `socios` y `pagos`
 
-Aquí enseñas:
+Frase clave:
 
-- experiencia del socio
-- centro de gestión
-- triggers de activación, lead e impago
-- outputs visuales: evidencias, eventos, tareas, artefactos
+`No solo cambia la pantalla; la acción deja rastro real en la capa operativa.`
 
-### Google Sheet
+Segunda frase clave:
 
-Es el backend ligero de la demo.
+`Hoy usamos Google Sheets como backend de demo porque se parece mucho más a la realidad operativa actual del cliente que montar una arquitectura enterprise solo para enseñar el concepto.`
 
-No está para lucirse como frontend. Está para enseñar:
+## 5. Guion recomendado de 5 minutos
 
-- que existe una capa de datos real
-- que un evento no solo cambia la pantalla
-- que además queda registrado en una hoja operativa de verdad
-- y que el PoC ya puede refrescar indicadores conectados leyendo ese estado vivo
-
-### Apps Script
-
-Es la capa intermedia.
-
-Su papel es:
-
-- recibir la acción desde la demo
-- escribir datos en la hoja
-- devolver un resumen JSON a la página
-
-Si el cliente pregunta qué tecnología hay detrás, puedes decir esto:
-
-`Para el PoC hemos usado una arquitectura ligera y muy cercana a su realidad actual: una interfaz de producto conectada a una capa de automatización y a una hoja operativa viva.`
-
-## 4. Qué NO tienes que hacer en la reunión
-
-No necesitas:
-
-- editar la hoja manualmente para que "parezca que funciona"
-- abrir Apps Script delante del cliente
-- explicar endpoints, JSON ni detalles técnicos
-- enseñar el repo salvo que te lo pidan
-
-La forma correcta de enseñarlo es:
-
-1. disparas el caso en la demo
-2. enseñas el cambio visual
-3. cambias a Google Sheet
-4. enseñas la evidencia creada
-
-## 5. Cómo contar la conexión sin complicarte
-
-Frase simple recomendada:
-
-`La gracia no es solo que cambie la pantalla; la gracia es que la acción deja rastro real en la capa operativa. Para esta demo hemos conectado la experiencia a una hoja viva para enseñar exactamente eso.`
-
-Otra frase útil:
-
-`Hoy el backend de demo es Google Sheets porque se parece más a la realidad operativa actual del cliente que montar algo enterprise solo para una demo.`
-
-Si te preguntan por la dirección del flujo:
-
-`Ahora mismo la demo dispara la automatización y la hoja refleja el resultado. Si el proyecto siguiera adelante, esa misma lógica podría conectarse a Stripe, CRM, ERP o la base de datos real del grupo.`
-
-Si te preguntan si la web escucha la hoja en vivo, puedes decir esto:
-
-`Sí, el PoC ya refresca el estado conectado leyendo el backend de la hoja. En esta versión la sincronización viva se ve sobre todo en KPIs y estado operativo; la siguiente iteración sería reflejar también el detalle fila a fila en todas las vistas.`
-
-## 6. Guion recomendado de 5 minutos
-
-### Paso 1. Empieza por la demo
+## Paso 1. Arranca por valor
 
 Abre:
 https://giqciklum.github.io/wifit-poc/
 
 Di esto:
 
-`Aquí estamos separando dos experiencias: una para el socio y otra para gestión. La idea es que ambas compartan la misma lógica de datos y automatización.`
+`No estamos enseñando un dashboard genérico. Estamos enseñando dos experiencias conectadas: una para el socio y otra para gestión.`
 
-### Paso 2. Enseña primero la parte bonita
+## Paso 2. Enseña primero la parte bonita
 
-Muévete por:
+Recorre:
 
 - `Experiencia del Socio`
 - `Centro de Gestión`
 
-No abras Google Sheet todavía.
+No abras la hoja todavía.
 
-### Paso 3. Abre el simulador
+## Paso 3. Abre el simulador
 
-Arriba verás el botón:
+Pulsa:
 
 `Abrir simulador`
 
-Haz clic ahí.
+## Paso 4. Lanza un caso
 
-### Paso 4. Activa un caso
-
-Recomendación de orden:
+Orden recomendado:
 
 1. `Activación premium`
 2. `Lead de prueba`
 3. `Recuperación de impago`
 
-### Paso 5. Enseña el efecto en la demo
+## Paso 5. Enseña el impacto en pantalla
 
-Después de activar un caso, enseña:
+Muestra:
 
-- cambios en el estado
+- cambio de estado
 - cronología de eventos
 - artefactos generados
-- impacto en socio y gestión
+- sincronía entre socio y gestión
 
-### Paso 6. Solo entonces abre Google Sheet
+## Paso 6. Solo después abre la hoja
 
 Di esto:
 
-`Y ahora os enseño que esto no es solo una pantalla bonita: la acción ha quedado registrada en una hoja operativa real.`
+`Y ahora os enseño que esto no es solo una pantalla bonita: la acción ha quedado registrada en una capa operativa real.`
 
-## 7. Cómo enseñar Google Sheets, paso a paso
+## 6. Qué enseñar en Google Sheets
 
-Abre esta hoja:
+La hoja tiene varias pestañas, pero no necesitas enseñarlas todas.
 
-https://docs.google.com/spreadsheets/d/1ew8qaFc1d0G7EjeR1xJa-llsb1o9dC2BYCdDBKcR8ek/
-
-Las pestañas importantes son:
+Las importantes son:
 
 - `socios`
 - `pagos`
 - `leads`
-- `reservas`
 - `automatizaciones`
 - `tareas`
 
-### Regla de oro
+Regla de oro:
 
-Si te pierdes, ve siempre a:
+Si te pierdes, abre siempre `automatizaciones`.
 
-`automatizaciones`
+Es la pestaña más segura para demostrar que el trigger dejó rastro real.
 
-Es la pestaña más segura para demostrar que el trigger dejó rastro.
+## 7. Qué pestaña enseñar según el caso
 
 ### Caso 1. Activación premium
 
 En la demo:
 
-1. pulsa `Abrir simulador`
-2. pulsa `Activación premium`
+1. `Abrir simulador`
+2. `Activación premium`
 
-Después cambia a la hoja y enseña:
+En la hoja:
 
 1. `automatizaciones`
-   Aquí deberías ver el registro de la acción ejecutada.
-
 2. `socios`
-   Aquí puedes enseñar que el socio queda activado o añadido según la lógica del demo backend.
-
 3. `pagos`
-   Aquí puedes enseñar el cobro o la referencia asociada.
 
-Frase útil:
+Mensaje útil:
 
-`Un cobro confirmado no solo activa una vista premium; también deja alta, pago y trazabilidad operativa en la capa de gestión.`
+`Un cobro confirmado no solo activa una vista premium; también deja alta, pago y trazabilidad operativa.`
 
 ### Caso 2. Lead de prueba
 
 En la demo:
 
-1. pulsa `Lead de prueba`
+1. `Lead de prueba`
 
-Después cambia a la hoja y enseña:
+En la hoja:
 
 1. `automatizaciones`
 2. `leads`
 
-Qué decir:
+Mensaje útil:
 
-`Aquí se ve que el lead no se queda en una lista muerta. El sistema lo registra, le da prioridad y prepara la siguiente mejor acción.`
+`El lead deja de ser una fila muerta. Se registra, se prioriza y se prepara una siguiente mejor acción.`
 
 ### Caso 3. Recuperación de impago
 
 En la demo:
 
-1. pulsa `Recuperación de impago`
+1. `Recuperación de impago`
 
-Después cambia a la hoja y enseña:
+En la hoja:
 
 1. `automatizaciones`
 2. `tareas`
 
-Qué decir:
+Mensaje útil:
 
-`En lugar de descubrir el impago tarde y gestionarlo a mano, se genera un caso visible y accionable para el equipo.`
+`El impago deja de descubrirse tarde y pasa a una secuencia visible de recuperación.`
 
-## 8. Dónde introducir datos
+## 8. Qué cambia en vivo y qué no
 
-Respuesta corta:
+Esto es importante decirlo bien.
 
-`Normalmente en ningún sitio.`
+### Sí cambia en vivo
 
-Para la demo estándar, no tienes que escribir datos manualmente.
+- badge de backend
+- KPIs conectados
+- snapshot de `socios`
+- snapshot de `leads`
+- snapshot de `logs` / `automatizaciones`
 
-Lo correcto es:
+### No es el objetivo principal de esta demo
 
-1. disparar el trigger desde la web
-2. enseñar cómo cambia la web
-3. enseñar la fila o el log que aparece en la hoja
+- enseñar todas las pestañas de la hoja como si fueran producto
+- vender Google Sheets como arquitectura final
+- entrar en detalles técnicos de Apps Script
 
-### Si aun así quieres tocar algo manualmente
+La forma correcta de explicarlo:
 
-Puedes abrir la hoja y editarla manualmente, pero recuerda:
+`El PoC ya tiene lectura y escritura real sobre una capa operativa viva. Google Sheets es el backend de demostración, no la arquitectura final.`
 
-`editar la hoja a mano no hace que la web reaccione sola`
+## 9. Cómo saber si el backend está vivo
 
-Eso todavía no está implementado en esta versión.
-
-Así que, si el cliente te pide "mete algo en la hoja", puedes hacerlo como apoyo visual, pero no vendas que esa edición manual dispara el frontend porque no sería verdad.
-
-## 9. Qué verás en la parte superior de la demo
-
-En la barra superior de la demo puedes ver:
+En la parte superior de la demo verás uno de estos estados:
 
 - `Backend en vivo`
-- o `Modo demo local`
+- `Modo demo local`
+- `Conectando backend`
 
 ### Si sale `Backend en vivo`
 
-Perfecto. Significa que la página está hablando con Apps Script y que deberías poder enseñar registros reales en Google Sheets.
-También significa que los indicadores conectados pueden actualizarse solos si cambia el estado de la hoja.
+Perfecto.
+
+Puedes decir:
+
+`La página está conectada al backend y está refrescando estado operativo real.`
 
 ### Si sale `Modo demo local`
 
-La demo visual sigue funcionando, pero la escritura en Google Sheets puede no estar activa en ese momento.
+La demo no se rompe.
 
-Qué hacer:
+Haz esto:
 
 1. refresca la página
 2. espera unos segundos
-3. comprueba si cambia a `Backend en vivo`
+3. comprueba si cambia
 
-Si no cambia, puedes seguir la reunión igualmente porque el PoC visual no se rompe.
+Si no cambia, sigue igualmente con la demo y di:
 
-## 10. Orden ideal para mostrarlo al cliente
+`La capa visual y la lógica del journey siguen funcionando. La conexión a la hoja la usamos para demostrar trazabilidad operativa, pero no condiciona la historia principal.`
 
-Mi recomendación es esta:
+## 10. Qué NO hacer en reunión
 
-1. `Empieza por valor`
-   Experiencia del socio y visión general.
+No hagas esto:
 
-2. `Pasa a negocio`
-   Centro de gestión y operaciones.
+- no empieces por la hoja
+- no abras Apps Script
+- no expliques JSON ni endpoints
+- no edites filas a mano “para demostrar”
+- no vendas Google Sheets como solución final
 
-3. `Abre el simulador`
-   Un solo caso cada vez.
+Idea importante:
 
-4. `Prueba visual`
-   Enseña el cambio dentro de la demo.
+`La hoja no vende. La hoja demuestra.`
 
-5. `Prueba operativa`
-   Enseña Google Sheet.
+## 11. Qué decir si preguntan por la tecnología
 
-No empieces por la hoja.
-
-La hoja no vende.
-La hoja demuestra.
-
-## 11. Resumen técnico en lenguaje simple
-
-Si te piden una explicación técnica breve, usa esta:
-
-`La demo está publicada en GitHub Pages. Cuando activamos una acción, la web llama a un Apps Script que actualiza una Google Sheet de demo. Luego la propia web consulta ese backend para refrescar indicadores conectados en vivo.`
-
-Versión todavía más corta:
+Versión corta:
 
 `Frontend estático, automatización ligera y hoja operativa viva como backend de demo.`
 
-## 12. Plan B si algo falla en directo
+Versión un poco más completa:
 
-Si Google Sheets o Apps Script no respondieran:
+`La demo está publicada en GitHub Pages. Cuando activamos una acción, la web llama a un Apps Script que escribe en una Google Sheet de demo y luego refresca el estado conectado leyendo ese backend.`
 
-1. sigue la demo visual
-2. no entres en detalle técnico
-3. di esto:
+## 12. Qué decir si preguntan por Harbiz o por build vs buy
 
-`La capa visual y la lógica del journey siguen funcionando. La conexión a la hoja la hemos usado para demostrar trazabilidad operativa, pero la propuesta final no depende de Google Sheets; eso es solo el backend de demo.`
+Mensaje recomendado:
 
-Eso te protege y sigue dejando el mensaje correcto.
+`Una herramienta estándar puede cubrir una necesidad puntual. Una capa propia conectada a captación, cobros, operación y experiencia puede convertirse en un activo estratégico del grupo.`
 
-## 13. Frases literales que puedes usar
+Otra frase útil:
 
-### Apertura
+`Aquí no estamos enseñando solo un entrenador virtual; estamos enseñando una capa de experiencia y operación que WiFit puede controlar y evolucionar.`
 
-`No queríamos enseñar un dashboard genérico. Queríamos enseñar dos experiencias conectadas: una para el socio y otra para gestión.`
+## 13. Qué decir si preguntan por la visión futura
 
-### Al enseñar automatización
+Puedes usar esto:
 
-`Lo importante aquí no es la tecnología en sí, sino que un evento útil desencadena acciones útiles sin trabajo manual.`
+`Hoy hemos usado una hoja operativa realista para demostrar valor rápido. Si el proyecto avanzara, la misma lógica podría conectarse a Stripe, CRM, ERP, base de datos corporativa o stack cloud del grupo.`
 
-### Al enseñar la hoja
+## 14. Si necesitas una versión ultracorta
 
-`Aquí se ve la evidencia operativa. No solo cambia la pantalla: queda registro real.`
+Si solo tienes 60 segundos, usa esto:
 
-### Al hablar de visión futura
+`La demo enseña dos journeys conectados: socio y gestión. Cuando lanzamos una acción, no solo cambia la interfaz; también deja rastro real en una capa operativa viva. Hoy esa capa es Google Sheets porque se parece a la realidad actual y nos permite demostrar automatización real sin sobrediseñar el PoC.`
 
-`Hoy usamos una hoja porque se parece a la realidad actual y nos permite demostrar valor rápido. Mañana la misma lógica puede vivir sobre la arquitectura definitiva del grupo.`
+## 15. Checklist previo a cliente
 
-## 14. Datos reales vs datos sintéticos
+Antes de la reunión comprueba:
 
-Esta demo mezcla:
+- que la demo abre
+- que el badge muestra `Backend en vivo`
+- que `Abrir simulador` funciona
+- que `Activación premium` deja un evento `Backend confirmado`
+- que la hoja está accesible
+- que no hay filas raras de pruebas técnicas que quieras ocultar
 
-- `Referencias públicas reales`
+## 16. Limpieza de demo si has hecho pruebas
+
+Si has lanzado muchos triggers de prueba, recuerda que la hoja acumula filas nuevas.
+
+Opciones:
+
+- enseñar la demo tal cual, si no molesta
+- limpiar manualmente las filas de prueba
+- o reejecutar `setupSheet()` desde Apps Script para dejar la base fresca
+
+## 17. Arquitectura real del PoC
+
+La arquitectura actual es:
+
+`Frontend publicado -> Apps Script Web App -> Google Sheet`
+
+Hoy el backend soporta:
+
+- `?action=state`
+- `?action=state&detail=full`
+- `?action=activation`
+- `?action=lead`
+- `?action=retention`
+
+El código fuente de referencia del backend está ya guardado en:
+
+[apps-script/Code.gs](/Users/computerxperts/Documents/POC/apps-script/Code.gs)
+
+## 18. Qué contiene el snapshot full
+
+El `detail=full` devuelve:
+
+- `snapshot.socios`
+- `snapshot.leads`
+- `snapshot.logs`
+
+Eso permite al frontend refrescar en vivo:
+
+- tabla de socios
+- pipeline de leads
+- log de automatizaciones
+
+## 19. Datos reales vs sintéticos
+
+La demo mezcla:
+
+- `referencias públicas reales`
   marca, sedes visibles, servicios y pricing público de WiFit
 
-- `Datos sintéticos`
-  socios, scoring, forecasting, tareas, automatizaciones, cobros y outputs generados
+- `datos sintéticos`
+  socios, leads, scoring, forecasting, tareas, automatizaciones, cobros y outputs
 
-Eso es correcto y está hecho a propósito para poder enseñar algo creíble sin usar datos internos.
+Esto es intencional y correcto para un PoC comercial.
 
-## 15. Fuentes públicas usadas como base
+## 20. Fuentes públicas usadas como base
 
 - https://wifitgyms.com/
 - https://wifitgyms.com/gimnasios/madrid/wifit-retiro/
