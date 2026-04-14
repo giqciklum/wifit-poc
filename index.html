@@ -143,15 +143,59 @@
             position: sticky;
             top: 12px;
             z-index: 10;
-            display: grid;
-            grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr) minmax(220px, 0.9fr);
-            gap: 14px;
             padding: 18px 20px;
             margin-bottom: 18px;
             background: rgba(255, 255, 255, 0.92);
             border: 1px solid rgba(210, 216, 192, 0.9);
             box-shadow: 0 18px 40px rgba(35, 42, 4, 0.1);
             backdrop-filter: blur(18px);
+        }
+
+        .runtime-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .runtime-summary {
+            display: grid;
+            gap: 10px;
+        }
+
+        .runtime-summary strong {
+            display: block;
+            font-size: 1.02rem;
+            line-height: 1.35;
+        }
+
+        .runtime-summary p {
+            color: var(--oliva-texto);
+            font-size: 0.86rem;
+            line-height: 1.55;
+        }
+
+        .runtime-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .runtime-body {
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr) minmax(220px, 0.9fr);
+            gap: 14px;
+            margin-top: 16px;
+        }
+
+        .runtime-bar.compacta .runtime-body {
+            display: none;
+        }
+
+        .runtime-bar.compacta {
+            padding-bottom: 16px;
         }
 
         .runtime-copy strong {
@@ -252,6 +296,10 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.12em;
+        }
+
+        .runtime-toggle {
+            min-width: 140px;
         }
 
         .brand-wordmark {
@@ -2280,12 +2328,15 @@
         }
 
         @media (max-width: 1260px) {
-            .runtime-bar,
             .landing-hero,
             .choice-grid,
             .bridge-grid,
             .socio-layout,
             .split-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .runtime-body {
                 grid-template-columns: 1fr;
             }
 
@@ -2323,9 +2374,15 @@
                 padding: 16px;
             }
 
+            .runtime-controls {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
             .landing-topbar,
             .journey-header,
             .modal-top,
+            .runtime-top,
             .section-head {
                 flex-direction: column;
                 align-items: flex-start;
@@ -2432,14 +2489,27 @@
 </head>
 <body>
     <div class="site-shell">
-        <div class="runtime-bar panel">
-            <div class="runtime-copy">
-                <div class="eyebrow">Escenarios conectados</div>
-                <strong>Activa un trigger y verás cambios reales en socio, gestión y evidencias generadas.</strong>
-                <p>La demo ya no se queda en una pantalla estática: persiste el estado, sincroniza journeys y deja rastro operativo de cada acción.</p>
+        <div class="runtime-bar panel compacta" id="runtime-bar">
+            <div class="runtime-top">
+                <div class="runtime-summary" id="runtime-summary">
+                    <div class="eyebrow">Escenarios conectados</div>
+                    <strong>Escenario activo</strong>
+                    <p>La demo mantiene estado, sincroniza journeys y deja trazabilidad operativa.</p>
+                </div>
+                <div class="runtime-controls">
+                    <button class="btn-soft" type="button" onclick="resetRuntimeScenario()">Reiniciar</button>
+                    <button class="btn-primary runtime-toggle" id="runtime-toggle" type="button" onclick="toggleRuntimePanel()">Mostrar panel</button>
+                </div>
             </div>
-            <div class="runtime-actions" id="runtime-actions"></div>
-            <div class="runtime-status" id="runtime-status"></div>
+            <div class="runtime-body" id="runtime-body">
+                <div class="runtime-copy">
+                    <div class="eyebrow">Escenarios conectados</div>
+                    <strong>Activa un trigger y verás cambios reales en socio, gestión y evidencias generadas.</strong>
+                    <p>La demo ya no se queda en una pantalla estática: persiste el estado, sincroniza journeys y deja rastro operativo de cada acción.</p>
+                </div>
+                <div class="runtime-actions" id="runtime-actions"></div>
+                <div class="runtime-status" id="runtime-status"></div>
+            </div>
         </div>
 
         <section class="screen activa" id="screen-inicio">

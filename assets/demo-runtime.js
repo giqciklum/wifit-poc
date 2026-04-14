@@ -347,7 +347,8 @@
         events: [],
         memberSync: null,
         phoneNotice: null,
-        lastAppliedAt: null
+        lastAppliedAt: null,
+        collapsed: true
     };
 
     function replaceArray(target, source) {
@@ -363,7 +364,8 @@
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify({
                 currentScenario: runtime.currentScenario,
-                lastAppliedAt: runtime.lastAppliedAt
+                lastAppliedAt: runtime.lastAppliedAt,
+                collapsed: runtime.collapsed
             }));
         } catch (error) {
             console.warn("No se pudo guardar el estado runtime", error);
@@ -442,9 +444,12 @@
     }
 
     function renderRuntimeShell() {
+        const bar = document.getElementById("runtime-bar");
+        const summary = document.getElementById("runtime-summary");
+        const toggle = document.getElementById("runtime-toggle");
         const actions = document.getElementById("runtime-actions");
         const status = document.getElementById("runtime-status");
-        if (!actions || !status) return;
+        if (!bar || !summary || !toggle || !actions || !status) return;
 
         actions.innerHTML = Object.entries(scenarioLibrary.scenarios).map(([id, scenario]) => `
             <button class="runtime-btn ${runtime.currentScenario === id ? "activo" : ""}" type="button" onclick="applyRuntimeScenario('${id}')">
@@ -461,6 +466,15 @@
         `;
 
         const scenario = runtime.currentScenario ? scenarioLibrary.scenarios[runtime.currentScenario] : null;
+        summary.innerHTML = scenario ? `
+            <div class="eyebrow">Escenarios conectados</div>
+            <strong>${scenario.label}</strong>
+            <p>${scenario.summary}</p>
+        ` : `
+            <div class="eyebrow">Escenarios conectados</div>
+            <strong>Escenario preparado</strong>
+            <p>Selecciona un trigger para activar socio, gestión y evidencias generadas.</p>
+        `;
         status.innerHTML = scenario ? `
             <div class="status-chip">${scenario.status.badge}</div>
             <strong>${scenario.status.title}</strong>
@@ -472,6 +486,9 @@
             <p>Selecciona un trigger para activar comunicaciones, documentos, tareas y cambios visibles en los dos journeys.</p>
             <p><strong>Persistencia:</strong> el estado se guarda en tu navegador para que la demo mantenga continuidad.</p>
         `;
+
+        bar.classList.toggle("compacta", runtime.collapsed);
+        toggle.textContent = runtime.collapsed ? "Mostrar panel" : "Ocultar panel";
     }
 
     function renderMemberSync() {
@@ -653,6 +670,12 @@
         showToast("Escenario reiniciado", "La demo ha vuelto al estado base y ha limpiado las evidencias generadas.");
     }
 
+    function toggleRuntimePanel(force) {
+        runtime.collapsed = typeof force === "boolean" ? force : !runtime.collapsed;
+        saveRuntime();
+        renderRuntimeShell();
+    }
+
     const originalRenderSocio = renderSocio;
     renderSocio = function wrappedRenderSocio() {
         originalRenderSocio();
@@ -679,6 +702,7 @@
 
     window.applyRuntimeScenario = (id) => applyScenario(id);
     window.resetRuntimeScenario = resetRuntimeScenario;
+    window.toggleRuntimePanel = (force) => toggleRuntimePanel(force);
     window.openArtifactModal = openArtifactModal;
     window.closeArtifactModal = closeArtifactModal;
 
@@ -692,10 +716,12 @@
     const saved = loadRuntime();
     renderRuntimeShell();
     if (saved && saved.currentScenario && scenarioLibrary.scenarios[saved.currentScenario]) {
+        runtime.collapsed = typeof saved.collapsed === "boolean" ? saved.collapsed : true;
         applyScenario(saved.currentScenario, { silent: true });
         runtime.lastAppliedAt = saved.lastAppliedAt || runtime.lastAppliedAt;
         renderRuntimeShell();
     } else {
+        runtime.collapsed = true;
         applyScenario(scenarioLibrary.defaultScenario, { silent: true });
     }
 
