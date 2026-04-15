@@ -2634,6 +2634,29 @@
             margin-bottom: 8px;
         }
 
+        .finance-card strong.finance-value {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 0.16em;
+            max-width: 100%;
+            font-size: clamp(1.8rem, 2vw, 2.45rem);
+            line-height: 0.96;
+            letter-spacing: -0.04em;
+            margin-bottom: 12px;
+        }
+
+        .finance-value-main {
+            min-width: 0;
+            max-width: 100%;
+        }
+
+        .finance-value-currency {
+            flex: 0 0 auto;
+            font-size: 0.82em;
+            letter-spacing: -0.02em;
+        }
+
         .finance-card p {
             color: var(--oliva-texto);
             font-size: 0.84rem;
@@ -4243,6 +4266,15 @@
             return `${valor >= 0 ? "+" : "-"}${euroFinance(Math.abs(valor))}`;
         }
 
+        function formatFinanceMetricMarkup(value) {
+            const raw = String(value == null ? "" : value).trim();
+            if (!raw) return "";
+            const hasCurrency = /€$/.test(raw);
+            const main = hasCurrency ? raw.replace(/\s*€$/, "").trim() : raw;
+            if (!hasCurrency) return `<span class="finance-value-main">${main}</span>`;
+            return `<span class="finance-value-main">${main}</span><span class="finance-value-currency">€</span>`;
+        }
+
         function formatShortDate(value) {
             return new Intl.DateTimeFormat("es-ES", { day: "2-digit", month: "short" }).format(value).replace(".", "");
         }
@@ -5318,22 +5350,22 @@
             document.getElementById("cash-cards").innerHTML = `
                 <div class="finance-card positive">
                     <span>Cobros esperados 30 días</span>
-                    <strong>${euroFinance(cashData.inflows)}</strong>
+                    <strong class="finance-value">${formatFinanceMetricMarkup(euroFinance(cashData.inflows))}</strong>
                     <p>${cashData.source === "sheet" ? "Suma real de ingresos esperados en la agenda financiera sincronizada desde backend." : "Fallback demo con cobros previstos de suscripciones, renovaciones y recuperación."}</p>
                 </div>
                 <div class="finance-card">
                     <span>Salidas previstas 30 días</span>
-                    <strong>${euroFinance(cashData.outflows)}</strong>
+                    <strong class="finance-value">${formatFinanceMetricMarkup(euroFinance(cashData.outflows))}</strong>
                     <p>Incluye alquileres, nóminas, suministros, mantenimiento, fiscalidad y otras salidas visibles en la misma vista.</p>
                 </div>
                 <div class="finance-card ${cashData.projectedNetCash >= 0 ? "positive" : "negative"}">
                     <span>Net cash proyectado</span>
-                    <strong>${signedEuroFinance(cashData.projectedNetCash)}</strong>
+                    <strong class="finance-value">${formatFinanceMetricMarkup(signedEuroFinance(cashData.projectedNetCash))}</strong>
                     <p>Diferencia entre próximos ingresos esperados y gastos previstos para los próximos 30 días.</p>
                 </div>
                 <div class="finance-card negative">
                     <span>Revenue en riesgo</span>
-                    <strong>${euroFinance(cashData.revenueAtRisk)}</strong>
+                    <strong class="finance-value">${formatFinanceMetricMarkup(euroFinance(cashData.revenueAtRisk))}</strong>
                     <p>Ingresos marcados como riesgo por incidencia de cobro y ya reflejados en el forecast.</p>
                 </div>
             `;
