@@ -193,6 +193,21 @@
         return amount < 0 ? "outflow" : "inflow";
     }
 
+    function normalizeFinanceType(value, fallbackFlow) {
+        const raw = String(value == null ? "" : value).trim().toLowerCase();
+        if (raw.includes("gasto") || raw.includes("expense") || raw.includes("out")) return "gasto";
+        if (raw.includes("ingreso") || raw.includes("revenue") || raw.includes("in") || raw.includes("cuota") || raw.includes("cobro")) return "ingreso";
+        return fallbackFlow === "outflow" ? "gasto" : "ingreso";
+    }
+
+    function normalizeFinanceState(value, type, fallbackFlow) {
+        const raw = String(value == null ? "" : value).trim().toLowerCase();
+        if (raw.includes("riesgo") || raw.includes("risk") || fallbackFlow === "risk") return "riesgo";
+        if (raw.includes("prev")) return "previsto";
+        if (raw.includes("esper") || raw.includes("confirm")) return "esperado";
+        return type === "gasto" ? "previsto" : "esperado";
+    }
+
     function normalizeFinanceRows(rows) {
         if (!Array.isArray(rows)) return null;
         const normalized = rows.map((row, index) => {
@@ -201,18 +216,47 @@
             const amount = parseFinanceNumber(
                 normalizedRow.amount || normalizedRow.importe || normalizedRow.valor || normalizedRow.euros || normalizedRow.expected_amount || normalizedRow.monto
             );
-            const flow = normalizeFinanceFlow(
-                normalizedRow.flow || normalizedRow.tipo || normalizedRow.movimiento || normalizedRow.kind || normalizedRow.category || normalizedRow.sentido || normalizedRow.estado,
+            const rawDate = normalizedRow.date || normalizedRow.fecha || normalizedRow.fecha_evento || normalizedRow.fecha_prevista || normalizedRow.dia || "";
+            const flowHint = normalizeFinanceFlow(
+                normalizedRow.flow || normalizedRow.tipo || normalizedRow.movimiento || normalizedRow.kind || normalizedRow.sentido || normalizedRow.estado,
                 amount
             );
+            const tipo = normalizeFinanceType(
+                normalizedRow.tipo || normalizedRow.movimiento || normalizedRow.kind || normalizedRow.sentido,
+                flowHint
+            );
+            const estado = normalizeFinanceState(normalizedRow.estado || normalizedRow.status, tipo, flowHint);
+            const flow = estado === "riesgo" ? "risk" : tipo === "gasto" ? "outflow" : "inflow";
+            const categoria = String(
+                normalizedRow.categoria || normalizedRow.category || normalizedRow.concepto || normalizedRow.tipo_gasto || normalizedRow.detalle || ""
+            ).trim() || (tipo === "gasto" ? "gasto" : "cuota");
+            const sede = String(
+                normalizedRow.sede || normalizedRow.scope || normalizedRow.ambito || normalizedRow.centro || normalizedRow.area || ""
+            ).trim() || "Cadena";
+            const comentario = String(
+                normalizedRow.comentario || normalizedRow.note || normalizedRow.nota || normalizedRow.observaciones || normalizedRow.detalle || normalizedRow.descripcion || ""
+            ).trim();
+            const triggerRelacionado = String(
+                normalizedRow.trigger_relacionado || normalizedRow.trigger || normalizedRow.automatizacion || normalizedRow.evento || ""
+            ).trim();
             return {
-                date: normalizedRow.date || normalizedRow.fecha || normalizedRow.fecha_evento || normalizedRow.fecha_prevista || normalizedRow.dia || "",
+                fecha: rawDate,
+                tipo: tipo,
+                categoria: categoria,
+                sede: sede,
+                id_socio: String(normalizedRow.id_socio || normalizedRow.socio_id || normalizedRow.member_id || "").trim(),
+                importe: Math.abs(amount),
+                estado: estado,
+                origen: String(normalizedRow.origen || normalizedRow.origin || "").trim(),
+                trigger_relacionado: triggerRelacionado,
+                comentario: comentario,
+                date: rawDate,
                 flow: flow,
-                label: normalizedRow.label || normalizedRow.etiqueta || (flow === "outflow" ? "Salida" : flow === "risk" ? "En riesgo" : "Entrada"),
-                concept: normalizedRow.concept || normalizedRow.concepto || normalizedRow.evento || normalizedRow.titulo || normalizedRow.detalle || normalizedRow.descripcion || `Evento ${index + 1}`,
-                scope: normalizedRow.scope || normalizedRow.ambito || normalizedRow.sede || normalizedRow.centro || normalizedRow.area || normalizedRow.tipo_gasto || normalizedRow.categoria || "Cadena",
+                label: normalizedRow.label || normalizedRow.etiqueta || (flow === "outflow" ? "Gasto" : flow === "risk" ? "Riesgo" : "Ingreso"),
+                concept: normalizedRow.concept || normalizedRow.concepto || normalizedRow.evento || normalizedRow.titulo || categoria || `Evento ${index + 1}`,
+                scope: sede,
                 amount: Math.abs(amount),
-                note: normalizedRow.note || normalizedRow.nota || normalizedRow.observaciones || normalizedRow.estado || ""
+                note: comentario || estado
             };
         }).filter(Boolean);
         return normalized.length ? normalized : null;

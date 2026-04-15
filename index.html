@@ -1999,6 +1999,21 @@
             color: var(--oliva-oscuro);
         }
 
+        .badge.esperado {
+            background: rgba(153, 185, 18, 0.16);
+            color: #607609;
+        }
+
+        .badge.riesgo {
+            background: rgba(194, 102, 37, 0.12);
+            color: #b45a18;
+        }
+
+        .badge.previsto {
+            background: rgba(35, 42, 4, 0.08);
+            color: var(--oliva-oscuro);
+        }
+
         .flow-stack {
             display: grid;
             gap: 14px;
@@ -2647,9 +2662,9 @@
         }
 
         .cash-flow.inflow {
-            background: rgba(0, 127, 104, 0.1);
-            border: 1px solid rgba(0, 127, 104, 0.16);
-            color: var(--teal);
+            background: rgba(153, 185, 18, 0.14);
+            border: 1px solid rgba(153, 185, 18, 0.22);
+            color: #607609;
         }
 
         .cash-flow.outflow {
@@ -2659,9 +2674,9 @@
         }
 
         .cash-flow.risk {
-            background: rgba(197, 121, 28, 0.1);
-            border: 1px solid rgba(197, 121, 28, 0.16);
-            color: #9a5e17;
+            background: rgba(194, 102, 37, 0.12);
+            border: 1px solid rgba(194, 102, 37, 0.18);
+            color: #b45a18;
         }
 
         .cash-note {
@@ -2674,6 +2689,18 @@
         .cash-amount {
             font-weight: 700;
             white-space: nowrap;
+        }
+
+        .cash-amount.inflow {
+            color: #607609;
+        }
+
+        .cash-amount.outflow {
+            color: var(--oliva-oscuro);
+        }
+
+        .cash-amount.risk {
+            color: #b45a18;
         }
 
         .price-grid {
@@ -3650,9 +3677,10 @@
                                     <tr>
                                         <th>Fecha</th>
                                         <th>Tipo</th>
-                                        <th>Evento</th>
-                                        <th>Ámbito</th>
+                                        <th>Categoría</th>
+                                        <th>Sede</th>
                                         <th>Importe</th>
+                                        <th>Estado</th>
                                     </tr>
                                 </thead>
                                 <tbody id="cash-calendar-body"></tbody>
@@ -4196,8 +4224,23 @@
             return new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(valor);
         }
 
+        function euroFinance(valor) {
+            const amount = Number(valor || 0);
+            const hasDecimals = Math.abs(amount % 1) > 0.001;
+            return new Intl.NumberFormat("es-ES", {
+                style: "currency",
+                currency: "EUR",
+                minimumFractionDigits: hasDecimals ? 2 : 0,
+                maximumFractionDigits: 2
+            }).format(amount);
+        }
+
         function signedEuro(valor) {
             return `${valor >= 0 ? "+" : "-"}${euro(Math.abs(valor))}`;
+        }
+
+        function signedEuroFinance(valor) {
+            return `${valor >= 0 ? "+" : "-"}${euroFinance(Math.abs(valor))}`;
         }
 
         function formatShortDate(value) {
@@ -4205,9 +4248,9 @@
         }
 
         function formatCashAmount(evento) {
-            if (evento.flow === "outflow") return signedEuro(-evento.amount);
-            if (evento.flow === "risk") return `En riesgo · ${euro(evento.amount)}`;
-            return signedEuro(evento.amount);
+            const amount = parseMoneyValue(evento.importe != null ? evento.importe : evento.amount);
+            if (evento.tipo === "gasto" || evento.flow === "outflow") return signedEuroFinance(-amount);
+            return signedEuroFinance(amount);
         }
 
         function getFinanceAutomationEvidence() {
@@ -4278,34 +4321,106 @@
             return Number.isNaN(parsed.getTime()) ? null : parsed;
         }
 
+        function parseMoneyValue(value) {
+            if (typeof value === "number") return Number.isFinite(value) ? value : 0;
+            const raw = String(value == null ? "" : value).trim();
+            if (!raw) return 0;
+            const normalized = raw
+                .replace(/EUR|€/gi, "")
+                .replace(/\s/g, "")
+                .replace(/\.(?=\d{3}(?:\D|$))/g, "")
+                .replace(",", ".");
+            const parsed = Number(normalized);
+            return Number.isFinite(parsed) ? parsed : 0;
+        }
+
+        function normalizeFinanceType(value, fallbackFlow) {
+            const raw = String(value == null ? "" : value).trim().toLowerCase();
+            if (raw.includes("gasto") || raw.includes("expense") || raw.includes("out")) return "gasto";
+            if (raw.includes("ingreso") || raw.includes("revenue") || raw.includes("in") || raw.includes("cuota") || raw.includes("cobro")) return "ingreso";
+            return fallbackFlow === "outflow" ? "gasto" : "ingreso";
+        }
+
+        function normalizeFinanceState(value, type, fallbackFlow) {
+            const raw = String(value == null ? "" : value).trim().toLowerCase();
+            if (raw.includes("riesgo") || raw.includes("risk") || fallbackFlow === "risk") return "riesgo";
+            if (raw.includes("prev")) return "previsto";
+            if (raw.includes("esper") || raw.includes("confirm")) return "esperado";
+            return type === "gasto" ? "previsto" : "esperado";
+        }
+
+        function resolveFinanceFlow(type, state) {
+            if (state === "riesgo") return "risk";
+            return type === "gasto" ? "outflow" : "inflow";
+        }
+
+        function formatFinanceCategory(value) {
+            const labels = {
+                cuota: "Cuota",
+                alquiler: "Alquiler",
+                nomina: "Nómina",
+                mantenimiento: "Mantenimiento",
+                suministros: "Suministros",
+                impuestos: "Impuestos",
+                reintento_cobro: "Reintento cobro"
+            };
+            const raw = String(value || "").trim().toLowerCase();
+            if (!raw) return "Operación";
+            return labels[raw] || raw.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+        }
+
+        function formatFinanceStatus(value) {
+            const labels = { esperado: "Esperado", riesgo: "Riesgo", previsto: "Previsto" };
+            return labels[String(value || "").trim().toLowerCase()] || "Pendiente";
+        }
+
+        function getFinanceTypeMeta(event) {
+            if (event.estado === "riesgo") return { className: "risk", label: "! Riesgo" };
+            if (event.tipo === "gasto") return { className: "outflow", label: "- Gasto" };
+            return { className: "inflow", label: "+ Ingreso" };
+        }
+
         function normalizeAgendaEvent(rawEvent, index, baseDate) {
             if (!rawEvent || typeof rawEvent !== "object") return null;
 
-            const rawFlow = String(rawEvent.flow || rawEvent.tipo || rawEvent.movimiento || rawEvent.kind || rawEvent.category || rawEvent.sentido || "").trim().toLowerCase();
-            let flow = rawFlow;
-            if (!flow) {
-                const signedAmount = Number(rawEvent.amount || rawEvent.importe || rawEvent.valor || 0);
-                flow = signedAmount < 0 ? "outflow" : "inflow";
-            }
-            if (flow.includes("riesgo") || flow.includes("risk")) flow = "risk";
-            if (flow.includes("salida") || flow.includes("out") || flow.includes("gasto") || flow.includes("expense") || flow.includes("pago")) flow = "outflow";
-            if (flow.includes("entrada") || flow.includes("in") || flow.includes("ingreso") || flow.includes("revenue") || flow.includes("cobro")) flow = "inflow";
-
-            const amount = Number(rawEvent.amount || rawEvent.importe || rawEvent.valor || 0);
+            const amount = Math.abs(parseMoneyValue(rawEvent.amount || rawEvent.importe || rawEvent.valor || 0));
+            const rawFlow = String(rawEvent.flow || rawEvent.tipo || rawEvent.movimiento || rawEvent.kind || rawEvent.sentido || rawEvent.estado || "").trim().toLowerCase();
+            const fallbackFlow = rawFlow.includes("riesgo") || rawFlow.includes("risk")
+                ? "risk"
+                : (rawFlow.includes("salida") || rawFlow.includes("out") || rawFlow.includes("gasto") || rawFlow.includes("expense") || rawFlow.includes("pago")
+                    ? "outflow"
+                    : "inflow");
+            const tipo = normalizeFinanceType(rawEvent.tipo || rawEvent.flow || rawEvent.movimiento || rawEvent.kind || rawEvent.sentido, fallbackFlow);
+            const estadoEvento = normalizeFinanceState(rawEvent.estado || rawEvent.status || rawEvent.note || rawEvent.nota, tipo, fallbackFlow);
+            const flow = resolveFinanceFlow(tipo, estadoEvento);
             const parsedDate = parseAgendaDate(rawEvent.date || rawEvent.fecha || rawEvent.fecha_evento || rawEvent.fecha_prevista || rawEvent.dia);
             const offset = Number(rawEvent.offset || rawEvent.dias || rawEvent.day_offset || (index + 1));
             const eventDate = parsedDate || new Date(baseDate.getTime() + (offset * 86400000));
             const safeOffset = Math.max(0, Math.round((eventDate.getTime() - baseDate.getTime()) / 86400000));
+            const categoria = String(rawEvent.categoria || rawEvent.category || rawEvent.concepto || rawEvent.evento || rawEvent.titulo || rawEvent.detalle || "").trim() || (tipo === "gasto" ? "gasto" : "cuota");
+            const sede = String(rawEvent.sede || rawEvent.scope || rawEvent.ambito || rawEvent.centro || rawEvent.area || "Cadena").trim() || "Cadena";
+            const comentario = String(rawEvent.comentario || rawEvent.note || rawEvent.nota || rawEvent.observaciones || "").trim();
+            const triggerRelacionado = String(rawEvent.trigger_relacionado || rawEvent.trigger || "").trim();
 
             return {
                 offset: safeOffset,
-                flow: ["inflow", "outflow", "risk"].includes(flow) ? flow : "inflow",
-                label: rawEvent.label || rawEvent.etiqueta || (flow === "outflow" ? "Salida" : flow === "risk" ? "En riesgo" : "Entrada"),
-                concept: rawEvent.concept || rawEvent.concepto || rawEvent.evento || rawEvent.titulo || rawEvent.detalle || `Evento ${index + 1}`,
-                scope: rawEvent.scope || rawEvent.ambito || rawEvent.sede || rawEvent.centro || rawEvent.area || rawEvent.tipo_gasto || "Cadena",
-                amount: Math.abs(amount),
-                note: rawEvent.note || rawEvent.nota || rawEvent.observaciones || rawEvent.estado || "",
-                date: eventDate
+                date: eventDate,
+                fecha: eventDate,
+                flow: flow,
+                label: flow === "outflow" ? "Gasto" : flow === "risk" ? "Riesgo" : "Ingreso",
+                concept: formatFinanceCategory(categoria),
+                scope: sede,
+                amount: amount,
+                note: comentario || triggerRelacionado || formatFinanceStatus(estadoEvento),
+                tipo: tipo,
+                categoria: categoria,
+                sede: sede,
+                id_socio: String(rawEvent.id_socio || rawEvent.socio_id || "").trim(),
+                importe: amount,
+                estado: estadoEvento,
+                origen: String(rawEvent.origen || rawEvent.origin || "").trim(),
+                trigger_relacionado: triggerRelacionado,
+                comentario: comentario
             };
         }
 
@@ -4916,6 +5031,46 @@
             return { arpu, mrrBase, anualBase, premium, retencion, anualObjetivo, payback, reales, forecast, inferior, superior };
         }
 
+        function buildWeeklyFinanceBreakdown(events) {
+            if (!events.length) return [];
+            const dayMs = 86400000;
+            const firstDate = new Date(events[0].date);
+            firstDate.setHours(0, 0, 0, 0);
+            const buckets = [];
+
+            events.forEach((event) => {
+                const eventDate = new Date(event.date);
+                eventDate.setHours(0, 0, 0, 0);
+                const diffDays = Math.max(0, Math.floor((eventDate.getTime() - firstDate.getTime()) / dayMs));
+                const bucketIndex = Math.floor(diffDays / 7);
+                if (!buckets[bucketIndex]) {
+                    const start = new Date(firstDate.getTime() + (bucketIndex * 7 * dayMs));
+                    const end = new Date(start.getTime() + (6 * dayMs));
+                    buckets[bucketIndex] = {
+                        label: `Sem ${bucketIndex + 1}`,
+                        range: `${formatShortDate(start)} - ${formatShortDate(end)}`,
+                        start,
+                        end,
+                        inflows: 0,
+                        outflows: 0,
+                        atRisk: 0,
+                        net: 0
+                    };
+                }
+
+                if (event.tipo === "gasto") {
+                    buckets[bucketIndex].outflows += event.importe;
+                } else if (event.estado === "riesgo") {
+                    buckets[bucketIndex].atRisk += event.importe;
+                } else {
+                    buckets[bucketIndex].inflows += event.importe;
+                }
+                buckets[bucketIndex].net = buckets[bucketIndex].inflows - buckets[bucketIndex].outflows;
+            });
+
+            return buckets.filter(Boolean);
+        }
+
         function calcCashForecast(datos) {
             const baseDate = new Date();
             baseDate.setHours(0, 0, 0, 0);
@@ -4925,9 +5080,9 @@
             const impagosMuestra = sociosGestion.filter((fila) => String(fila[7] || "").toLowerCase().includes("impago")).length;
             const ratioImpago = impagosMuestra / Math.max(sociosGestion.length, 1);
             const fallbackRevenueAtRisk = Math.round(datos.mrrBase * Math.min(ratioImpago, 0.08) * 0.7);
+            const fallbackRecovery = Math.round(fallbackRevenueAtRisk * 0.42);
             const agendaRows = Array.isArray(estado.finanzasAgenda) ? estado.finanzasAgenda : [];
 
-            const openingCash = 165000;
             const alquileres = clubs * 12150;
             const nominas = clubs * 33300;
             const suministros = clubs * 3100;
@@ -4936,114 +5091,120 @@
             const impuestos = 46000;
             const conversiones = 11800 + (estado.finanzas.adopcionPremium * 210);
 
-            const baseEvents = [
+            const fallbackRows = [
                 {
                     offset: 2,
-                    flow: "inflow",
-                    label: "Entrada",
-                    concept: "Remesa prevista de suscripciones · quincena 1",
-                    scope: "Cadena · cobros socios",
-                    amount: Math.round(datos.mrrBase * 0.31),
-                    note: "Mensuales, trimestrales y renovaciones ya calendarizadas."
+                    tipo: "ingreso",
+                    categoria: "cuota",
+                    sede: "Cadena",
+                    importe: Math.round(datos.mrrBase * 0.31),
+                    estado: "esperado",
+                    comentario: "Mensuales, trimestrales y renovaciones ya calendarizadas.",
+                    trigger_relacionado: "Pago confirmado"
                 },
                 {
                     offset: 5,
-                    flow: "outflow",
-                    label: "Salida",
-                    concept: "Alquileres y gastos comunes de locales",
-                    scope: `${clubs} sedes operativas`,
-                    amount: alquileres,
-                    note: "Bloque fijo de caja con impacto inmediato en tesorería."
+                    tipo: "gasto",
+                    categoria: "alquiler",
+                    sede: `${clubs} sedes operativas`,
+                    importe: alquileres,
+                    estado: "previsto",
+                    comentario: "Bloque fijo de caja con impacto inmediato en tesorería."
                 },
                 {
                     offset: 8,
-                    flow: "outflow",
-                    label: "Salida",
-                    concept: "Nóminas, seguridad social y coordinación de club",
-                    scope: "Clubes + estructura central",
-                    amount: nominas,
-                    note: "Es la mayor salida prevista del ciclo y concentra la primera semana tensa."
+                    tipo: "gasto",
+                    categoria: "nomina",
+                    sede: "Clubes + estructura central",
+                    importe: nominas,
+                    estado: "previsto",
+                    comentario: "Es la mayor salida prevista del ciclo y concentra la primera semana tensa."
                 },
                 {
                     offset: 10,
-                    flow: "risk",
-                    label: "En riesgo",
-                    concept: "Cuotas todavía en riesgo de impago",
-                    scope: "Cobros y retención",
-                    amount: revenueAtRisk,
-                    note: "Esta señal ajusta el forecast y activa recordatorio, link de regularización y seguimiento."
+                    tipo: "ingreso",
+                    categoria: "cuota",
+                    sede: "Cobros y retención",
+                    importe: fallbackRevenueAtRisk,
+                    estado: "riesgo",
+                    comentario: "Esta señal ajusta el forecast y activa recordatorio, link de regularización y seguimiento.",
+                    trigger_relacionado: "Pago fallido"
                 },
                 {
                     offset: 12,
-                    flow: "inflow",
-                    label: "Entrada",
-                    concept: "Renovaciones premium y remesa trimestral",
-                    scope: "Cadena · clientes activos",
-                    amount: Math.round(datos.mrrBase * 0.27),
-                    note: "Entrada relevante para compensar la semana de mayor carga fija."
+                    tipo: "ingreso",
+                    categoria: "cuota",
+                    sede: "Cadena · clientes activos",
+                    importe: Math.round(datos.mrrBase * 0.27),
+                    estado: "esperado",
+                    comentario: "Entrada relevante para compensar la semana de mayor carga fija.",
+                    trigger_relacionado: "Pago confirmado"
                 },
                 {
                     offset: 16,
-                    flow: "outflow",
-                    label: "Salida",
-                    concept: "Suministros y climatización",
-                    scope: "Energía, agua y clima multi-sede",
-                    amount: suministros,
-                    note: "Aquí interesa enseñar que la demo ya puede leer impacto operativo, no solo cobrar."
+                    tipo: "gasto",
+                    categoria: "suministros",
+                    sede: "Energía, agua y clima multi-sede",
+                    importe: suministros,
+                    estado: "previsto",
+                    comentario: "Aquí interesa enseñar que la demo ya puede leer impacto operativo, no solo cobrar."
                 },
                 {
                     offset: 18,
-                    flow: "outflow",
-                    label: "Salida",
-                    concept: "Leasing de equipos cardio y fuerza",
-                    scope: "Cadena · equipamiento",
-                    amount: leasing,
-                    note: "Salida programada que conviene visualizar con antelación."
+                    tipo: "gasto",
+                    categoria: "leasing",
+                    sede: "Cadena · equipamiento",
+                    importe: leasing,
+                    estado: "previsto",
+                    comentario: "Salida programada que conviene visualizar con antelación."
                 },
                 {
                     offset: 20,
-                    flow: "inflow",
-                    label: "Entrada",
-                    concept: "Regularización prevista de impagos",
-                    scope: "Secuencia automática de cobro",
-                    amount: regularizacionEsperada,
-                    note: "La automatización financiera protege caja y reduce trabajo manual de recuperación."
+                    tipo: "ingreso",
+                    categoria: "reintento_cobro",
+                    sede: "Secuencia automática de cobro",
+                    importe: fallbackRecovery,
+                    estado: "esperado",
+                    comentario: "La automatización financiera protege caja y reduce trabajo manual de recuperación.",
+                    trigger_relacionado: "Reintento programado"
                 },
                 {
                     offset: 22,
-                    flow: "outflow",
-                    label: "Salida",
-                    concept: "Mantenimiento preventivo priorizado",
-                    scope: "Retiro · Chamberí · Humanes",
-                    amount: mantenimiento,
-                    note: "Se enseña como gasto controlado que evita correctivos más caros."
+                    tipo: "gasto",
+                    categoria: "mantenimiento",
+                    sede: "Retiro · Chamberí · Humanes",
+                    importe: mantenimiento,
+                    estado: "previsto",
+                    comentario: "Se enseña como gasto controlado que evita correctivos más caros."
                 },
                 {
                     offset: 25,
-                    flow: "inflow",
-                    label: "Entrada",
-                    concept: "Altas convertidas desde prueba y upsell premium",
-                    scope: "Captación + socio premium",
-                    amount: conversiones,
-                    note: "Une captación, monetización y caja futura en la misma historia."
+                    tipo: "ingreso",
+                    categoria: "cuota",
+                    sede: "Captación + socio premium",
+                    importe: conversiones,
+                    estado: "esperado",
+                    comentario: "Une captación, monetización y caja futura en la misma historia.",
+                    trigger_relacionado: "Lead de prueba"
                 },
                 {
                     offset: 27,
-                    flow: "outflow",
-                    label: "Salida",
-                    concept: "IVA y obligaciones previstas",
-                    scope: "Fiscalidad y cierre de periodo",
-                    amount: impuestos,
-                    note: "Aporta una lectura más CFO que la simple facturación comercial."
+                    tipo: "gasto",
+                    categoria: "impuestos",
+                    sede: "Fiscalidad y cierre de periodo",
+                    importe: impuestos,
+                    estado: "previsto",
+                    comentario: "Aporta una lectura más CFO que la simple facturación comercial."
                 },
                 {
                     offset: 30,
-                    flow: "inflow",
-                    label: "Entrada",
-                    concept: "Remesa prevista de suscripciones · cierre de periodo",
-                    scope: "Cadena · cobros socios",
-                    amount: Math.round(datos.mrrBase * 0.26),
-                    note: "Cierre del ciclo con visibilidad de entrada comprometida."
+                    tipo: "ingreso",
+                    categoria: "cuota",
+                    sede: "Cadena · cobros socios",
+                    importe: Math.round(datos.mrrBase * 0.26),
+                    estado: "esperado",
+                    comentario: "Cierre del ciclo con visibilidad de entrada comprometida.",
+                    trigger_relacionado: "Pago confirmado"
                 }
             ];
 
@@ -5053,67 +5214,42 @@
                 .filter(Boolean)
                 .sort((a, b) => a.date - b.date);
 
-            const sourceEvents = normalizedAgenda.length ? normalizedAgenda : baseEvents.map((event) => ({
-                ...event,
-                date: new Date(baseDate.getTime() + (event.offset * 86400000))
-            }));
+            const sourceEvents = normalizedAgenda.length
+                ? normalizedAgenda
+                : fallbackRows
+                    .map((row, index) => normalizeAgendaEvent(row, index, baseDate))
+                    .filter(Boolean)
+                    .sort((a, b) => a.date - b.date);
 
-            const events = [...(evidence ? evidence.events.map((event) => ({
-                ...event,
-                date: new Date(baseDate.getTime() + (event.offset * 86400000))
-            })) : []), ...sourceEvents];
-
-            let inflows = 0;
-            let outflows = 0;
-            let revenueAtRisk = 0;
-            events.forEach((event) => {
-                if (event.flow === "inflow") inflows += event.amount;
-                if (event.flow === "outflow") outflows += event.amount;
-                if (event.flow === "risk") revenueAtRisk += event.amount;
-            });
-            if (!revenueAtRisk) revenueAtRisk = fallbackRevenueAtRisk;
-            const regularizacionEsperada = Math.round(revenueAtRisk * 0.42);
-
-            const weekRanges = [
-                { label: "Sem 1", start: 1, end: 7 },
-                { label: "Sem 2", start: 8, end: 14 },
-                { label: "Sem 3", start: 15, end: 21 },
-                { label: "Sem 4", start: 22, end: 30 }
-            ];
-
-            let runningBalance = openingCash;
-            const weeks = weekRanges.map((range) => {
-                const weekEvents = events.filter((event) => event.flow !== "risk" && event.offset >= range.start && event.offset <= range.end);
-                const weekInflows = weekEvents.filter((event) => event.flow === "inflow").reduce((sum, event) => sum + event.amount, 0);
-                const weekOutflows = weekEvents.filter((event) => event.flow === "outflow").reduce((sum, event) => sum + event.amount, 0);
-                runningBalance += weekInflows - weekOutflows;
-                return {
-                    label: range.label,
-                    inflows: weekInflows,
-                    outflows: weekOutflows,
-                    balance: runningBalance
-                };
-            });
-
-            const tensionThreshold = 135000;
-            const tensionWeeks = weeks.filter((week) => week.balance < tensionThreshold);
-            const lowestWeek = weeks.reduce((lowest, week) => week.balance < lowest.balance ? week : lowest, weeks[0]);
-            const salidasFijas = normalizedAgenda.length ? outflows : (alquileres + nominas + suministros + leasing + impuestos);
+            const inflows = sourceEvents
+                .filter((event) => event.tipo === "ingreso" && event.estado !== "riesgo")
+                .reduce((sum, event) => sum + event.importe, 0);
+            const outflows = sourceEvents
+                .filter((event) => event.tipo === "gasto")
+                .reduce((sum, event) => sum + event.importe, 0);
+            const revenueAtRisk = sourceEvents
+                .filter((event) => event.tipo === "ingreso" && event.estado === "riesgo")
+                .reduce((sum, event) => sum + event.importe, 0);
+            const weeks = buildWeeklyFinanceBreakdown(sourceEvents);
+            const lowestWeek = weeks.length
+                ? weeks.reduce((lowest, week) => week.net < lowest.net ? week : lowest, weeks[0])
+                : null;
+            const riskRatio = inflows > 0 ? revenueAtRisk / inflows : 0;
+            const largestOutflow = sourceEvents
+                .filter((event) => event.tipo === "gasto")
+                .sort((a, b) => b.importe - a.importe)[0] || null;
 
             return {
-                events,
+                events: sourceEvents,
                 weeks,
-                openingCash,
                 inflows,
                 outflows,
                 revenueAtRisk,
-                regularizacionEsperada,
+                regularizacionEsperada: Number(((revenueAtRisk || fallbackRevenueAtRisk) * 0.42).toFixed(2)),
                 projectedNetCash: inflows - outflows,
-                closingCash: openingCash + inflows - outflows,
-                tensionThreshold,
-                tensionWeeks,
                 lowestWeek,
-                salidasFijas,
+                riskRatio,
+                largestOutflow,
                 evidence,
                 source: normalizedAgenda.length ? "sheet" : "local"
             };
@@ -5182,47 +5318,59 @@
             document.getElementById("cash-cards").innerHTML = `
                 <div class="finance-card positive">
                     <span>Cobros esperados 30 días</span>
-                    <strong>${euro(cashData.inflows)}</strong>
-                    <p>Suscripciones previstas, renovaciones premium y conversiones desde prueba ya reflejadas en agenda.</p>
+                    <strong>${euroFinance(cashData.inflows)}</strong>
+                    <p>${cashData.source === "sheet" ? "Suma real de ingresos esperados en la agenda financiera sincronizada desde backend." : "Fallback demo con cobros previstos de suscripciones, renovaciones y recuperación."}</p>
                 </div>
                 <div class="finance-card">
                     <span>Salidas previstas 30 días</span>
-                    <strong>${euro(cashData.outflows)}</strong>
-                    <p>Alquileres, nóminas, suministros, leasing, mantenimiento e impuestos visibles en la misma vista.</p>
+                    <strong>${euroFinance(cashData.outflows)}</strong>
+                    <p>Incluye alquileres, nóminas, suministros, mantenimiento, fiscalidad y otras salidas visibles en la misma vista.</p>
                 </div>
                 <div class="finance-card ${cashData.projectedNetCash >= 0 ? "positive" : "negative"}">
                     <span>Net cash proyectado</span>
-                    <strong>${signedEuro(cashData.projectedNetCash)}</strong>
-                    <p>Cambio estimado de caja para el próximo ciclo sin salir a otra herramienta financiera.</p>
+                    <strong>${signedEuroFinance(cashData.projectedNetCash)}</strong>
+                    <p>Diferencia entre próximos ingresos esperados y gastos previstos para los próximos 30 días.</p>
                 </div>
                 <div class="finance-card negative">
                     <span>Revenue en riesgo</span>
-                    <strong>${euro(cashData.revenueAtRisk)}</strong>
-                    <p>La señal de impago ya deja huella en forecast y en la secuencia de recuperación automática.</p>
+                    <strong>${euroFinance(cashData.revenueAtRisk)}</strong>
+                    <p>Ingresos marcados como riesgo por incidencia de cobro y ya reflejados en el forecast.</p>
                 </div>
             `;
 
             document.getElementById("cash-alerts").innerHTML = `
-                <li>${cashData.source === "sheet" ? "La agenda financiera ya está leyendo eventos reales desde la hoja operativa y usa esa base para la previsión." : "La agenda financiera usa ahora la base demo del PoC y puede conectarse a la hoja operativa sin cambiar el front."}</li>
+                <li>${cashData.source === "sheet" ? "La agenda financiera ya está leyendo eventos reales desde Google Sheets y los KPIs salen de esa base conectada." : "Si el backend no devuelve agenda financiera, la vista mantiene el fallback local del PoC sin romper la demo."}</li>
                 ${cashData.evidence ? cashData.evidence.alerts.map((item) => `<li>${item}</li>`).join("") : ""}
-                <li>${cashData.lowestWeek.label} es la semana más tensa y cerraría en ${euro(cashData.lowestWeek.balance)} si no se acelera regularización o cobro.</li>
-                <li>Las salidas fijas ya explican ${Math.round((cashData.salidasFijas / cashData.outflows) * 100)}% del total previsto; por eso la lectura de caja importa tanto como la de facturación.</li>
-                <li>La recuperación automática de impagos puede proteger hasta ${euro(cashData.regularizacionEsperada)} en el siguiente ciclo sin depender de seguimiento manual.</li>
-                <li>${cashData.tensionWeeks.length} de 4 semanas quedan por debajo del umbral de atención; esa es la conversación que interesa a un perfil CFO.</li>
+                <li>${cashData.lowestWeek ? `${cashData.lowestWeek.label} (${cashData.lowestWeek.range}) es la semana con peor neto: ${signedEuroFinance(cashData.lowestWeek.net)}.` : "La agenda actual no tiene todavía suficiente densidad para dibujar tensión semanal."}</li>
+                <li>${cashData.largestOutflow ? `La mayor salida prevista es ${formatFinanceCategory(cashData.largestOutflow.categoria)} en ${cashData.largestOutflow.sede} por ${euroFinance(cashData.largestOutflow.importe)}.` : "No hay salidas previstas registradas en la agenda actual."}</li>
+                <li>${cashData.revenueAtRisk ? `Hay ${euroFinance(cashData.revenueAtRisk)} en ingresos en riesgo, equivalente al ${Math.round(cashData.riskRatio * 100)}% de los cobros esperados hoy visibles.` : "La agenda actual no marca ingresos en riesgo; el net cash proyectado no está penalizado por impagos abiertos."}</li>
+                <li>La recuperación automática de impagos puede proteger hasta ${euroFinance(cashData.regularizacionEsperada)} en el siguiente ciclo si el reintento entra a tiempo.</li>
             `;
 
-            document.getElementById("cash-calendar-body").innerHTML = cashData.events.map((event) => `
-                <tr>
-                    <td>${formatShortDate(event.date)}</td>
-                    <td><span class="cash-flow ${event.flow}">${event.label}</span></td>
-                    <td>
-                        <strong>${event.concept}</strong>
-                        <div class="cash-note">${event.note}</div>
-                    </td>
-                    <td>${event.scope}</td>
-                    <td class="cash-amount">${formatCashAmount(event)}</td>
-                </tr>
-            `).join("");
+            document.getElementById("cash-calendar-body").innerHTML = cashData.events.length
+                ? cashData.events.map((event) => {
+                    const typeMeta = getFinanceTypeMeta(event);
+                    const amountClass = event.estado === "riesgo" ? "risk" : event.tipo === "gasto" ? "outflow" : "inflow";
+                    const detail = [event.trigger_relacionado, event.comentario].filter(Boolean).join(" · ");
+                    return `
+                        <tr>
+                            <td>${formatShortDate(event.date)}</td>
+                            <td><span class="cash-flow ${typeMeta.className}">${typeMeta.label}</span></td>
+                            <td>
+                                <strong>${formatFinanceCategory(event.categoria)}</strong>
+                                ${detail ? `<div class="cash-note">${detail}</div>` : ""}
+                            </td>
+                            <td>${event.sede || "Cadena"}</td>
+                            <td class="cash-amount ${amountClass}">${formatCashAmount(event)}</td>
+                            <td><span class="badge ${event.estado}">${formatFinanceStatus(event.estado)}</span></td>
+                        </tr>
+                    `;
+                }).join("")
+                : `
+                    <tr>
+                        <td colspan="6">Sin eventos financieros disponibles.</td>
+                    </tr>
+                `;
 
             renderFinanceChart(datos);
             renderCashChart(cashData);
@@ -5296,19 +5444,17 @@
                     datasets: [
                         {
                             type: "bar",
-                            label: "Balance proyectado",
-                            data: cashData.weeks.map((week) => week.balance),
-                            backgroundColor: cashData.weeks.map((week) => week.balance < cashData.tensionThreshold ? "rgba(197,121,28,0.78)" : "rgba(0,127,104,0.78)"),
+                            label: "Ingresos",
+                            data: cashData.weeks.map((week) => week.inflows),
+                            backgroundColor: "rgba(153,185,18,0.78)",
                             borderRadius: 12
                         },
                         {
-                            type: "line",
-                            label: "Umbral de atención",
-                            data: cashData.weeks.map(() => cashData.tensionThreshold),
-                            borderColor: "rgba(35,42,4,0.28)",
-                            borderDash: [7, 6],
-                            pointRadius: 0,
-                            tension: 0
+                            type: "bar",
+                            label: "Gastos",
+                            data: cashData.weeks.map((week) => week.outflows),
+                            backgroundColor: "rgba(35,42,4,0.32)",
+                            borderRadius: 12
                         }
                     ]
                 },
@@ -5322,7 +5468,18 @@
                         },
                         tooltip: {
                             callbacks: {
-                                label: (ctx) => `${ctx.dataset.label}: ${euro(ctx.parsed.y || 0)}`
+                                title: (items) => {
+                                    const week = cashData.weeks[items[0].dataIndex];
+                                    return week ? `${week.label} · ${week.range}` : "";
+                                },
+                                label: (ctx) => `${ctx.dataset.label}: ${euroFinance(ctx.parsed.y || 0)}`,
+                                afterBody: (items) => {
+                                    const week = cashData.weeks[items[0].dataIndex];
+                                    if (!week) return "";
+                                    const lines = [`Neto semanal: ${signedEuroFinance(week.net)}`];
+                                    if (week.atRisk) lines.push(`Ingresos en riesgo: ${euroFinance(week.atRisk)}`);
+                                    return lines;
+                                }
                             }
                         }
                     },
