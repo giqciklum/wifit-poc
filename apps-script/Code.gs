@@ -162,118 +162,146 @@ function sheetToObjects(sheet, keys) {
   return rows;
 }
 
-/* ---------- SHARED: handleTrigger ---------- */
-function handleTrigger(action, params, ss) {
-  var autos = ss.getSheetByName("automatizaciones");
-  var now = Utilities.formatDate(new Date(), "Europe/Madrid", "yyyy-MM-dd HH:mm");
-  var nextId = "A" + String(autos.getLastRow()).padStart(3, "0");
+function getNextSequentialId(sheet, prefix, columnIndex) {
+  var lastRow = sheet.getLastRow();
+  var col = columnIndex || 1;
+  var maxId = 0;
 
-  if (action === "activation") {
-    var socios = ss.getSheetByName("socios");
-    var pagos = ss.getSheetByName("pagos");
-    var nombre = params.nombre || "Nuevo Socio Demo";
-    var sede = params.sede || "WiFit Retiro";
-    var newId = "S" + String(socios.getLastRow()).padStart(3, "0");
-    var newPagoId = "P" + String(pagos.getLastRow()).padStart(3, "0");
+  if (lastRow >= 2) {
+    var values = sheet.getRange(2, col, lastRow - 1, 1).getValues();
+    for (var i = 0; i < values.length; i++) {
+      var raw = String(values[i][0] || "").trim();
+      if (raw.indexOf(prefix) !== 0) continue;
 
-    socios.appendRow([newId, nombre.split(" ")[0], nombre.split(" ").slice(1).join(" ") || "Demo",
-      nombre.toLowerCase().replace(/ /g,".") + "@demo.com", "612000000", sede,
-      "Mensual", Utilities.formatDate(new Date(), "Europe/Madrid", "yyyy-MM-dd"),
-      "Activo", "41.90", Utilities.formatDate(new Date(), "Europe/Madrid", "yyyy-MM-dd"), "Si"]);
-
-    pagos.appendRow([newPagoId, newId, Utilities.formatDate(new Date(), "Europe/Madrid", "yyyy-MM-dd"),
-      "41.90", "Tarjeta", "Confirmado",
-      Utilities.formatDate(new Date(Date.now() + 30*86400000), "Europe/Madrid", "yyyy-MM-dd"),
-      "INV-" + Utilities.formatDate(new Date(), "Europe/Madrid", "yyyyMMdd") + "-" + newId]);
-
-    autos.appendRow([nextId, "Pago confirmado", newId,
-      "Cobro mensual 41.90 EUR - " + nombre,
-      "Completado", now, now,
-      "Socio activado + email bienvenida + IA premium asignada + plan semana 1 generado"]);
-
-    SpreadsheetApp.flush();
-    return ContentService.createTextOutput(JSON.stringify({
-      status: "ok", action: "activation", socio_id: newId, pago_id: newPagoId, auto_id: nextId,
-      mensaje: "Cobro confirmado. Socio " + nombre + " activado en " + sede + ". Email de bienvenida enviado. IA premium asignada.",
-      timestamp: now
-    }, null, 2)).setMimeType(ContentService.MimeType.JSON);
-  }
-
-  if (action === "lead") {
-    var leadsSheet = ss.getSheetByName("leads");
-    var nombre = params.nombre || "Lead Demo";
-    var canal = params.canal || "Instagram";
-    var sede = params.sede || "WiFit Retiro";
-    var score = Math.floor(Math.random() * 40) + 55;
-    var newId = "L" + String(leadsSheet.getLastRow()).padStart(3, "0");
-
-    leadsSheet.appendRow([newId, canal, nombre,
-      nombre.toLowerCase().replace(/ /g,".") + "@demo.com",
-      "634" + String(Math.floor(Math.random()*999999)).padStart(6,"0"),
-      sede, String(score), "Nuevo",
-      score > 75 ? "Llamada comercial prioritaria" : "Email prueba gratis"]);
-
-    autos.appendRow([nextId, "Lead nuevo", newId,
-      canal + " - " + nombre + " - score " + score,
-      "Completado", now, now,
-      "Scoring automatico (" + score + ") + " + (score > 75 ? "llamada comercial asignada" : "email prueba gratis enviado")]);
-
-    if (score > 75) {
-      var tareas = ss.getSheetByName("tareas");
-      var tId = "T" + String(tareas.getLastRow()).padStart(3, "0");
-      tareas.appendRow([tId, "Comercial", sede, "Ana Lopez", "Alta", "Pendiente",
-        "Contactar lead " + nombre + " (score " + score + ") - " + canal]);
-    }
-
-    SpreadsheetApp.flush();
-    return ContentService.createTextOutput(JSON.stringify({
-      status: "ok", action: "lead", lead_id: newId, score: score, auto_id: nextId,
-      mensaje: "Lead " + nombre + " registrado via " + canal + ". Score: " + score + ". " + (score > 75 ? "Llamada comercial asignada." : "Email prueba gratis enviado."),
-      timestamp: now
-    }, null, 2)).setMimeType(ContentService.MimeType.JSON);
-  }
-
-  if (action === "retention") {
-    var sociosSheet = ss.getSheetByName("socios");
-    var socioId = params.socio_id || "S003";
-
-    var sociosData = sociosSheet.getDataRange().getValues();
-    var socioRow = -1;
-    var socioNombre = "Socio";
-    for (var i = 1; i < sociosData.length; i++) {
-      if (sociosData[i][0] === socioId) {
-        socioRow = i + 1;
-        socioNombre = sociosData[i][1] + " " + sociosData[i][2];
-        break;
+      var numericPart = parseInt(raw.slice(prefix.length), 10);
+      if (!isNaN(numericPart) && numericPart > maxId) {
+        maxId = numericPart;
       }
     }
-
-    if (socioRow > 0) {
-      sociosSheet.getRange(socioRow, 9).setValue("Impago");
-    }
-
-    autos.appendRow([nextId, "Pago fallido", socioId,
-      "Impago detectado - " + socioNombre,
-      "En curso", now, "",
-      "Aviso enviado al socio + tarea creada para gestor + oferta recuperacion programada"]);
-
-    var tareas = ss.getSheetByName("tareas");
-    var tId = "T" + String(tareas.getLastRow()).padStart(3, "0");
-    tareas.appendRow([tId, "Cobros", "WiFit Retiro", "Sistema", "Alta", "En curso",
-      "Recuperacion impago " + socioNombre + " (" + socioId + ")"]);
-
-    SpreadsheetApp.flush();
-    return ContentService.createTextOutput(JSON.stringify({
-      status: "ok", action: "retention", socio_id: socioId, socio_nombre: socioNombre,
-      auto_id: nextId, tarea_id: tId,
-      mensaje: "Impago detectado para " + socioNombre + ". Aviso enviado. Tarea de recuperacion creada.",
-      timestamp: now
-    }, null, 2)).setMimeType(ContentService.MimeType.JSON);
   }
 
-  return ContentService.createTextOutput(JSON.stringify({
-    error: "Accion no reconocida. Usa action=state|activation|lead|retention"
-  })).setMimeType(ContentService.MimeType.JSON);
+  return prefix + Utilities.formatString("%03d", maxId + 1);
+}
+
+/* ---------- SHARED: handleTrigger ---------- */
+function handleTrigger(action, params, ss) {
+  var lock = LockService.getDocumentLock();
+  lock.waitLock(10000);
+
+  try {
+    var autos = ss.getSheetByName("automatizaciones");
+    var now = Utilities.formatDate(new Date(), "Europe/Madrid", "yyyy-MM-dd HH:mm");
+    var nextId = getNextSequentialId(autos, "A", 1);
+
+    if (action === "activation") {
+      var socios = ss.getSheetByName("socios");
+      var pagos = ss.getSheetByName("pagos");
+      var nombre = params.nombre || "Nuevo Socio Demo";
+      var sede = params.sede || "WiFit Retiro";
+      var newId = getNextSequentialId(socios, "S", 1);
+      var newPagoId = getNextSequentialId(pagos, "P", 1);
+
+      socios.appendRow([newId, nombre.split(" ")[0], nombre.split(" ").slice(1).join(" ") || "Demo",
+        nombre.toLowerCase().replace(/ /g,".") + "@demo.com", "612000000", sede,
+        "Mensual", Utilities.formatDate(new Date(), "Europe/Madrid", "yyyy-MM-dd"),
+        "Activo", "41.90", Utilities.formatDate(new Date(), "Europe/Madrid", "yyyy-MM-dd"), "Si"]);
+
+      pagos.appendRow([newPagoId, newId, Utilities.formatDate(new Date(), "Europe/Madrid", "yyyy-MM-dd"),
+        "41.90", "Tarjeta", "Confirmado",
+        Utilities.formatDate(new Date(Date.now() + 30*86400000), "Europe/Madrid", "yyyy-MM-dd"),
+        "INV-" + Utilities.formatDate(new Date(), "Europe/Madrid", "yyyyMMdd") + "-" + newId]);
+
+      autos.appendRow([nextId, "Pago confirmado", newId,
+        "Cobro mensual 41.90 EUR - " + nombre,
+        "Completado", now, now,
+        "Socio activado + email bienvenida + IA premium asignada + plan semana 1 generado"]);
+
+      SpreadsheetApp.flush();
+      return ContentService.createTextOutput(JSON.stringify({
+        status: "ok", action: "activation", socio_id: newId, pago_id: newPagoId, auto_id: nextId,
+        mensaje: "Cobro confirmado. Socio " + nombre + " activado en " + sede + ". Email de bienvenida enviado. IA premium asignada.",
+        timestamp: now
+      }, null, 2)).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    if (action === "lead") {
+      var leadsSheet = ss.getSheetByName("leads");
+      var nombre = params.nombre || "Lead Demo";
+      var canal = params.canal || "Instagram";
+      var sede = params.sede || "WiFit Retiro";
+      var score = Math.floor(Math.random() * 40) + 55;
+      var newId = getNextSequentialId(leadsSheet, "L", 1);
+
+      leadsSheet.appendRow([newId, canal, nombre,
+        nombre.toLowerCase().replace(/ /g,".") + "@demo.com",
+        "634" + String(Math.floor(Math.random()*999999)).padStart(6,"0"),
+        sede, String(score), "Nuevo",
+        score > 75 ? "Llamada comercial prioritaria" : "Email prueba gratis"]);
+
+      autos.appendRow([nextId, "Lead nuevo", newId,
+        canal + " - " + nombre + " - score " + score,
+        "Completado", now, now,
+        "Scoring automatico (" + score + ") + " + (score > 75 ? "llamada comercial asignada" : "email prueba gratis enviado")]);
+
+      if (score > 75) {
+        var tareas = ss.getSheetByName("tareas");
+        var tId = getNextSequentialId(tareas, "T", 1);
+        tareas.appendRow([tId, "Comercial", sede, "Ana Lopez", "Alta", "Pendiente",
+          "Contactar lead " + nombre + " (score " + score + ") - " + canal]);
+      }
+
+      SpreadsheetApp.flush();
+      return ContentService.createTextOutput(JSON.stringify({
+        status: "ok", action: "lead", lead_id: newId, score: score, auto_id: nextId,
+        mensaje: "Lead " + nombre + " registrado via " + canal + ". Score: " + score + ". " + (score > 75 ? "Llamada comercial asignada." : "Email prueba gratis enviado."),
+        timestamp: now
+      }, null, 2)).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    if (action === "retention") {
+      var sociosSheet = ss.getSheetByName("socios");
+      var socioId = params.socio_id || "S003";
+
+      var sociosData = sociosSheet.getDataRange().getValues();
+      var socioRow = -1;
+      var socioNombre = "Socio";
+      for (var i = 1; i < sociosData.length; i++) {
+        if (sociosData[i][0] === socioId) {
+          socioRow = i + 1;
+          socioNombre = sociosData[i][1] + " " + sociosData[i][2];
+          break;
+        }
+      }
+
+      if (socioRow > 0) {
+        sociosSheet.getRange(socioRow, 9).setValue("Impago");
+      }
+
+      autos.appendRow([nextId, "Pago fallido", socioId,
+        "Impago detectado - " + socioNombre,
+        "En curso", now, "",
+        "Aviso enviado al socio + tarea creada para gestor + oferta recuperacion programada"]);
+
+      var tareas = ss.getSheetByName("tareas");
+      var tId = getNextSequentialId(tareas, "T", 1);
+      tareas.appendRow([tId, "Cobros", "WiFit Retiro", "Sistema", "Alta", "En curso",
+        "Recuperacion impago " + socioNombre + " (" + socioId + ")"]);
+
+      SpreadsheetApp.flush();
+      return ContentService.createTextOutput(JSON.stringify({
+        status: "ok", action: "retention", socio_id: socioId, socio_nombre: socioNombre,
+        auto_id: nextId, tarea_id: tId,
+        mensaje: "Impago detectado para " + socioNombre + ". Aviso enviado. Tarea de recuperacion creada.",
+        timestamp: now
+      }, null, 2)).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({
+      error: "Accion no reconocida. Usa action=state|activation|lead|retention"
+    })).setMimeType(ContentService.MimeType.JSON);
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 /* ---------- WEB APP: doGet ---------- */

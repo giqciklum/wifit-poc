@@ -2625,6 +2625,57 @@
             line-height: 1.55;
         }
 
+        .finance-card.positive {
+            background: linear-gradient(180deg, rgba(0, 127, 104, 0.12), rgba(247, 249, 241, 0.94));
+        }
+
+        .finance-card.negative {
+            background: linear-gradient(180deg, rgba(197, 121, 28, 0.14), rgba(255, 255, 255, 0.94));
+        }
+
+        .cash-flow {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 7px 10px;
+            border-radius: 999px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .cash-flow.inflow {
+            background: rgba(0, 127, 104, 0.1);
+            border: 1px solid rgba(0, 127, 104, 0.16);
+            color: var(--teal);
+        }
+
+        .cash-flow.outflow {
+            background: rgba(35, 42, 4, 0.08);
+            border: 1px solid rgba(35, 42, 4, 0.1);
+            color: var(--oliva-oscuro);
+        }
+
+        .cash-flow.risk {
+            background: rgba(197, 121, 28, 0.1);
+            border: 1px solid rgba(197, 121, 28, 0.16);
+            color: #9a5e17;
+        }
+
+        .cash-note {
+            margin-top: 6px;
+            color: var(--oliva-texto);
+            font-size: 0.82rem;
+            line-height: 1.45;
+        }
+
+        .cash-amount {
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
         .price-grid {
             display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -3567,10 +3618,46 @@
                     <div class="panel panel-pad chart-card">
                         <div class="section-head">
                             <div>
-                                <h2>Facturación estimada por sede</h2>
+                                <h2>Balance semanal proyectado</h2>
                             </div>
                         </div>
-                        <canvas id="site-chart"></canvas>
+                        <canvas id="cash-chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="split-grid" style="margin-top: 18px;">
+                    <div class="panel panel-pad">
+                        <div class="section-head">
+                            <div>
+                                <div class="eyebrow">Cash forecast</div>
+                                <h2>Agenda de caja a 30 días</h2>
+                                <p>Una lectura rápida para dirección financiera: cobros esperados, salidas previstas, net cash y puntos de tensión.</p>
+                            </div>
+                        </div>
+                        <div class="finance-grid" id="cash-cards"></div>
+                        <ul class="info-list" id="cash-alerts" style="margin-top: 18px;"></ul>
+                    </div>
+                    <div class="panel panel-pad">
+                        <div class="section-head">
+                            <div>
+                                <h2>Agenda financiera próxima</h2>
+                                <p>Eventos esperados por bloque operativo para poder explicar caja futura sin salir del relato de negocio.</p>
+                            </div>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="simple-table">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Tipo</th>
+                                        <th>Evento</th>
+                                        <th>Ámbito</th>
+                                        <th>Importe</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cash-calendar-body"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -4103,6 +4190,20 @@
 
         function euro(valor) {
             return new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(valor);
+        }
+
+        function signedEuro(valor) {
+            return `${valor >= 0 ? "+" : "-"}${euro(Math.abs(valor))}`;
+        }
+
+        function formatShortDate(value) {
+            return new Intl.DateTimeFormat("es-ES", { day: "2-digit", month: "short" }).format(value).replace(".", "");
+        }
+
+        function formatCashAmount(evento) {
+            if (evento.flow === "outflow") return signedEuro(-evento.amount);
+            if (evento.flow === "risk") return `En riesgo · ${euro(evento.amount)}`;
+            return signedEuro(evento.amount);
         }
 
         function initChats() {
@@ -4689,6 +4790,190 @@
             return { arpu, mrrBase, anualBase, premium, retencion, anualObjetivo, payback, reales, forecast, inferior, superior };
         }
 
+        function calcCashForecast(datos) {
+            const sedesOperativas = sedes.filter((sede) => sede.estado === "Operativa");
+            const baseDate = new Date();
+            baseDate.setHours(0, 0, 0, 0);
+
+            const clubs = sedesOperativas.length;
+            const impagosMuestra = sociosGestion.filter((fila) => String(fila[7] || "").toLowerCase().includes("impago")).length;
+            const ratioImpago = impagosMuestra / Math.max(sociosGestion.length, 1);
+            const revenueAtRisk = Math.round(datos.mrrBase * Math.min(ratioImpago, 0.08) * 0.7);
+            const regularizacionEsperada = Math.round(revenueAtRisk * 0.42);
+
+            const openingCash = 165000;
+            const alquileres = clubs * 12150;
+            const nominas = clubs * 33300;
+            const suministros = clubs * 3100;
+            const leasing = clubs * 1850;
+            const mantenimiento = 8400;
+            const impuestos = 46000;
+            const conversiones = 11800 + (estado.finanzas.adopcionPremium * 210);
+
+            const events = [
+                {
+                    offset: 2,
+                    flow: "inflow",
+                    label: "Entrada",
+                    concept: "Remesa prevista de suscripciones · quincena 1",
+                    scope: "Cadena · cobros socios",
+                    amount: Math.round(datos.mrrBase * 0.31),
+                    note: "Mensuales, trimestrales y renovaciones ya calendarizadas."
+                },
+                {
+                    offset: 5,
+                    flow: "outflow",
+                    label: "Salida",
+                    concept: "Alquileres y gastos comunes de locales",
+                    scope: `${clubs} sedes operativas`,
+                    amount: alquileres,
+                    note: "Bloque fijo de caja con impacto inmediato en tesorería."
+                },
+                {
+                    offset: 8,
+                    flow: "outflow",
+                    label: "Salida",
+                    concept: "Nóminas, seguridad social y coordinación de club",
+                    scope: "Clubes + estructura central",
+                    amount: nominas,
+                    note: "Es la mayor salida prevista del ciclo y concentra la primera semana tensa."
+                },
+                {
+                    offset: 10,
+                    flow: "risk",
+                    label: "En riesgo",
+                    concept: "Cuotas todavía en riesgo de impago",
+                    scope: "Cobros y retención",
+                    amount: revenueAtRisk,
+                    note: "Esta señal ajusta el forecast y activa recordatorio, link de regularización y seguimiento."
+                },
+                {
+                    offset: 12,
+                    flow: "inflow",
+                    label: "Entrada",
+                    concept: "Renovaciones premium y remesa trimestral",
+                    scope: "Cadena · clientes activos",
+                    amount: Math.round(datos.mrrBase * 0.27),
+                    note: "Entrada relevante para compensar la semana de mayor carga fija."
+                },
+                {
+                    offset: 16,
+                    flow: "outflow",
+                    label: "Salida",
+                    concept: "Suministros y climatización",
+                    scope: "Energía, agua y clima multi-sede",
+                    amount: suministros,
+                    note: "Aquí interesa enseñar que la demo ya puede leer impacto operativo, no solo cobrar."
+                },
+                {
+                    offset: 18,
+                    flow: "outflow",
+                    label: "Salida",
+                    concept: "Leasing de equipos cardio y fuerza",
+                    scope: "Cadena · equipamiento",
+                    amount: leasing,
+                    note: "Salida programada que conviene visualizar con antelación."
+                },
+                {
+                    offset: 20,
+                    flow: "inflow",
+                    label: "Entrada",
+                    concept: "Regularización prevista de impagos",
+                    scope: "Secuencia automática de cobro",
+                    amount: regularizacionEsperada,
+                    note: "La automatización financiera protege caja y reduce trabajo manual de recuperación."
+                },
+                {
+                    offset: 22,
+                    flow: "outflow",
+                    label: "Salida",
+                    concept: "Mantenimiento preventivo priorizado",
+                    scope: "Retiro · Chamberí · Humanes",
+                    amount: mantenimiento,
+                    note: "Se enseña como gasto controlado que evita correctivos más caros."
+                },
+                {
+                    offset: 25,
+                    flow: "inflow",
+                    label: "Entrada",
+                    concept: "Altas convertidas desde prueba y upsell premium",
+                    scope: "Captación + socio premium",
+                    amount: conversiones,
+                    note: "Une captación, monetización y caja futura en la misma historia."
+                },
+                {
+                    offset: 27,
+                    flow: "outflow",
+                    label: "Salida",
+                    concept: "IVA y obligaciones previstas",
+                    scope: "Fiscalidad y cierre de periodo",
+                    amount: impuestos,
+                    note: "Aporta una lectura más CFO que la simple facturación comercial."
+                },
+                {
+                    offset: 30,
+                    flow: "inflow",
+                    label: "Entrada",
+                    concept: "Remesa prevista de suscripciones · cierre de periodo",
+                    scope: "Cadena · cobros socios",
+                    amount: Math.round(datos.mrrBase * 0.26),
+                    note: "Cierre del ciclo con visibilidad de entrada comprometida."
+                }
+            ].map((event) => ({
+                ...event,
+                date: new Date(baseDate.getTime() + (event.offset * 86400000))
+            }));
+
+            let inflows = 0;
+            let outflows = 0;
+            events.forEach((event) => {
+                if (event.flow === "inflow") inflows += event.amount;
+                if (event.flow === "outflow") outflows += event.amount;
+            });
+
+            const weekRanges = [
+                { label: "Sem 1", start: 1, end: 7 },
+                { label: "Sem 2", start: 8, end: 14 },
+                { label: "Sem 3", start: 15, end: 21 },
+                { label: "Sem 4", start: 22, end: 30 }
+            ];
+
+            let runningBalance = openingCash;
+            const weeks = weekRanges.map((range) => {
+                const weekEvents = events.filter((event) => event.flow !== "risk" && event.offset >= range.start && event.offset <= range.end);
+                const weekInflows = weekEvents.filter((event) => event.flow === "inflow").reduce((sum, event) => sum + event.amount, 0);
+                const weekOutflows = weekEvents.filter((event) => event.flow === "outflow").reduce((sum, event) => sum + event.amount, 0);
+                runningBalance += weekInflows - weekOutflows;
+                return {
+                    label: range.label,
+                    inflows: weekInflows,
+                    outflows: weekOutflows,
+                    balance: runningBalance
+                };
+            });
+
+            const tensionThreshold = 135000;
+            const tensionWeeks = weeks.filter((week) => week.balance < tensionThreshold);
+            const lowestWeek = weeks.reduce((lowest, week) => week.balance < lowest.balance ? week : lowest, weeks[0]);
+            const salidasFijas = alquileres + nominas + suministros + leasing + impuestos;
+
+            return {
+                events,
+                weeks,
+                openingCash,
+                inflows,
+                outflows,
+                revenueAtRisk,
+                regularizacionEsperada,
+                projectedNetCash: inflows - outflows,
+                closingCash: openingCash + inflows - outflows,
+                tensionThreshold,
+                tensionWeeks,
+                lowestWeek,
+                salidasFijas
+            };
+        }
+
         function renderFinanzasTab() {
             document.getElementById("price-grid").innerHTML = `
                 <div class="price-card">
@@ -4748,8 +5033,52 @@
                 <li>La misma plataforma conecta socio, cobros, leads y operación en un único relato financiero.</li>
             `;
 
+            const cashData = calcCashForecast(datos);
+            document.getElementById("cash-cards").innerHTML = `
+                <div class="finance-card positive">
+                    <span>Cobros esperados 30 días</span>
+                    <strong>${euro(cashData.inflows)}</strong>
+                    <p>Suscripciones previstas, renovaciones premium y conversiones desde prueba ya reflejadas en agenda.</p>
+                </div>
+                <div class="finance-card">
+                    <span>Salidas previstas 30 días</span>
+                    <strong>${euro(cashData.outflows)}</strong>
+                    <p>Alquileres, nóminas, suministros, leasing, mantenimiento e impuestos visibles en la misma vista.</p>
+                </div>
+                <div class="finance-card ${cashData.projectedNetCash >= 0 ? "positive" : "negative"}">
+                    <span>Net cash proyectado</span>
+                    <strong>${signedEuro(cashData.projectedNetCash)}</strong>
+                    <p>Cambio estimado de caja para el próximo ciclo sin salir a otra herramienta financiera.</p>
+                </div>
+                <div class="finance-card negative">
+                    <span>Revenue en riesgo</span>
+                    <strong>${euro(cashData.revenueAtRisk)}</strong>
+                    <p>La señal de impago ya deja huella en forecast y en la secuencia de recuperación automática.</p>
+                </div>
+            `;
+
+            document.getElementById("cash-alerts").innerHTML = `
+                <li>${cashData.lowestWeek.label} es la semana más tensa y cerraría en ${euro(cashData.lowestWeek.balance)} si no se acelera regularización o cobro.</li>
+                <li>Las salidas fijas ya explican ${Math.round((cashData.salidasFijas / cashData.outflows) * 100)}% del total previsto; por eso la lectura de caja importa tanto como la de facturación.</li>
+                <li>La recuperación automática de impagos puede proteger hasta ${euro(cashData.regularizacionEsperada)} en el siguiente ciclo sin depender de seguimiento manual.</li>
+                <li>${cashData.tensionWeeks.length} de 4 semanas quedan por debajo del umbral de atención; esa es la conversación que interesa a un perfil CFO.</li>
+            `;
+
+            document.getElementById("cash-calendar-body").innerHTML = cashData.events.map((event) => `
+                <tr>
+                    <td>${formatShortDate(event.date)}</td>
+                    <td><span class="cash-flow ${event.flow}">${event.label}</span></td>
+                    <td>
+                        <strong>${event.concept}</strong>
+                        <div class="cash-note">${event.note}</div>
+                    </td>
+                    <td>${event.scope}</td>
+                    <td class="cash-amount">${formatCashAmount(event)}</td>
+                </tr>
+            `).join("");
+
             renderFinanceChart(datos);
-            renderSiteChart();
+            renderCashChart(cashData);
         }
 
         function renderFinanceChart(datos) {
@@ -4811,26 +5140,45 @@
             });
         }
 
-        function renderSiteChart() {
-            const ctx = document.getElementById("site-chart");
-            if (estado.charts.site) estado.charts.site.destroy();
-            const operativas = sedes.filter((sede) => sede.estado === "Operativa");
-            const arpu = calcFinance().arpu;
-            estado.charts.site = new Chart(ctx, {
-                type: "bar",
+        function renderCashChart(cashData) {
+            const ctx = document.getElementById("cash-chart");
+            if (estado.charts.cash) estado.charts.cash.destroy();
+            estado.charts.cash = new Chart(ctx, {
                 data: {
-                    labels: operativas.map((sede) => sede.nombre.replace("WiFit ", "")),
-                    datasets: [{
-                        label: "Facturación mensual estimada",
-                        data: operativas.map((sede) => Math.round(sede.miembros * arpu)),
-                        backgroundColor: ["#007f68", "#99b912", "#8cae11", "#6ea718", "#4f9455", "#7eb522", "#2f8b72"],
-                        borderRadius: 10
-                    }]
+                    labels: cashData.weeks.map((week) => week.label),
+                    datasets: [
+                        {
+                            type: "bar",
+                            label: "Balance proyectado",
+                            data: cashData.weeks.map((week) => week.balance),
+                            backgroundColor: cashData.weeks.map((week) => week.balance < cashData.tensionThreshold ? "rgba(197,121,28,0.78)" : "rgba(0,127,104,0.78)"),
+                            borderRadius: 12
+                        },
+                        {
+                            type: "line",
+                            label: "Umbral de atención",
+                            data: cashData.weeks.map(() => cashData.tensionThreshold),
+                            borderColor: "rgba(35,42,4,0.28)",
+                            borderDash: [7, 6],
+                            pointRadius: 0,
+                            tension: 0
+                        }
+                    ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    plugins: {
+                        legend: {
+                            position: "bottom",
+                            labels: { color: "#46512a", font: { family: "DM Sans" } }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => `${ctx.dataset.label}: ${euro(ctx.parsed.y || 0)}`
+                            }
+                        }
+                    },
                     scales: {
                         x: { grid: { display: false }, ticks: { color: "#46512a" } },
                         y: { grid: { color: "rgba(210,216,192,0.6)" }, ticks: { color: "#46512a", callback: (value) => euro(value) } }

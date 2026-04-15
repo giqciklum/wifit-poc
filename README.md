@@ -90,6 +90,8 @@ Si te bloqueas, haz exactamente esto:
 6. cambia a Google Sheet
 7. abre `automatizaciones`
 8. luego enseña `socios` y `pagos`
+9. si aparece un perfil financiero, vuelve a la demo y abre `Finanzas`
+10. enseña `Agenda de caja a 30 días`
 
 Frase clave:
 
@@ -147,6 +149,20 @@ Muestra:
 Di esto:
 
 `Y ahora os enseño que esto no es solo una pantalla bonita: la acción ha quedado registrada en una capa operativa real.`
+
+## Paso 7. Si entra conversación financiera, no improvises
+
+Vuelve a la pestaña `Finanzas` del front y enseña solo esto:
+
+- `Cobros esperados 30 días`
+- `Salidas previstas 30 días`
+- `Net cash proyectado`
+- `Revenue en riesgo`
+- `Agenda financiera próxima`
+
+Frase útil:
+
+`No estamos enseñando solo facturación; estamos enseñando visibilidad de caja futura, tensión de tesorería y efecto directo de cobros e impagos sobre el forecast operativo.`
 
 ## 6. Qué enseñar en Google Sheets
 
@@ -214,6 +230,19 @@ En la hoja:
 Mensaje útil:
 
 `El impago deja de descubrirse tarde y pasa a una secuencia visible de recuperación.`
+
+### Caso 4. Perfil CFO / caja
+
+En la demo:
+
+1. abre `Finanzas`
+2. enseña `Agenda de caja a 30 días`
+3. recorre `Balance semanal proyectado`
+4. termina en `Agenda financiera próxima`
+
+Mensaje útil:
+
+`La misma capa que activa al socio y gestiona impagos también permite anticipar caja, ver semanas tensas y priorizar recuperación antes de que el problema llegue al cierre.`
 
 ## 8. Qué cambia en vivo y qué no
 
