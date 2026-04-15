@@ -3968,7 +3968,8 @@
                     ["2", "Socio activado", "La membresía pasa a activa y el acceso queda habilitado."],
                     ["3", "Email de bienvenida", "Se dispara la comunicación con QR, horario y próximos pasos."],
                     ["4", "Entrenador IA asignado", "El socio queda listo para activar IA premium si aplica."],
-                    ["5", "Plan semana 1", "Se genera una primera propuesta de entrenamiento y seguimiento."]
+                    ["5", "Previsión de caja actualizada", "El ingreso confirmado refresca agenda financiera, forecast y próximos cobros esperados."],
+                    ["6", "Plan semana 1", "Se genera una primera propuesta de entrenamiento y seguimiento."]
                 ]
             },
             lead: {
@@ -3991,8 +3992,9 @@
                     ["1", "Impago detectado", "El sistema marca al socio y registra el evento."],
                     ["2", "Aviso al socio", "Se envía comunicación con recordatorio y siguiente paso."],
                     ["3", "Tarea para gestor", "Se crea seguimiento para recuperar el método de pago."],
-                    ["4", "Oferta recuperación", "Puede lanzarse incentivo o ayuda si aplica."],
-                    ["5", "Actualización cobro", "Se regulariza el método o se cierra la incidencia."]
+                    ["4", "Ingreso movido a riesgo", "La agenda financiera saca la cuota del bloque esperado y la mueve a ingresos en riesgo."],
+                    ["5", "Forecast de caja ajustado", "La previsión a 30 días se recalcula para enseñar impacto financiero inmediato."],
+                    ["6", "Actualización cobro", "Se regulariza el método o se cierra la incidencia."]
                 ]
             }
         };
@@ -4002,7 +4004,7 @@
                 etiqueta: "Cobro confirmado",
                 titular: "Una cuota mensual activa la experiencia completa",
                 detalle: "La activación puede llegar desde la pasarela de pago, TPV o una actualización en la hoja operativa.",
-                metas: ["Acceso habilitado", "Email de bienvenida", "Semana 1 generada"]
+                metas: ["Acceso habilitado", "Email de bienvenida", "Forecast ajustado"]
             },
             lead: {
                 etiqueta: "Lead nuevo",
@@ -4014,11 +4016,12 @@
                 etiqueta: "Pago fallido",
                 titular: "El impago entra en recuperación antes de perder al socio",
                 detalle: "La incidencia se detecta, se comunica y se convierte en una secuencia trazable para retención.",
-                metas: ["Aviso inmediato", "Tarea al equipo", "Recuperación guiada"]
+                metas: ["Aviso inmediato", "Ingreso en riesgo", "Forecast ajustado"]
             }
         };
 
         const logsIniciales = [
+            { tipo: "Finanzas", titulo: "Hoy 09:16 · Previsión de caja actualizada", texto: "La agenda financiera consolida próximos cobros, ingresos en riesgo y caja neta prevista a 30 días." },
             { tipo: "Cobros", titulo: "Hoy 09:14 · Laura Sánchez -> activación completa", texto: "Pago confirmado, socio activo, email enviado y plan de semana 1 preparado." },
             { tipo: "Leads", titulo: "Hoy 08:45 · Pablo Ruiz (web) -> score 78", texto: "Prueba gratis enviada y clase sugerida en Chamberí." },
             { tipo: "Retención", titulo: "Ayer 17:30 · Carlos Fernández -> recuperación abierta", texto: "Aviso enviado, tarea creada y seguimiento marcado para hoy." },
@@ -4204,6 +4207,54 @@
             if (evento.flow === "outflow") return signedEuro(-evento.amount);
             if (evento.flow === "risk") return `En riesgo · ${euro(evento.amount)}`;
             return signedEuro(evento.amount);
+        }
+
+        function getFinanceAutomationEvidence() {
+            if (estado.automationStep < 0) return null;
+            const evidence = {
+                activation: {
+                    alerts: [
+                        "El último cobro confirmado ya ha consolidado una entrada en agenda y ha refrescado la previsión de caja."
+                    ],
+                    events: [
+                        {
+                            offset: 0,
+                            flow: "inflow",
+                            label: "Entrada",
+                            concept: "Previsión de caja actualizada tras cobro confirmado",
+                            scope: "Retiro · activación premium",
+                            amount: 42,
+                            note: "El cobro queda conciliado, la factura sale emitida y la agenda financiera se ajusta en el mismo flujo."
+                        }
+                    ]
+                },
+                retention: {
+                    alerts: [
+                        "Un ingreso acaba de moverse a riesgo y el forecast de caja ya refleja la incidencia abierta."
+                    ],
+                    events: [
+                        {
+                            offset: 0,
+                            flow: "risk",
+                            label: "En riesgo",
+                            concept: "Ingreso movido a riesgo en agenda financiera",
+                            scope: "Humanes · recuperación abierta",
+                            amount: 42,
+                            note: "La cuota deja de contar como entrada prevista hasta regularización del método de pago."
+                        },
+                        {
+                            offset: 1,
+                            flow: "risk",
+                            label: "En riesgo",
+                            concept: "Forecast de caja ajustado automáticamente",
+                            scope: "Cadena · cobros y retención",
+                            amount: 42,
+                            note: "La previsión de tesorería se recalcula para que dirección vea el impacto sin esperar al cierre."
+                        }
+                    ]
+                }
+            };
+            return evidence[estado.automationActive] || null;
         }
 
         function initChats() {
@@ -4510,6 +4561,7 @@
                 const timer = setTimeout(() => {
                     estado.automationStep = index;
                     renderAutomationFlows();
+                    if (estado.gestionTab === "finanzas") renderFinanzasTab();
                 }, index * 420);
                 estado.automationTimers.push(timer);
             });
@@ -4534,8 +4586,30 @@
                 };
                 estado.logs = [nuevos[tipo], ...estado.logs].slice(0, 6);
                 renderAutomationLog();
+                if (estado.gestionTab === "finanzas") renderFinanzasTab();
             }, steps.length * 420 + 120);
             estado.automationTimers.push(logTimer);
+
+            const financialLogs = {
+                activation: {
+                    tipo: "Finanzas",
+                    titulo: "Ahora mismo · Previsión de caja actualizada",
+                    texto: "El cobro confirmado entra en agenda financiera, refuerza próximos ingresos esperados y ajusta la caja neta a 30 días."
+                },
+                retention: {
+                    tipo: "Finanzas",
+                    titulo: "Ahora mismo · Ingreso movido a riesgo",
+                    texto: "La cuota deja de contar como cobro esperado, pasa a ingresos en riesgo y el forecast de caja se recalcula automáticamente."
+                }
+            };
+            if (financialLogs[tipo]) {
+                const financeLogTimer = setTimeout(() => {
+                    estado.logs = [financialLogs[tipo], ...estado.logs].slice(0, 6);
+                    renderAutomationLog();
+                    if (estado.gestionTab === "finanzas") renderFinanzasTab();
+                }, steps.length * 420 + 340);
+                estado.automationTimers.push(financeLogTimer);
+            }
         }
 
         function renderAutomationSignals() {
@@ -4810,7 +4884,7 @@
             const impuestos = 46000;
             const conversiones = 11800 + (estado.finanzas.adopcionPremium * 210);
 
-            const events = [
+            const baseEvents = [
                 {
                     offset: 2,
                     flow: "inflow",
@@ -4919,7 +4993,10 @@
                     amount: Math.round(datos.mrrBase * 0.26),
                     note: "Cierre del ciclo con visibilidad de entrada comprometida."
                 }
-            ].map((event) => ({
+            ];
+
+            const evidence = getFinanceAutomationEvidence();
+            const events = [...(evidence ? evidence.events : []), ...baseEvents].map((event) => ({
                 ...event,
                 date: new Date(baseDate.getTime() + (event.offset * 86400000))
             }));
@@ -4970,7 +5047,8 @@
                 tensionThreshold,
                 tensionWeeks,
                 lowestWeek,
-                salidasFijas
+                salidasFijas,
+                evidence
             };
         }
 
@@ -5058,6 +5136,7 @@
             `;
 
             document.getElementById("cash-alerts").innerHTML = `
+                ${cashData.evidence ? cashData.evidence.alerts.map((item) => `<li>${item}</li>`).join("") : ""}
                 <li>${cashData.lowestWeek.label} es la semana más tensa y cerraría en ${euro(cashData.lowestWeek.balance)} si no se acelera regularización o cobro.</li>
                 <li>Las salidas fijas ya explican ${Math.round((cashData.salidasFijas / cashData.outflows) * 100)}% del total previsto; por eso la lectura de caja importa tanto como la de facturación.</li>
                 <li>La recuperación automática de impagos puede proteger hasta ${euro(cashData.regularizacionEsperada)} en el siguiente ciclo sin depender de seguimiento manual.</li>

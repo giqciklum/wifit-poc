@@ -160,6 +160,12 @@ Vuelve a la pestaña `Finanzas` del front y enseña solo esto:
 - `Revenue en riesgo`
 - `Agenda financiera próxima`
 
+Si vienes justo de lanzar `Activación premium` o `Recuperación de impago`, señala además:
+
+- `Previsión de caja actualizada`
+- `Ingreso movido a riesgo` cuando aplique
+- `Forecast de caja ajustado` dentro de la cronología
+
 Frase útil:
 
 `No estamos enseñando solo facturación; estamos enseñando visibilidad de caja futura, tensión de tesorería y efecto directo de cobros e impagos sobre el forecast operativo.`

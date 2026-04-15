@@ -392,12 +392,34 @@
                                 "Seguimiento nutricional alineado con ganancia de masa"
                             ]
                         }
+                    },
+                    {
+                        id: "cash-forecast",
+                        kind: "Forecast",
+                        title: "Previsión de caja actualizada",
+                        summary: "El cobro confirmado entra en agenda financiera y ajusta la lectura de caja prevista a 30 días.",
+                        meta: ["30 días", "Cobro conciliado", "Forecast"],
+                        detail: {
+                            title: "Agenda financiera actualizada",
+                            subtitle: "Origen: cobro confirmado / lectura CFO",
+                            paragraphs: [
+                                "La misma señal que activa al socio consolida el ingreso dentro de la agenda financiera.",
+                                "Así la dirección puede ver cobros esperados, salidas previstas y caja neta sin separar operación y finanzas.",
+                                "La demo no enseña solo una factura: enseña cómo ese cobro mueve forecast y previsión de caja."
+                            ],
+                            bullets: [
+                                "Próximos ingresos esperados refrescados",
+                                "Caja neta prevista ajustada",
+                                "Trazabilidad financiera visible en el mismo flujo"
+                            ]
+                        }
                     }
                 ],
                 events: [
                     { time: "07:45", title: "Cobro confirmado", detail: "La pasarela valida el pago mensual y actualiza el estado del socio." },
                     { time: "07:45", title: "Servicio activado", detail: "La cuenta premium queda habilitada sin esperar gestión manual." },
                     { time: "07:46", title: "Bienvenida enviada", detail: "Se genera email de activación con QR, siguiente paso y recomendaciones." },
+                    { time: "07:46", title: "Previsión de caja actualizada", detail: "El ingreso confirmado entra en agenda financiera y refresca el forecast de caja a 30 días." },
                     { time: "07:46", title: "Plan IA preparado", detail: "WiFit IA construye la primera semana y propone una clase en Retiro." }
                 ]
             },
@@ -603,12 +625,35 @@
                                 "Siguiente acción: llamada y confirmación"
                             ]
                         }
+                    },
+                    {
+                        id: "cash-risk",
+                        kind: "Forecast",
+                        title: "Ingreso movido a riesgo",
+                        summary: "La incidencia sale del bloque de cobros esperados y ajusta el forecast de caja hasta regularización.",
+                        meta: ["Ingreso en riesgo", "Caja 30 días", "Retención"],
+                        detail: {
+                            title: "Forecast de caja ajustado",
+                            subtitle: "Origen: impago / agenda financiera",
+                            paragraphs: [
+                                "El impago no solo abre una tarea: también mueve ese ingreso a la banda de riesgo dentro de la agenda financiera.",
+                                "De este modo la previsión de tesorería se recalcula en el momento y no al final del mes.",
+                                "La historia para dirección es clara: el problema se detecta, se comunica y además modifica el forecast operativo."
+                            ],
+                            bullets: [
+                                "Ingreso esperado movido a riesgo",
+                                "Forecast de caja refrescado automáticamente",
+                                "Secuencia de recuperación ya preparada"
+                            ]
+                        }
                     }
                 ],
                 events: [
                     { time: "09:16", title: "Impago detectado", detail: "La conciliación marca incidencia y actualiza el estado del socio." },
                     { time: "09:17", title: "Aviso enviado", detail: "Se dispara la comunicación con enlace de regularización y contexto claro." },
                     { time: "09:17", title: "Tarea creada", detail: "La sede recibe seguimiento prioritario para recuperar el método de pago." },
+                    { time: "09:18", title: "Ingreso movido a riesgo", detail: "La cuota deja de contar como cobro esperado y pasa a ingresos en riesgo en la agenda financiera." },
+                    { time: "09:18", title: "Forecast de caja ajustado", detail: "La previsión a 30 días se recalcula al instante para enseñar impacto financiero real." },
                     { time: "09:18", title: "Acción de retención preparada", detail: "El caso queda listo para resolver sin romper la experiencia del socio." }
                 ]
             }
