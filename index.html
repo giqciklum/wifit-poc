@@ -4183,6 +4183,7 @@
             automationStep: -1,
             automationTimers: [],
             logs: [...logsIniciales],
+            finanzasAgenda: [],
             finanzas: {
                 sedesObjetivo: 10,
                 adopcionPremium: 12,
@@ -4255,6 +4256,57 @@
                 }
             };
             return evidence[estado.automationActive] || null;
+        }
+
+        function parseAgendaDate(value) {
+            if (!value) return null;
+            if (value instanceof Date && !Number.isNaN(value.getTime())) return value;
+
+            const raw = String(value).trim();
+            if (!raw) return null;
+
+            const direct = new Date(raw);
+            if (!Number.isNaN(direct.getTime())) return direct;
+
+            const match = raw.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+            if (!match) return null;
+
+            const day = Number(match[1]);
+            const month = Number(match[2]) - 1;
+            const year = Number(match[3].length === 2 ? `20${match[3]}` : match[3]);
+            const parsed = new Date(year, month, day);
+            return Number.isNaN(parsed.getTime()) ? null : parsed;
+        }
+
+        function normalizeAgendaEvent(rawEvent, index, baseDate) {
+            if (!rawEvent || typeof rawEvent !== "object") return null;
+
+            const rawFlow = String(rawEvent.flow || rawEvent.tipo || rawEvent.movimiento || rawEvent.kind || rawEvent.category || rawEvent.sentido || "").trim().toLowerCase();
+            let flow = rawFlow;
+            if (!flow) {
+                const signedAmount = Number(rawEvent.amount || rawEvent.importe || rawEvent.valor || 0);
+                flow = signedAmount < 0 ? "outflow" : "inflow";
+            }
+            if (flow.includes("riesgo") || flow.includes("risk")) flow = "risk";
+            if (flow.includes("salida") || flow.includes("out") || flow.includes("gasto") || flow.includes("expense") || flow.includes("pago")) flow = "outflow";
+            if (flow.includes("entrada") || flow.includes("in") || flow.includes("ingreso") || flow.includes("revenue") || flow.includes("cobro")) flow = "inflow";
+
+            const amount = Number(rawEvent.amount || rawEvent.importe || rawEvent.valor || 0);
+            const parsedDate = parseAgendaDate(rawEvent.date || rawEvent.fecha || rawEvent.fecha_evento || rawEvent.fecha_prevista || rawEvent.dia);
+            const offset = Number(rawEvent.offset || rawEvent.dias || rawEvent.day_offset || (index + 1));
+            const eventDate = parsedDate || new Date(baseDate.getTime() + (offset * 86400000));
+            const safeOffset = Math.max(0, Math.round((eventDate.getTime() - baseDate.getTime()) / 86400000));
+
+            return {
+                offset: safeOffset,
+                flow: ["inflow", "outflow", "risk"].includes(flow) ? flow : "inflow",
+                label: rawEvent.label || rawEvent.etiqueta || (flow === "outflow" ? "Salida" : flow === "risk" ? "En riesgo" : "Entrada"),
+                concept: rawEvent.concept || rawEvent.concepto || rawEvent.evento || rawEvent.titulo || rawEvent.detalle || `Evento ${index + 1}`,
+                scope: rawEvent.scope || rawEvent.ambito || rawEvent.sede || rawEvent.centro || rawEvent.area || rawEvent.tipo_gasto || "Cadena",
+                amount: Math.abs(amount),
+                note: rawEvent.note || rawEvent.nota || rawEvent.observaciones || rawEvent.estado || "",
+                date: eventDate
+            };
         }
 
         function initChats() {
@@ -4865,15 +4917,15 @@
         }
 
         function calcCashForecast(datos) {
-            const sedesOperativas = sedes.filter((sede) => sede.estado === "Operativa");
             const baseDate = new Date();
             baseDate.setHours(0, 0, 0, 0);
+            const sedesOperativas = sedes.filter((sede) => sede.estado === "Operativa");
 
             const clubs = sedesOperativas.length;
             const impagosMuestra = sociosGestion.filter((fila) => String(fila[7] || "").toLowerCase().includes("impago")).length;
             const ratioImpago = impagosMuestra / Math.max(sociosGestion.length, 1);
-            const revenueAtRisk = Math.round(datos.mrrBase * Math.min(ratioImpago, 0.08) * 0.7);
-            const regularizacionEsperada = Math.round(revenueAtRisk * 0.42);
+            const fallbackRevenueAtRisk = Math.round(datos.mrrBase * Math.min(ratioImpago, 0.08) * 0.7);
+            const agendaRows = Array.isArray(estado.finanzasAgenda) ? estado.finanzasAgenda : [];
 
             const openingCash = 165000;
             const alquileres = clubs * 12150;
@@ -4996,17 +5048,31 @@
             ];
 
             const evidence = getFinanceAutomationEvidence();
-            const events = [...(evidence ? evidence.events : []), ...baseEvents].map((event) => ({
+            const normalizedAgenda = agendaRows
+                .map((row, index) => normalizeAgendaEvent(row, index, baseDate))
+                .filter(Boolean)
+                .sort((a, b) => a.date - b.date);
+
+            const sourceEvents = normalizedAgenda.length ? normalizedAgenda : baseEvents.map((event) => ({
                 ...event,
                 date: new Date(baseDate.getTime() + (event.offset * 86400000))
             }));
 
+            const events = [...(evidence ? evidence.events.map((event) => ({
+                ...event,
+                date: new Date(baseDate.getTime() + (event.offset * 86400000))
+            })) : []), ...sourceEvents];
+
             let inflows = 0;
             let outflows = 0;
+            let revenueAtRisk = 0;
             events.forEach((event) => {
                 if (event.flow === "inflow") inflows += event.amount;
                 if (event.flow === "outflow") outflows += event.amount;
+                if (event.flow === "risk") revenueAtRisk += event.amount;
             });
+            if (!revenueAtRisk) revenueAtRisk = fallbackRevenueAtRisk;
+            const regularizacionEsperada = Math.round(revenueAtRisk * 0.42);
 
             const weekRanges = [
                 { label: "Sem 1", start: 1, end: 7 },
@@ -5032,7 +5098,7 @@
             const tensionThreshold = 135000;
             const tensionWeeks = weeks.filter((week) => week.balance < tensionThreshold);
             const lowestWeek = weeks.reduce((lowest, week) => week.balance < lowest.balance ? week : lowest, weeks[0]);
-            const salidasFijas = alquileres + nominas + suministros + leasing + impuestos;
+            const salidasFijas = normalizedAgenda.length ? outflows : (alquileres + nominas + suministros + leasing + impuestos);
 
             return {
                 events,
@@ -5048,7 +5114,8 @@
                 tensionWeeks,
                 lowestWeek,
                 salidasFijas,
-                evidence
+                evidence,
+                source: normalizedAgenda.length ? "sheet" : "local"
             };
         }
 
@@ -5136,6 +5203,7 @@
             `;
 
             document.getElementById("cash-alerts").innerHTML = `
+                <li>${cashData.source === "sheet" ? "La agenda financiera ya está leyendo eventos reales desde la hoja operativa y usa esa base para la previsión." : "La agenda financiera usa ahora la base demo del PoC y puede conectarse a la hoja operativa sin cambiar el front."}</li>
                 ${cashData.evidence ? cashData.evidence.alerts.map((item) => `<li>${item}</li>`).join("") : ""}
                 <li>${cashData.lowestWeek.label} es la semana más tensa y cerraría en ${euro(cashData.lowestWeek.balance)} si no se acelera regularización o cobro.</li>
                 <li>Las salidas fijas ya explican ${Math.round((cashData.salidasFijas / cashData.outflows) * 100)}% del total previsto; por eso la lectura de caja importa tanto como la de facturación.</li>

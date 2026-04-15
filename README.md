@@ -182,6 +182,8 @@ Las importantes son:
 - `automatizaciones`
 - `tareas`
 
+Si existe una pestaña nueva tipo `Agenda financiera`, `Financial Calendar` o `Cash Forecast`, el repo ya queda preparado para leerla como fuente del bloque financiero cuando el Apps Script la exponga en el snapshot.
+
 Regla de oro:
 
 Si te pierdes, abre siempre `automatizaciones`.

@@ -158,6 +158,66 @@
         return normalized.length ? normalized.slice(0, 6) : null;
     }
 
+    function parseFinanceNumber(value) {
+        if (typeof value === "number") return value;
+        const raw = String(value == null ? "" : value).trim();
+        if (!raw) return 0;
+        const normalized = raw
+            .replace(/EUR|€/gi, "")
+            .replace(/\s/g, "")
+            .replace(/\.(?=\d{3}(?:\D|$))/g, "")
+            .replace(",", ".");
+        const parsed = Number(normalized);
+        return Number.isFinite(parsed) ? parsed : 0;
+    }
+
+    function normalizeObjectKeys(row) {
+        const normalized = {};
+        Object.keys(row || {}).forEach((key) => {
+            const nextKey = String(key)
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, "_")
+                .replace(/^_+|_+$/g, "");
+            normalized[nextKey] = row[key];
+        });
+        return normalized;
+    }
+
+    function normalizeFinanceFlow(value, amount) {
+        const raw = String(value == null ? "" : value).trim().toLowerCase();
+        if (raw.includes("riesgo") || raw.includes("risk")) return "risk";
+        if (raw.includes("salida") || raw.includes("out") || raw.includes("gasto") || raw.includes("expense") || raw.includes("pago")) return "outflow";
+        if (raw.includes("entrada") || raw.includes("in") || raw.includes("ingreso") || raw.includes("revenue") || raw.includes("cobro")) return "inflow";
+        return amount < 0 ? "outflow" : "inflow";
+    }
+
+    function normalizeFinanceRows(rows) {
+        if (!Array.isArray(rows)) return null;
+        const normalized = rows.map((row, index) => {
+            if (!row || typeof row !== "object") return null;
+            const normalizedRow = normalizeObjectKeys(row);
+            const amount = parseFinanceNumber(
+                normalizedRow.amount || normalizedRow.importe || normalizedRow.valor || normalizedRow.euros || normalizedRow.expected_amount || normalizedRow.monto
+            );
+            const flow = normalizeFinanceFlow(
+                normalizedRow.flow || normalizedRow.tipo || normalizedRow.movimiento || normalizedRow.kind || normalizedRow.category || normalizedRow.sentido || normalizedRow.estado,
+                amount
+            );
+            return {
+                date: normalizedRow.date || normalizedRow.fecha || normalizedRow.fecha_evento || normalizedRow.fecha_prevista || normalizedRow.dia || "",
+                flow: flow,
+                label: normalizedRow.label || normalizedRow.etiqueta || (flow === "outflow" ? "Salida" : flow === "risk" ? "En riesgo" : "Entrada"),
+                concept: normalizedRow.concept || normalizedRow.concepto || normalizedRow.evento || normalizedRow.titulo || normalizedRow.detalle || normalizedRow.descripcion || `Evento ${index + 1}`,
+                scope: normalizedRow.scope || normalizedRow.ambito || normalizedRow.sede || normalizedRow.centro || normalizedRow.area || normalizedRow.tipo_gasto || normalizedRow.categoria || "Cadena",
+                amount: Math.abs(amount),
+                note: normalizedRow.note || normalizedRow.nota || normalizedRow.observaciones || normalizedRow.estado || ""
+            };
+        }).filter(Boolean);
+        return normalized.length ? normalized : null;
+    }
+
     function extractBackendSnapshot(data) {
         const raw = data && (data.snapshot || data.snapshots || data.data || data.hojas || data.detalle);
         if (!raw || typeof raw !== "object") return null;
@@ -165,10 +225,18 @@
         const socios = normalizeSocioRows(raw.socios || raw.members || raw.clientes);
         const liveLeads = normalizeLeadRows(raw.leads || raw.oportunidades);
         const logs = normalizeLogRows(raw.logs || raw.automatizaciones || raw.eventos);
+        const finanzas = normalizeFinanceRows(
+            raw.finanzas ||
+            raw.finance ||
+            raw.cash_forecast ||
+            raw.financial_calendar ||
+            raw.agenda_financiera
+        );
 
         if (socios) snapshot.socios = socios;
         if (liveLeads) snapshot.leads = liveLeads;
         if (logs) snapshot.logs = logs;
+        if (finanzas) snapshot.finanzas = finanzas;
 
         return Object.keys(snapshot).length ? snapshot : null;
     }
@@ -189,6 +257,11 @@
 
         if (snapshot.logs) {
             estado.logs = deepClone(snapshot.logs);
+            changed = true;
+        }
+
+        if (snapshot.finanzas && Array.isArray(estado.finanzasAgenda)) {
+            estado.finanzasAgenda = deepClone(snapshot.finanzas);
             changed = true;
         }
 
@@ -666,7 +739,8 @@
         operaciones: deepClone(operaciones),
         logs: deepClone(logsIniciales),
         chats: deepClone(estado.chats),
-        finanzas: deepClone(estado.finanzas)
+        finanzas: deepClone(estado.finanzas),
+        finanzasAgenda: deepClone(estado.finanzasAgenda || [])
     };
 
     const runtime = {
@@ -715,6 +789,7 @@
         estado.logs = deepClone(baseline.logs);
         replaceObject(estado.chats, baseline.chats);
         estado.finanzas = deepClone(baseline.finanzas);
+        estado.finanzasAgenda = deepClone(baseline.finanzasAgenda);
         runtime.artifacts = [];
         runtime.events = [];
         runtime.memberSync = null;

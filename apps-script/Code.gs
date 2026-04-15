@@ -183,6 +183,27 @@ function getNextSequentialId(sheet, prefix, columnIndex) {
   return prefix + Utilities.formatString("%03d", maxId + 1);
 }
 
+function findSheetByNames(ss, names) {
+  for (var i = 0; i < names.length; i++) {
+    var sheet = ss.getSheetByName(names[i]);
+    if (sheet) return sheet;
+  }
+
+  var normalizedTargets = names.map(function(name) {
+    return String(name).toLowerCase().replace(/[^a-z0-9]/g, "");
+  });
+
+  var sheets = ss.getSheets();
+  for (var j = 0; j < sheets.length; j++) {
+    var normalizedName = sheets[j].getName().toLowerCase().replace(/[^a-z0-9]/g, "");
+    if (normalizedTargets.indexOf(normalizedName) !== -1) {
+      return sheets[j];
+    }
+  }
+
+  return null;
+}
+
 /* ---------- SHARED: handleTrigger ---------- */
 function handleTrigger(action, params, ss) {
   var lock = LockService.getDocumentLock();
@@ -313,6 +334,17 @@ function doGet(e) {
     var socios = ss.getSheetByName("socios");
     var leadsSheet = ss.getSheetByName("leads");
     var autos = ss.getSheetByName("automatizaciones");
+    var financeSheet = findSheetByNames(ss, [
+      "agenda_financiera",
+      "Agenda financiera",
+      "financial_calendar",
+      "Financial Calendar",
+      "cash_forecast",
+      "Cash Forecast",
+      "cash forecast",
+      "cashflow",
+      "cash_flow"
+    ]);
 
     var sociosData = socios.getDataRange().getValues();
     var totalSocios = sociosData.length - 1;
@@ -347,6 +379,10 @@ function doGet(e) {
         leads: sheetToObjects(leadsSheet, ["id_lead","canal","nombre","email","telefono","sede_interes","score","estado","siguiente_accion"]),
         logs: sheetToObjects(autos, ["id_evento","trigger","entidad","detalle","estado","hora_inicio","hora_fin","resultado"])
       };
+
+      if (financeSheet && financeSheet.getLastRow() >= 2) {
+        result.snapshot.finanzas = sheetToObjects(financeSheet);
+      }
     }
 
     return ContentService.createTextOutput(JSON.stringify(result, null, 2))
