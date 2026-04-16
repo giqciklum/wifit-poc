@@ -1,5 +1,5 @@
 /* ==========================================================
-   WiFit PoC · Service Worker v2
+   WiFit Demo · Service Worker v3
    ==========================================================
    Estrategia:
    - HTML, JS, CSS, manifest: network-first (fallback cache).
@@ -11,14 +11,18 @@
    - Peticiones no http(s) y cross-origin sin regla: se dejan pasar.
    ========================================================== */
 
-const CACHE_VERSION = "wifit-poc-v2";
+const CACHE_VERSION = "wifit-poc-v3";
 const APP_SHELL = [
     "./",
     "./index.html",
     "./manifest.webmanifest",
+    "./assets/chart.umd.min.js",
     "./assets/demo-runtime.js",
     "./assets/icon.svg",
-    "./assets/wifit-logo-menu.png"
+    "./assets/wifit-logo-menu.png",
+    "./assets/wifit-retiro-hero.jpg",
+    "./assets/wifit-member-journey.jpg",
+    "./assets/wifit-chamberi-hero.jpg"
 ];
 
 const BACKEND_HOST = "script.google.com";

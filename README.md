@@ -129,7 +129,7 @@ https://giqciklum.github.io/wifit-poc/?mode=present
 ```
 
 Verifica:
-- **Badge superior derecho** dice "Backend en vivo · v2" en verde. Si tras 10 segundos sigue en "Modo demo local", la wifi está bloqueando `script.google.com` — cambia a 4G del móvil.
+- **Badge superior derecho** dice "Backend en vivo · v2" en verde. Si tras 15 segundos sigue en "Modo demo local", la wifi está bloqueando `script.google.com` — cambia a 4G del móvil.
 - **Marca de agua** abajo a la derecha: "Modo presentación · WiFit × Ciklum".
 - **Botón "Reiniciar"** arriba está oculto (protege contra clics accidentales).
 - **Gráficos** (Cash In, Revenue at Risk, funnel de leads) cargan con números, no con cuadrículas vacías.
@@ -237,7 +237,7 @@ Cambia a la Google Sheet y enseña, en este orden:
 
 > *"En 5 segundos: 4 sistemas actualizados simultáneamente. Esto es lo que os va a doler cuando paséis de 7 a 10 sedes: duplicar datos en 4 herramientas se vuelve inviable."*
 
-**Segundo escenario opcional si hay tiempo**: **Recuperación de impago**.
+**Segundo escenario opcional si hay tiempo**: **Detección de impago**.
 
 > *"Caso inverso. Carlos lleva 30 días sin pagar. El sistema lo detecta, envía aviso, crea tarea para el gestor de sede, y mueve el ingreso a riesgo en la agenda financiera. Cuando se regulariza, pasa a confirmado y se añade el siguiente ciclo como esperado. El CFO ve en tiempo real el impacto de cada acción operativa."*
 
@@ -265,7 +265,7 @@ Párate. Baja el ritmo.
 >
 > *Lo que necesitamos para arrancar:*
 > 1. *Punto de contacto técnico por vuestra parte (pagos, CRM actual).*
-> 2. *Elegir sede piloto — sugerimos WiFit Retiro por tamaño.*
+> 2. *Elegir sede piloto con criterio conjunto: sponsor interno claro, dato limpio y dolor operativo recuperable. Retiro es una buena candidata, pero no la única por defecto.*
 > 3. *KPI de éxito del piloto firmado antes de empezar."*
 
 Si preguntan "¿y vosotros quiénes sois?":
@@ -283,7 +283,7 @@ Si preguntan "¿y vosotros quiénes sois?":
 | Qué no es esto | 2 | 21 |
 | Cierre y siguiente paso | 4 | 25 |
 
-Si te pasas: corta primero **Mercado** y **Ruta** del Bloque 3. Si te sobran 5 minutos: añade el escenario de **Recuperación de impago** en el Bloque 4.
+Si te pasas: corta primero **Mercado** y **Ruta** del Bloque 3. Si te sobran 5 minutos: añade el escenario de **Detección de impago** en el Bloque 4.
 
 ---
 
@@ -293,6 +293,9 @@ Si te pasas: corta primero **Mercado** y **Ruta** del Bloque 3. Si te sobran 5 m
 
 **"¿Esto no lo podemos hacer con Zapier o Make?"**
 > *"Los flujos simples, sí. La agenda financiera viva, el scoring consistente y la capa de dirección, no. Zapier es fontanería; esto es arquitectura."*
+
+**"Ya tenemos un CRM y automatizaciones por 200 €/mes"**
+> *"Perfecto. Y esa es la razón por la que no os vendemos un CRM. Lo que no tenéis por 200 € es la capa que une CRM, cobros, tareas operativas y agenda financiera en una lectura ejecutiva consolidada. Si seguís con vuestro CRM actual, nos lo traemos al piloto y lo conectamos en la semana 1."*
 
 **"¿Por qué no usamos directamente SIGEGym?"**
 > *"Podéis. SIGEGym es excelente para facilities. Esto es complementario — podemos integrarnos con SIGEGym si lo adoptáis. Lo que nosotros hacemos es el lado experiencia + IA + dirección financiera, que SIGEGym no resuelve."*
@@ -304,7 +307,7 @@ Si te pasas: corta primero **Mercado** y **Ruta** del Bloque 3. Si te sobran 5 m
 > *"La demo que veis va contra Google Sheets porque es una demo. El piloto real usa vuestra infraestructura o cloud europeo regulado. GDPR compliance se audita en semana 1 del piloto."*
 
 **"¿Plazos?"**
-> *"Piloto 6-8 semanas desde firma. Rollout completo a 7 + 10 sedes, 4-6 meses más. Lo relevante es que el piloto empieza a dar valor desde la semana 3, no al final."*
+> *"Piloto 6-8 semanas desde firma. Despliegue al mapa actual de 7 sedes y expansión hacia 10, 4-6 meses más. Lo relevante es que el piloto empieza a dar valor desde la semana 3, no al final."*
 
 **"¿Y si el PE no lo aprueba?"**
 > *"Preparamos un one-pager orientado al fondo, centrado en Revenue at Risk y eficiencia operativa por sede. Son las dos métricas que mueven el comité."*
@@ -402,7 +405,7 @@ Limpieza:
 ## 8. Si piden arrancar piloto en la propia reunión
 
 - **No firmes nada verbal.** Di: *"Perfecto — mañana os mandamos propuesta formal con alcance, hitos, rango y condiciones, y la cerramos esta semana."*
-- **Pide**: punto de contacto técnico (email), sede piloto (sugerida Retiro), fecha objetivo de kickoff.
+- **Pide**: punto de contacto técnico (email), criterio de sede piloto (sponsor + dato limpio + dolor operativo), fecha objetivo de kickoff.
 - **Cierra**: *"¿Os va que enviemos propuesta formal el [día X] y cerramos llamada de 30 min el [día Y] para resolver dudas?"*
 
 ---
@@ -471,19 +474,19 @@ Demuestra: captación conectada, siguiente mejor acción, lectura comercial más
 Frase útil:
 > *"El lead deja de ser una fila muerta y pasa a una secuencia con contexto y próxima acción."*
 
-### 10.3. Recuperación de impago
+### 10.3. Impago detectado y regularización
 
-1. Lanza "Recuperación de impago".
+1. Lanza "Detección de impago".
 2. Enseña eventos, retención y evidencias.
 3. Abre `automatizaciones` y `tareas`.
 4. Muestra `agenda_financiera`: fila movida a `riesgo`.
 5. Lanza regularización (`?action=regularize&socio_id=S003`).
 6. Muestra: fila vuelve a `confirmado` y se añade el siguiente ciclo como `esperado`.
 
-Demuestra: detección de incidencia, secuencia de recuperación, impacto operativo inmediato, efecto sobre forecast.
+Demuestra: detección de incidencia, secuencia de seguimiento, impacto operativo inmediato y efecto sobre forecast, con regularización disponible cuando quieras cerrar el caso.
 
 Frase útil:
-> *"El impago deja de descubrirse tarde y pasa a una secuencia visible de recuperación, con efecto inmediato en la caja prevista."*
+> *"El impago deja de descubrirse tarde y pasa a una secuencia visible de detección y seguimiento, con efecto inmediato en la caja prevista."*
 
 ### 10.4. Perfil CFO / dirección financiera
 
@@ -587,7 +590,7 @@ Cómo explicarlo:
 - Edición manual de filas en reunión.
 
 Frase correcta:
-> *"El PoC ya tiene lectura y escritura real sobre una capa operativa viva. No hace falta entrar en la implementación para entender el valor."*
+> *"La demo ya tiene lectura y escritura real sobre una capa operativa viva. No hace falta entrar en la implementación para entender el valor."*
 
 ---
 
@@ -640,7 +643,7 @@ Endpoints principales:
 | `?action=reset` | restaura dataset inicial |
 | `?action=activation` | simula activación premium |
 | `?action=lead` | crea lead de prueba |
-| `?action=retention` | simula impago y secuencia de recuperación |
+| `?action=retention` | detecta impago, crea seguimiento y mueve el ingreso a riesgo |
 | `?action=regularize&socio_id=...` | regulariza un impago |
 
 Polling del frontend: cada 12 segundos.

@@ -1,8 +1,17 @@
 (() => {
     const STORAGE_KEY = "wifit_runtime_v1";
     const BACKEND_URL = "https://script.google.com/macros/s/AKfycbwmmgY9mg4p8o6lVboAelyR2P0WtnMYo7kDJWWLpvzHy6B2kuiatZSr1qguU2jGDLwnWg/exec";
-    const BACKEND_TIMEOUT = 8000;
+    const BACKEND_TIMEOUT = 10000;
+    const BACKEND_FULL_TIMEOUT = 15000;
+    const BACKEND_MAX_FAILURES = 2;
     const BACKEND_POLL_INTERVAL = 12000;
+    const IS_PRESENT_MODE = (() => {
+        try {
+            return new URLSearchParams(window.location.search).get("mode") === "present";
+        } catch (_) {
+            return false;
+        }
+    })();
 
     const deepClone = (value) => JSON.parse(JSON.stringify(value));
 
@@ -17,7 +26,9 @@
         snapshot: null,
         hasFullSnapshot: false,
         version: null,
-        warmupStarted: false
+        warmupStarted: false,
+        snapshotChecking: false,
+        failureCount: 0
     };
 
     // Fire-and-forget warmup para tumbar el cold start del Apps Script.
@@ -97,13 +108,13 @@
                     row[1] || "",
                     row[2] || "",
                     row[3] || "",
-                    row[4] || "",
                     row[5] || "",
                     row[6] || "",
-                    normalizeSocioStatus(row[7] || "Activo"),
-                    row[8] || "",
+                    row[7] || "",
+                    normalizeSocioStatus(row[8] || "Activo"),
                     row[9] || "",
-                    normalizeYesNo(row[10] || "No")
+                    row[10] || "",
+                    normalizeYesNo(row[11] || "No")
                 ];
             }
             if (!row || typeof row !== "object") return null;
@@ -112,11 +123,11 @@
                 row.nombre || "",
                 row.apellidos || row.apellido || "",
                 row.email || row.correo || "",
-                row.sede || row.club || "",
-                row.plan || row.cuota || row.membresia || "",
+                row.sede || row.sede_interes || row.club || "",
+                row.plan || row.membresia || "",
                 row.fecha_alta || row.alta || row.created_at || "",
                 normalizeSocioStatus(row.estado || "Activo"),
-                row.importe || row.cuota_mensual || row.cuota_media || "",
+                row.cuota || row.importe || row.cuota_mensual || row.cuota_media || "",
                 row.ultimo_pago || row.fecha_ultimo_pago || row.proximo_cobro || row.fecha_pago || "",
                 normalizeYesNo(row.premium_ia || row.ai_premium || row.servicio_ia || row.ia_activa || "No")
             ];
@@ -132,12 +143,12 @@
                     id: String(row[0] || `lead-live-${index + 1}`),
                     canal: normalizeLeadChannel(row[1] || "google"),
                     nombre: row[2] || "",
-                    sede: row[3] || "WiFit",
-                    estado: normalizeLeadStatus(row[4] || "Nuevo"),
-                    score: Number(row[5] || 75),
-                    detalle: row[6] || "Lead sincronizado desde Google Sheets.",
-                    siguiente: row[7] || "Revisar siguiente acción comercial.",
-                    drivers: normalizeDrivers(row[8])
+                    sede: row[5] || "WiFit",
+                    estado: normalizeLeadStatus(row[7] || "Nuevo"),
+                    score: Number(row[6] || 75),
+                    detalle: "Lead sincronizado desde Google Sheets.",
+                    siguiente: row[8] || "Revisar siguiente acción comercial.",
+                    drivers: normalizeDrivers()
                 };
             }
             if (!row || typeof row !== "object") return null;
@@ -145,7 +156,7 @@
                 id: String(row.id || row.id_lead || `lead-live-${index + 1}`),
                 canal: normalizeLeadChannel(row.canal || row.source || "google"),
                 nombre: row.nombre || row.name || "",
-                sede: row.sede || row.club || "WiFit",
+                sede: row.sede || row.sede_interes || row.club || "WiFit",
                 estado: normalizeLeadStatus(row.estado || "Nuevo"),
                 score: Number(row.score || row.puntuacion || 75),
                 detalle: row.detalle || row.descripcion || row.interes || "Lead sincronizado desde Google Sheets.",
@@ -222,8 +233,22 @@
         const raw = String(value == null ? "" : value).trim().toLowerCase();
         if (raw.includes("riesgo") || raw.includes("risk") || fallbackFlow === "risk") return "riesgo";
         if (raw.includes("prev")) return "previsto";
-        if (raw.includes("esper") || raw.includes("confirm")) return "esperado";
+        if (raw.includes("confirm")) return "confirmado";
+        if (raw.includes("esper")) return "esperado";
         return type === "gasto" ? "previsto" : "esperado";
+    }
+
+    function formatLiveCurrency(value) {
+        const raw = String(value == null ? "" : value).trim();
+        if (!raw) return "--";
+        const amount = parseFinanceNumber(raw);
+        const hasDecimals = Math.abs(amount % 1) > 0.001;
+        return new Intl.NumberFormat("es-ES", {
+            style: "currency",
+            currency: "EUR",
+            minimumFractionDigits: hasDecimals ? 2 : 0,
+            maximumFractionDigits: 2
+        }).format(amount);
     }
 
     function normalizeFinanceRows(rows) {
@@ -330,24 +355,31 @@
         return changed;
     }
 
-    function backendFetch(params) {
+    function backendFetch(params, options) {
+        const opts = options || {};
         const url = BACKEND_URL + "?" + new URLSearchParams(params).toString();
         const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), BACKEND_TIMEOUT);
-        return fetch(url, { signal: controller.signal })
-            .then(function (resp) { clearTimeout(timer); return resp.json(); })
+        const timer = setTimeout(() => controller.abort(), opts.timeout || BACKEND_TIMEOUT);
+        return fetch(url, { signal: controller.signal, cache: "no-store" })
+            .then(function (resp) {
+                clearTimeout(timer);
+                if (!resp.ok) {
+                    throw new Error(`HTTP ${resp.status}`);
+                }
+                return resp.json();
+            })
             .catch(function (err) { clearTimeout(timer); throw err; });
     }
 
     function probeBackend(options) {
-        const opts = Object.assign({ quiet: true, notifyOnChange: false }, options || {});
+        const opts = Object.assign({ quiet: true, notifyOnChange: false, syncSnapshot: false, timeout: BACKEND_TIMEOUT }, options || {});
         if (backend.checking) return;
         backend.checking = true;
         renderBackendBadge();
-        backendFetch({ action: "state", detail: "full" })
+        backendFetch({ action: "state" }, { timeout: opts.timeout })
             .then(function (data) {
                 if (data && data.status === "ok") {
-                    var previousDigest = backend.lastDigest;
+                    var digestChanged = !!backend.lastDigest && backend.lastDigest !== buildDigest(data.resumen);
                     var previousMode = backend.mode;
                     backend.mode = "live";
                     backend.liveState = data.resumen;
@@ -355,15 +387,13 @@
                     backend.lastError = null;
                     backend.version = data.version || backend.version;
                     backend.lastDigest = buildDigest(data.resumen);
-                    backend.snapshot = extractBackendSnapshot(data);
-                    backend.hasFullSnapshot = !!backend.snapshot;
-                    applyBackendSnapshot(backend.snapshot);
+                    backend.failureCount = 0;
 
                     renderRuntimeShell();
                     if (typeof renderSocio === "function") renderSocio();
                     if (typeof renderGestion === "function") renderGestion();
 
-                    if (opts.notifyOnChange && previousDigest && previousDigest !== backend.lastDigest) {
+                    if (opts.notifyOnChange && digestChanged) {
                         showToast(
                             backend.hasFullSnapshot ? "Datos sincronizados" : "KPIs actualizados",
                             backend.hasFullSnapshot
@@ -375,17 +405,67 @@
                     if (previousMode !== "live" && !opts.quiet) {
                         showToast("Backend conectado", "La demo ya está leyendo el estado vivo del backend.");
                     }
+
+                    if ((opts.syncSnapshot || !backend.hasFullSnapshot || digestChanged) && !backend.snapshotChecking) {
+                        syncBackendSnapshot({ notifyOnChange: opts.notifyOnChange && !digestChanged });
+                    }
                 } else {
-                    backend.mode = "local";
                     backend.lastError = "Respuesta inesperada";
+                    backend.failureCount += 1;
+                    if (backend.mode !== "live" || backend.failureCount >= BACKEND_MAX_FAILURES) {
+                        backend.mode = "local";
+                    }
                 }
             })
             .catch(function (err) {
-                backend.mode = "local";
                 backend.lastError = err.message || "Error de red";
+                backend.failureCount += 1;
+                if (backend.mode !== "live" || backend.failureCount >= BACKEND_MAX_FAILURES) {
+                    backend.mode = "local";
+                }
             })
             .finally(function () {
                 backend.checking = false;
+                renderBackendBadge();
+                renderRuntimeShell();
+            });
+    }
+
+    function syncBackendSnapshot(options) {
+        const opts = Object.assign({ notifyOnChange: false, timeout: BACKEND_FULL_TIMEOUT }, options || {});
+        if (backend.snapshotChecking) return;
+        backend.snapshotChecking = true;
+
+        backendFetch({ action: "state", detail: "full" }, { timeout: opts.timeout })
+            .then(function (data) {
+                if (!(data && data.status === "ok")) {
+                    throw new Error("Respuesta inesperada");
+                }
+                var previousSnapshotDigest = buildDigest(backend.snapshot);
+                var snapshot = extractBackendSnapshot(data);
+                backend.mode = "live";
+                backend.liveState = data.resumen || backend.liveState;
+                backend.lastSyncedAt = data.timestamp || new Date().toISOString();
+                backend.lastError = null;
+                backend.version = data.version || backend.version;
+                backend.snapshot = snapshot;
+                backend.hasFullSnapshot = !!snapshot;
+                backend.failureCount = 0;
+                applyBackendSnapshot(snapshot);
+
+                renderRuntimeShell();
+                if (typeof renderSocio === "function") renderSocio();
+                if (typeof renderGestion === "function") renderGestion();
+
+                if (opts.notifyOnChange && previousSnapshotDigest && previousSnapshotDigest !== buildDigest(snapshot)) {
+                    showToast("Datos sincronizados", "La página ha refrescado filas reales desde Google Sheets.");
+                }
+            })
+            .catch(function (err) {
+                backend.lastError = err.message || "Error de red";
+            })
+            .finally(function () {
+                backend.snapshotChecking = false;
                 renderBackendBadge();
                 renderRuntimeShell();
             });
@@ -669,24 +749,24 @@
             },
             retention: {
                 badge: "Retención",
-                label: "Recuperación de impago",
-                summary: "El impago deja de ser una sorpresa tardía y pasa a una secuencia visible de recuperación y seguimiento.",
+                label: "Detección de impago",
+                summary: "El impago deja de ser una sorpresa tardía y pasa a una secuencia visible de detección, aviso y preparación de regularización.",
                 flow: "retention",
                 memberProfile: "daniel",
                 canalLead: "meta",
                 selectedLead: "lead-3",
                 status: {
                     badge: "Impago detectado",
-                    title: "Recuperación automatizada en marcha",
-                    text: "La incidencia se comunica, genera tarea y prepara una salida operativa antes de que se pierda el socio."
+                    title: "Detección y seguimiento automatizados en marcha",
+                    text: "La incidencia se comunica, genera tarea y deja preparada la regularización antes de que se pierda el socio."
                 },
                 toast: {
-                    title: "Recuperación abierta",
-                    text: "El impago ya ha generado aviso, tarea y enlace de regularización."
+                    title: "Impago detectado",
+                    text: "La incidencia ya ha generado aviso, tarea y enlace de regularización."
                 },
                 memberSync: {
                     tone: "warning",
-                    label: "Riesgo controlado",
+                    label: "Incidencia controlada",
                     title: "La plataforma detecta fricción antes de que se convierta en baja",
                     text: "Cobros, equipo y experiencia quedan alineados para recuperar el método de pago sin romper la relación con el socio.",
                     actions: ["Aviso automático", "Tarea al equipo", "Enlace de pago", "Periodo de gracia"]
@@ -794,7 +874,7 @@
                     { time: "09:17", title: "Tarea creada", detail: "La sede recibe seguimiento prioritario para recuperar el método de pago." },
                     { time: "09:18", title: "Ingreso movido a riesgo", detail: "La cuota deja de contar como cobro esperado y pasa a ingresos en riesgo en la agenda financiera." },
                     { time: "09:18", title: "Forecast de caja ajustado", detail: "La previsión a 30 días se recalcula al instante para enseñar impacto financiero real." },
-                    { time: "09:18", title: "Acción de retención preparada", detail: "El caso queda listo para resolver sin romper la experiencia del socio." }
+                    { time: "09:18", title: "Regularización preparada", detail: "El caso queda listo para resolverse sin romper la experiencia del socio." }
                 ]
             }
         }
@@ -829,6 +909,7 @@
     }
 
     function saveRuntime() {
+        if (IS_PRESENT_MODE) return;
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify({
                 currentScenario: runtime.currentScenario,
@@ -840,6 +921,12 @@
     }
 
     function loadRuntime() {
+        if (IS_PRESENT_MODE) {
+            try {
+                localStorage.removeItem(STORAGE_KEY);
+            } catch (_) { /* no-op */ }
+            return null;
+        }
         try {
             const raw = localStorage.getItem(STORAGE_KEY);
             return raw ? JSON.parse(raw) : null;
@@ -926,13 +1013,13 @@
                 <strong>${scenario.label}</strong>
                 <span>${scenario.summary}</span>
             </button>
-        `).join("") + `
+        `).join("") + (IS_PRESENT_MODE ? "" : `
             <button class="runtime-btn" type="button" onclick="resetRuntimeScenario()">
                 <small>Reset</small>
                 <strong>Volver al estado base</strong>
                 <span>Limpia escenarios, evidencias generadas y vuelve al punto de partida.</span>
             </button>
-        `;
+        `);
 
         const scenario = runtime.currentScenario ? scenarioLibrary.scenarios[runtime.currentScenario] : null;
         const liveStats = backend.mode === "live" && backend.liveState ? backend.liveState : null;
@@ -1186,7 +1273,7 @@
     function fireLiveTrigger(id, scenario) {
         var actionMap = {
             activation: { action: "activation", nombre: "Manuel Garcia", sede: "WiFit Retiro" },
-            lead: { action: "lead", nombre: "Nuevo Lead Demo", canal: "Google Ads" },
+            lead: { action: "lead", nombre: "Nuevo Lead Demo", canal: "Google Ads", sede: "WiFit Lopez de Hoyos" },
             retention: { action: "retention", socio_id: "S003" }
         };
         var params = actionMap[id];
@@ -1203,7 +1290,7 @@
                 };
                 runtime.events = prev.concat([liveEvent]);
                 renderEventFeed();
-                probeBackend({ quiet: true });
+                probeBackend({ quiet: true, syncSnapshot: true, timeout: BACKEND_FULL_TIMEOUT });
             });
     }
 
@@ -1282,7 +1369,7 @@
 
     document.addEventListener("visibilitychange", () => {
         if (!document.hidden) {
-            probeBackend({ quiet: true });
+            probeBackend({ quiet: true, syncSnapshot: true, timeout: BACKEND_FULL_TIMEOUT });
         }
     });
 
@@ -1318,7 +1405,7 @@
             </div>
             <div class="kpi-card">
                 <span>Cuota media</span>
-                <strong>${backend.liveState.cuota_media || "--"}</strong>
+                <strong>${formatLiveCurrency(backend.liveState.cuota_media)}</strong>
                 <p>Referencia financiera conectada al estado actual de la hoja.</p>
             </div>
         `;
@@ -1329,21 +1416,19 @@
     // - añade watermark discreto "Modo presentación"
     // Permite enseñar la demo sin miedo a pulsaciones accidentales.
     (function applyPresentMode() {
+        if (!IS_PRESENT_MODE) return;
         try {
-            var params = new URLSearchParams(window.location.search);
-            if (params.get("mode") === "present") {
-                document.documentElement.classList.add("present-mode");
-                var mark = document.createElement("div");
-                mark.className = "present-watermark";
-                mark.textContent = "Modo presentación · WiFit × Ciklum";
-                document.body.appendChild(mark);
-            }
+            document.documentElement.classList.add("present-mode");
+            var mark = document.createElement("div");
+            mark.className = "present-watermark";
+            mark.textContent = "Modo presentación · WiFit × Ciklum";
+            document.body.appendChild(mark);
         } catch (_) { /* no-op */ }
     })();
 
     const saved = loadRuntime();
     renderRuntimeShell();
-    if (saved && saved.currentScenario && scenarioLibrary.scenarios[saved.currentScenario]) {
+    if (!IS_PRESENT_MODE && saved && saved.currentScenario && scenarioLibrary.scenarios[saved.currentScenario]) {
         applyScenario(saved.currentScenario, { silent: true });
         runtime.lastAppliedAt = saved.lastAppliedAt || runtime.lastAppliedAt;
         renderRuntimeShell();
@@ -1355,7 +1440,7 @@
     // antes de la primera acción del usuario: el cold start se va
     // mientras miran la landing, no mientras esperan una demo.
     warmupBackend();
-    probeBackend({ quiet: true });
+    probeBackend({ quiet: true, syncSnapshot: true, timeout: BACKEND_FULL_TIMEOUT });
     startBackendPolling();
 
     if ("serviceWorker" in navigator && window.location.protocol.startsWith("http")) {
