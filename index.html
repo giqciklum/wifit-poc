@@ -2034,6 +2034,11 @@
             color: #607609;
         }
 
+        .badge.confirmado {
+            background: rgba(0, 127, 104, 0.12);
+            color: var(--teal);
+        }
+
         .badge.riesgo {
             background: rgba(194, 102, 37, 0.12);
             color: #b45a18;
@@ -3401,7 +3406,7 @@
                     <div class="bridge-card management">
                         <span>Dirección y operación</span>
                         <strong>Centro de gestión WiFit</strong>
-                        <p>Cobros, activaciones, recuperación de impagos, captación, operación por sede y lectura financiera con un lenguaje entendible para negocio.</p>
+                        <p>Cobros, activaciones, detección y seguimiento de impagos, captación, operación por sede y lectura financiera con un lenguaje entendible para negocio.</p>
                     </div>
                 </div>
             </div>
@@ -3574,7 +3579,7 @@
                             <div>
                                 <div class="eyebrow">Automatizaciones activas</div>
                                 <h2>Qué ocurre después de cada trigger</h2>
-                                <p>Tres historias claras: cobro, lead y recuperación. Cada una enseña capacidad operativa con un lenguaje entendible para perfiles no técnicos.</p>
+                                <p>Tres historias claras: cobro, lead e impago detectado. Cada una enseña capacidad operativa con un lenguaje entendible para perfiles no técnicos.</p>
                             </div>
                         </div>
                         <div class="flow-stack" id="automation-flows"></div>
@@ -4024,7 +4029,7 @@
                         ["08:52", "WiHiit 15 min", "Franja corta para activar sin quemar de más."]
                     ],
                     clase: { hora: "07:30", titulo: "WiHiit recomendado", sede: "Retiro · plazas disponibles", texto: "Clase sugerida para mañana en franja de baja ocupación." },
-                    nutricion: "Desayuno con proteína + avena, comida con arroz y pollo, y recuperación con fruta + yogur tras el entreno.",
+                    nutricion: "Desayuno con proteína + avena, comida con arroz y pollo, y fruta + yogur tras el entreno.",
                     progreso: [54, 58, 61, 65, 68, 72]
                 },
                 mensajes: [
@@ -4034,7 +4039,7 @@
                 ],
                 respuestas: {
                     rutina: "Hoy toca tren superior: press banca 4x8, remo con barra 4x10, press militar 3x10, y un finisher de WiHiit de 15 minutos para activar.",
-                    nutricion: "Para tu objetivo, te propongo 2 g de proteína por kg, hidratos complejos antes del entreno y una recuperación simple con proteína y fruta.",
+                    nutricion: "Para tu objetivo, te propongo 2 g de proteína por kg, hidratos complejos antes del entreno y una pauta simple con proteína y fruta después.",
                     reserva: "WiHiit mañana a las 07:30 en Retiro tiene plazas. También hay hueco en zona funcional a las 08:15 con baja ocupación.",
                     progreso: "Tu fuerza de tren superior ha subido un 12% en seis semanas. La siguiente mejora está en dar más volumen a pierna y mantener la constancia."
                 }
@@ -4092,13 +4097,13 @@
                         ["08:58", "Seguimiento", "Registro de cargas y sensaciones."]
                     ],
                     clase: { hora: "07:30", titulo: "Body Pump recomendado", sede: "Chamberí · baja ocupación", texto: "Franja con mejor encaje para progresar sin picos de aforo." },
-                    nutricion: "30-35 g de proteína por toma, hidrato complejo antes de entrenar y recuperación con buena hidratación.",
+                    nutricion: "30-35 g de proteína por toma, hidrato complejo antes de entrenar y una buena hidratación postentreno.",
                     progreso: [61, 64, 68, 71, 74, 79]
                 },
                 mensajes: [
                     ["ia", "Hola Daniel. Tu patrón de uso en Chamberí es clarísimo: rindes mejor cuando entrenas antes de las 8:30."],
                     ["usuario", "Sí, me interesa ganar fuerza sin perder constancia."],
-                    ["ia", "Perfecto. He ajustado tu semana para combinar cargas, evitar picos de ocupación y mantener recuperación suficiente."]
+                    ["ia", "Perfecto. He ajustado tu semana para combinar cargas, evitar picos de ocupación y mantener descanso suficiente."]
                 ],
                 respuestas: {
                     rutina: "Hoy te dejo una sesión de empuje de 55 minutos y te reservo Body Pump mañana a primera hora para aprovechar la franja de baja ocupación.",
@@ -4150,7 +4155,7 @@
                     ["2", "Scoring automático", "El sistema prioriza por distancia, afinidad y velocidad de respuesta."],
                     ["3", "Email prueba gratis", "Se activa la primera comunicación con propuesta concreta."],
                     ["4", "Clase sugerida", "Se recomienda franja o clase con mejor encaje."],
-                    ["5", "Seguimiento", "Si no responde, se abre tarea para recuperación o cierre."]
+                    ["5", "Seguimiento", "Si no responde, se abre tarea para seguimiento manual o cierre."]
                 ]
             },
             retention: {
@@ -4183,7 +4188,7 @@
             },
             retention: {
                 etiqueta: "Pago fallido",
-                titular: "El impago entra en recuperación antes de perder al socio",
+                titular: "El impago se detecta a tiempo y entra en seguimiento antes de perder al socio",
                 detalle: "La incidencia se detecta, se comunica y se convierte en una secuencia trazable para retención.",
                 metas: ["Aviso inmediato", "Ingreso en riesgo", "Forecast ajustado"]
             }
@@ -4193,7 +4198,7 @@
             { tipo: "Finanzas", titulo: "Hoy 09:16 · Previsión de caja actualizada", texto: "La agenda financiera consolida próximos cobros, ingresos en riesgo y caja neta prevista a 30 días." },
             { tipo: "Cobros", titulo: "Hoy 09:14 · Laura Sánchez -> activación completa", texto: "Pago confirmado, socio activo, email enviado y plan de semana 1 preparado." },
             { tipo: "Leads", titulo: "Hoy 08:45 · Pablo Ruiz (web) -> score 78", texto: "Prueba gratis enviada y clase sugerida en Chamberí." },
-            { tipo: "Retención", titulo: "Ayer 17:30 · Carlos Fernández -> recuperación abierta", texto: "Aviso enviado, tarea creada y seguimiento marcado para hoy." },
+            { tipo: "Retención", titulo: "Ayer 17:30 · Carlos Fernández -> seguimiento abierto", texto: "Aviso enviado, tarea creada y seguimiento marcado para hoy." },
             { tipo: "Cobros", titulo: "Ayer 12:12 · Marta Pérez -> premium IA activado", texto: "Cobro validado y acceso premium reflejado en la hoja operativa." },
             { tipo: "Leads", titulo: "Ayer 10:03 · Sofía del Río -> visita cerrada", texto: "Seguimiento automático y reserva de prueba completada." }
         ];
@@ -4436,7 +4441,7 @@
                             flow: "risk",
                             label: "En riesgo",
                             concept: "Ingreso movido a riesgo en agenda financiera",
-                            scope: "Humanes · recuperación abierta",
+                            scope: "Humanes · seguimiento abierto",
                             amount: 41.9,
                             note: "La cuota deja de contar como entrada prevista hasta regularización del método de pago."
                         },
@@ -4903,7 +4908,7 @@
                     },
                     retention: {
                         tipo: "Retención",
-                        titulo: "Ahora mismo · Carlos Fernández -> recuperación abierta",
+                        titulo: "Ahora mismo · Carlos Fernández -> seguimiento abierto",
                         texto: "Impago detectado, aviso enviado y tarea abierta para actualización de método de pago."
                     }
                 };
@@ -5392,7 +5397,7 @@
                     sede: "Secuencia automática de cobro",
                     importe: fallbackRecovery,
                     estado: "esperado",
-                    comentario: "La automatización financiera protege caja y reduce trabajo manual de recuperación.",
+                    comentario: "La automatización financiera protege caja y reduce trabajo manual de seguimiento de impagos.",
                     trigger_relacionado: "Reintento programado"
                 },
                 {
@@ -5546,7 +5551,7 @@
                 <div class="finance-card positive">
                     <span>Cobros esperados 30 días</span>
                     <strong class="finance-value">${formatFinanceMetricMarkup(euroFinance(cashData.inflows))}</strong>
-                    <p>${cashData.source === "sheet" ? "Suma real de ingresos esperados en la agenda financiera sincronizada desde backend." : "Fallback demo con cobros previstos de suscripciones, renovaciones y recuperación."}</p>
+                    <p>${cashData.source === "sheet" ? "Suma real de ingresos esperados en la agenda financiera sincronizada desde backend." : "Fallback demo con cobros previstos de suscripciones, renovaciones y regularizaciones preparadas."}</p>
                 </div>
                 <div class="finance-card">
                     <span>Salidas previstas 30 días</span>
@@ -5571,7 +5576,7 @@
                 <li>${cashData.lowestWeek ? `${cashData.lowestWeek.label} (${cashData.lowestWeek.range}) es la semana con peor neto: ${signedEuroFinance(cashData.lowestWeek.net)}.` : "La agenda actual no tiene todavía suficiente densidad para dibujar tensión semanal."}</li>
                 <li>${cashData.largestOutflow ? `La mayor salida prevista es ${formatFinanceCategory(cashData.largestOutflow.categoria)} en ${cashData.largestOutflow.sede} por ${euroFinance(cashData.largestOutflow.importe)}.` : "No hay salidas previstas registradas en la agenda actual."}</li>
                 <li>${cashData.revenueAtRisk ? `Hay ${euroFinance(cashData.revenueAtRisk)} en ingresos en riesgo, equivalente al ${Math.round(cashData.riskRatio * 100)}% de los cobros esperados hoy visibles.` : "La agenda actual no marca ingresos en riesgo; el net cash proyectado no está penalizado por impagos abiertos."}</li>
-                <li>La recuperación automática de impagos puede proteger hasta ${euroFinance(cashData.regularizacionEsperada)} en el siguiente ciclo si el reintento entra a tiempo.</li>
+                <li>El seguimiento de impagos con regularización preparada puede proteger hasta ${euroFinance(cashData.regularizacionEsperada)} en el siguiente ciclo si el método de pago se actualiza a tiempo.</li>
             `;
 
             document.getElementById("cash-calendar-body").innerHTML = cashData.events.length
