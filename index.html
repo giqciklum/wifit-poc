@@ -2606,9 +2606,58 @@
             background: rgba(0, 127, 104, 0.08);
         }
 
+        .chart-card {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
         .chart-card canvas {
             width: 100% !important;
             height: 300px !important;
+        }
+
+        .chart-frame {
+            position: relative;
+            flex: 1 1 auto;
+            min-height: 300px;
+        }
+
+        .ops-overview-grid {
+            align-items: stretch;
+        }
+
+        .ops-chart-card {
+            gap: 18px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 249, 241, 0.96));
+        }
+
+        .ops-chart-copy {
+            display: grid;
+            gap: 8px;
+        }
+
+        .ops-chart-copy h3 {
+            margin: 0;
+            font-size: 1.38rem;
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+        }
+
+        .ops-chart-copy p {
+            margin: 0;
+            max-width: 52ch;
+            color: var(--oliva-texto);
+            line-height: 1.65;
+        }
+
+        .ops-chart-frame {
+            min-height: 430px;
+        }
+
+        .ops-chart-card canvas {
+            height: 100% !important;
+            min-height: 430px;
         }
 
         .control-stack {
@@ -3105,6 +3154,11 @@
             .chart-card canvas,
             .progress-wrap canvas {
                 height: 230px !important;
+            }
+
+            .ops-chart-frame,
+            .ops-chart-card canvas {
+                min-height: 280px;
             }
         }
     </style>
@@ -3628,12 +3682,19 @@
                         </div>
                         <div class="club-switch" id="club-switch"></div>
                     </div>
-                    <div class="split-grid">
+                    <div class="split-grid ops-overview-grid">
                         <div class="panel panel-pad" style="background: rgba(247, 249, 241, 0.92);">
                             <div id="ops-summary"></div>
                         </div>
-                        <div class="panel panel-pad chart-card">
-                            <canvas id="ops-chart"></canvas>
+                        <div class="panel panel-pad chart-card ops-chart-card">
+                            <div class="ops-chart-copy">
+                                <div class="eyebrow">Impacto económico</div>
+                                <h3>Preventivo frente a correctivo</h3>
+                                <p>La lectura compara el coste de actuar esta semana con el coste estimado de esperar a que la incidencia escale en una sede de alto tráfico.</p>
+                            </div>
+                            <div class="chart-frame ops-chart-frame">
+                                <canvas id="ops-chart"></canvas>
+                            </div>
                         </div>
                     </div>
                     <div class="panel panel-pad" style="margin-top: 18px;">
@@ -5080,24 +5141,95 @@
         function renderOpsChart(club) {
             const ctx = document.getElementById("ops-chart");
             if (estado.charts.ops) estado.charts.ops.destroy();
+            const maxCorrectivo = Math.max(...club.grafico.correctivo);
             estado.charts.ops = new Chart(ctx, {
                 type: "bar",
                 data: {
                     labels: club.grafico.etiquetas,
                     datasets: [
-                        { label: "Preventivo", data: club.grafico.preventivo, backgroundColor: "rgba(0,127,104,0.78)", borderRadius: 10 },
-                        { label: "Correctivo", data: club.grafico.correctivo, backgroundColor: "rgba(153,185,18,0.55)", borderRadius: 10 }
+                        {
+                            label: "Preventivo",
+                            data: club.grafico.preventivo,
+                            backgroundColor: "rgba(0,127,104,0.82)",
+                            hoverBackgroundColor: "rgba(0,127,104,0.92)",
+                            borderRadius: 12,
+                            maxBarThickness: 54,
+                            categoryPercentage: 0.62,
+                            barPercentage: 0.9
+                        },
+                        {
+                            label: "Correctivo",
+                            data: club.grafico.correctivo,
+                            backgroundColor: "rgba(189,211,100,0.88)",
+                            hoverBackgroundColor: "rgba(189,211,100,0.98)",
+                            borderRadius: 12,
+                            maxBarThickness: 54,
+                            categoryPercentage: 0.62,
+                            barPercentage: 0.9
+                        }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    interaction: {
+                        mode: "index",
+                        intersect: false
+                    },
+                    layout: {
+                        padding: {
+                            top: 8,
+                            right: 10,
+                            bottom: 0,
+                            left: 4
+                        }
+                    },
                     plugins: {
-                        legend: { position: "bottom", labels: { color: "#46512a", font: { family: "DM Sans" } } }
+                        legend: {
+                            position: "bottom",
+                            align: "start",
+                            labels: {
+                                color: "#46512a",
+                                usePointStyle: true,
+                                pointStyle: "rectRounded",
+                                boxWidth: 14,
+                                boxHeight: 14,
+                                padding: 18,
+                                font: { family: "DM Sans", size: 13, weight: "600" }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: "rgba(28, 34, 12, 0.94)",
+                            titleColor: "#f7f9f1",
+                            bodyColor: "#f7f9f1",
+                            padding: 12,
+                            displayColors: true,
+                            callbacks: {
+                                label: (context) => `${context.dataset.label}: ${euro(context.parsed.y)}`
+                            }
+                        }
                     },
                     scales: {
-                        x: { grid: { display: false }, ticks: { color: "#46512a" } },
-                        y: { grid: { color: "rgba(210,216,192,0.6)" }, ticks: { color: "#46512a", callback: (value) => euro(value) } }
+                        x: {
+                            grid: { display: false, drawBorder: false },
+                            border: { display: false },
+                            ticks: {
+                                color: "#46512a",
+                                font: { family: "DM Sans", size: 13, weight: "600" }
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            suggestedMax: Math.round(maxCorrectivo * 1.12),
+                            border: { display: false },
+                            grid: { color: "rgba(210,216,192,0.6)", drawTicks: false },
+                            ticks: {
+                                color: "#46512a",
+                                padding: 10,
+                                font: { family: "DM Sans", size: 12 },
+                                callback: (value) => euro(value)
+                            }
+                        }
                     }
                 }
             });
