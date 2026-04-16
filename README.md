@@ -213,7 +213,7 @@ Vuelve a inicio, clic en **"Centro de gestión"**. Orden de pestañas:
    > *"Cada alerta lleva sede, responsable y prioridad. Os interconectáis con la realidad del centro, no solo con lo digital."*
 
 4. **Finanzas** — **la pestaña clave.**
-   > *"Esto normalmente no existe en un gimnasio low-cost. Agenda financiera viva: Cash In 30 días, Cash Out, Net Forecast, y la pieza fuerte — Revenue at Risk. Impagos detectados, cobros en riesgo, y cuándo se recuperan si se ejecuta la automatización."*
+   > *"Esto normalmente no existe en un gimnasio low-cost. Agenda financiera viva: Cash In 30 días, Cash Out, Net Forecast, y la pieza fuerte — Revenue at Risk. Impagos detectados, cobros en riesgo, y cuándo se regularizan si el socio actualiza el método de pago."*
 
 5. **Mercado** — comparativa con VivaGym / Basic Fit / competidores.
    > *"Contexto competitivo. Dónde está WiFit y dónde quiere llegar."*
@@ -258,7 +258,7 @@ Párate. Baja el ritmo.
 > *"Para pasar de esto que os hemos enseñado a algo real para WiFit, os proponemos un piloto de 6-8 semanas en 1 o 2 sedes:*
 >
 > - *Semana 1-2: conectamos vuestros datos reales (sede piloto).*
-> - *Semana 3-5: activamos los 3 flujos clave — activación, recuperación de impago, scoring de leads — y medimos.*
+> - *Semana 3-5: activamos los 3 flujos clave — activación, detección y seguimiento de impago, scoring de leads — y medimos.*
 > - *Semana 6-8: cuadro de mando para dirección, con KPIs reales.*
 >
 > *Rango de inversión: orden de magnitud de 25.000 € a 45.000 € según alcance, porque el piloto real lleva ingeniería de integración contra vuestros sistemas actuales. Propuesta formal la semana siguiente si hay interés.*
@@ -357,7 +357,7 @@ Frases listas para cada problema:
 Recarga. Chart.js está vendorizado, si no carga es porque la wifi del cliente bloquea mucho más que eso.
 
 **El simulador se queda "procesando"**
-Espera 10 segundos máximo, luego: *"el backend estaba frío, ya se ha calentado, ahora va fluido"* y vuelve a pulsar.
+Espera hasta 15 segundos máximo, luego: *"el backend estaba frío, ya se ha calentado, ahora va fluido"* y vuelve a pulsar.
 
 **"¿Está todo en Google Sheets?"**
 > *"La capa operativa de la demo, sí — es una decisión deliberada para poder enseñaros datos reales que podéis tocar. La arquitectura del piloto se define con vuestro CTO en la semana 1."*
@@ -499,7 +499,7 @@ Frase útil:
 Demuestra: lectura de tesorería, ingresos en riesgo, semanas tensas, impacto real de cobros e impagos.
 
 Frase útil:
-> *"La misma capa que activa al socio y recupera impagos también anticipa caja y hace visible el forecast."*
+> *"La misma capa que activa al socio, pone el impago en seguimiento y permite regularizarlo también anticipa caja y hace visible el forecast."*
 
 ---
 
