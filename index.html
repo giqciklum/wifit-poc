@@ -11,7 +11,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <!-- Chart.js vendorizado: ningun KPI se rompe si la wifi del cliente bloquea CDNs -->
+    <script src="assets/chart.umd.min.js"></script>
+    <script>
+        // Fallback a CDN solo si el bundle local no estuviese disponible.
+        if (typeof Chart === "undefined") {
+            var s = document.createElement("script");
+            s.src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js";
+            document.head.appendChild(s);
+        }
+    </script>
     <style>
         :root {
             --verde: #99b912;
@@ -47,7 +56,7 @@
 
         body {
             min-height: 100vh;
-            font-family: "DM Sans", sans-serif;
+            font-family: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             color: var(--oliva-oscuro);
             background:
                 radial-gradient(circle at 0% 0%, rgba(153, 185, 18, 0.18), transparent 28%),
@@ -404,6 +413,27 @@
             box-shadow: 0 0 0 3px rgba(0, 127, 104, 0.12);
         }
 
+        /* Modo presentacion (?mode=present): protege la demo frente a clics accidentales */
+        .present-mode .runtime-reset-btn { display: none !important; }
+        .present-watermark {
+            position: fixed;
+            right: 14px;
+            bottom: 12px;
+            z-index: 9999;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: rgba(35, 42, 4, 0.55);
+            background: rgba(255, 255, 255, 0.8);
+            padding: 5px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(35, 42, 4, 0.08);
+            pointer-events: none;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
         .live-stats {
             margin-top: 10px;
             padding: 10px 12px;
@@ -660,7 +690,7 @@
         }
 
         .landing-copy h1 {
-            font-family: "Bebas Neue", sans-serif;
+            font-family: "Bebas Neue", Impact, "Arial Narrow", "Helvetica Neue Condensed", system-ui, sans-serif;
             font-size: clamp(3.8rem, 8vw, 6.8rem);
             line-height: 0.9;
             letter-spacing: -0.03em;
@@ -973,7 +1003,7 @@
             width: 52px;
             height: 52px;
             border-radius: 18px;
-            font-family: "Bebas Neue", sans-serif;
+            font-family: "Bebas Neue", Impact, "Arial Narrow", "Helvetica Neue Condensed", system-ui, sans-serif;
             font-size: 1.8rem;
             letter-spacing: 0.04em;
         }
@@ -3090,7 +3120,7 @@
                 </div>
                 <div class="runtime-controls">
                     <span class="backend-badge local" id="backend-mode-badge"><span class="badge-dot"></span> Modo demo local</span>
-                    <button class="btn-soft" type="button" onclick="resetRuntimeScenario()">Reiniciar</button>
+                    <button class="btn-soft runtime-reset-btn" type="button" onclick="resetRuntimeScenario()">Reiniciar</button>
                     <button class="btn-primary runtime-toggle" id="runtime-toggle" type="button" onclick="openRuntimeModal()">Abrir simulador</button>
                 </div>
             </div>

@@ -15,8 +15,26 @@
         lastDigest: null,
         pollTimer: null,
         snapshot: null,
-        hasFullSnapshot: false
+        hasFullSnapshot: false,
+        version: null,
+        warmupStarted: false
     };
+
+    // Fire-and-forget warmup para tumbar el cold start del Apps Script.
+    // No bloquea nada, no actualiza UI; solo precalienta la instancia
+    // antes de que el usuario toque nada.
+    function warmupBackend() {
+        if (backend.warmupStarted) return;
+        backend.warmupStarted = true;
+        try {
+            const url = BACKEND_URL + "?action=warmup&t=" + Date.now();
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), BACKEND_TIMEOUT);
+            fetch(url, { signal: controller.signal, cache: "no-store" })
+                .then(() => clearTimeout(timer))
+                .catch(() => clearTimeout(timer));
+        } catch (_) { /* no-op */ }
+    }
 
     function formatClock(value) {
         if (!value) return "Pendiente";
@@ -335,6 +353,7 @@
                     backend.liveState = data.resumen;
                     backend.lastSyncedAt = data.timestamp || new Date().toISOString();
                     backend.lastError = null;
+                    backend.version = data.version || backend.version;
                     backend.lastDigest = buildDigest(data.resumen);
                     backend.snapshot = extractBackendSnapshot(data);
                     backend.hasFullSnapshot = !!backend.snapshot;
@@ -394,12 +413,16 @@
         if (backend.checking && backend.mode !== "live") {
             el.className = "backend-badge syncing";
             el.innerHTML = '<span class="badge-dot"></span> Conectando backend';
+            el.title = "Pidiendo estado al Apps Script...";
         } else if (backend.mode === "live") {
             el.className = "backend-badge live";
-            el.innerHTML = '<span class="badge-dot"></span> Backend en vivo';
+            var tag = backend.version ? (" · " + backend.version) : "";
+            el.innerHTML = '<span class="badge-dot"></span> Backend en vivo' + tag;
+            el.title = "Leyendo Google Sheets en tiempo real" + (backend.lastSyncedAt ? (" · Ultima sync: " + backend.lastSyncedAt) : "");
         } else {
             el.className = "backend-badge local";
             el.innerHTML = '<span class="badge-dot"></span> Modo demo local';
+            el.title = backend.lastError ? ("Backend no alcanzable: " + backend.lastError) : "Mostrando datos seed locales";
         }
     }
 
@@ -1301,6 +1324,23 @@
         `;
     }
 
+    // Modo presentación: ?mode=present en la URL
+    // - oculta botones peligrosos de reset
+    // - añade watermark discreto "Modo presentación"
+    // Permite enseñar la demo sin miedo a pulsaciones accidentales.
+    (function applyPresentMode() {
+        try {
+            var params = new URLSearchParams(window.location.search);
+            if (params.get("mode") === "present") {
+                document.documentElement.classList.add("present-mode");
+                var mark = document.createElement("div");
+                mark.className = "present-watermark";
+                mark.textContent = "Modo presentación · WiFit × Ciklum";
+                document.body.appendChild(mark);
+            }
+        } catch (_) { /* no-op */ }
+    })();
+
     const saved = loadRuntime();
     renderRuntimeShell();
     if (saved && saved.currentScenario && scenarioLibrary.scenarios[saved.currentScenario]) {
@@ -1311,6 +1351,10 @@
         resetRuntimeScenario({ silent: true });
     }
 
+    // Precalentamos el Apps Script en cuanto carga la pagina,
+    // antes de la primera acción del usuario: el cold start se va
+    // mientras miran la landing, no mientras esperan una demo.
+    warmupBackend();
     probeBackend({ quiet: true });
     startBackendPolling();
 
