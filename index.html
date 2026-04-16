@@ -3154,8 +3154,8 @@
                         <img src="assets/wifit-logo-menu.png" alt="WiFit Gyms">
                     </div>
                     <div class="brand-caption">
-                        <strong>PoC x Ciklum</strong>
-                        <span>Experiencia conectada para crecimiento, operación y fidelización.</span>
+                        <strong>WiFit × Ciklum</strong>
+                        <span>Capa conectada para experiencia del socio, operación multi-sede y finanzas en vivo.</span>
                     </div>
                 </div>
                 <div class="chip-row">
@@ -3169,8 +3169,8 @@
                     <div class="eyebrow">Plataforma conectada</div>
                     <h1>Una experiencia premium para el socio. <span>Un centro de control claro para el negocio.</span></h1>
                     <p>
-                        WiFit ya tiene base de marca, pricing accesible y una red en expansión. Este PoC convierte esa base en algo que se siente mucho más
-                        aspiracional y mucho más controlable: una capa digital propia para elevar la experiencia del socio y otra para dar visibilidad operativa a dirección.
+                        WiFit ya tiene base de marca, pricing accesible y una red en expansión. Esta demo muestra cómo convertir esa base en algo que se siente más
+                        aspiracional y mucho más controlable: una capa digital propia para elevar la experiencia del socio, dar visibilidad operativa a dirección y conectar el día a día con la agenda financiera del CFO. Complementa — no sustituye — a Harbiz o SIGEGym si ya los usáis.
                     </p>
                     <div class="header-chips" style="margin-top: 18px;">
                         <div class="chip">Precios públicos actuales</div>
@@ -3827,6 +3827,33 @@
                             </div>
                         </div>
                         <p class="note">La ambición no es tener otra app fitness. La ambición es que WiFit pueda hablar de una capa propia de inteligencia y experiencia sobre su negocio.</p>
+                    </div>
+
+                    <div class="panel panel-pad">
+                        <div class="section-head">
+                            <div>
+                                <div class="eyebrow">Posicionamiento frente a otros proveedores</div>
+                                <h2>No sustituimos SIGEGym ni Harbiz — nos conectamos</h2>
+                                <p>La decisión técnica y operativa de qué sistemas mantener no se toca en esta conversación. Esta capa es complementaria por diseño.</p>
+                            </div>
+                        </div>
+                        <div class="insight-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));">
+                            <div class="insight-card">
+                                <span>Harbiz (coach IA)</span>
+                                <strong>Si lo queréis, se integra aquí dentro</strong>
+                                <p>Harbiz es un coach virtual enfocado al profesional y al centro. Nuestra capa le da contexto de socio, cobros y operación multi-sede que Harbiz por sí solo no resuelve.</p>
+                            </div>
+                            <div class="insight-card">
+                                <span>SIGEGym (facilities)</span>
+                                <strong>Especialista en instalación, no en experiencia</strong>
+                                <p>SIGEGym es referencia en mantenimiento y gestión de centros. Lo que aportamos es la capa de socio, captación, cobros, finanzas y dirección — integrable con cualquier sistema de facilities.</p>
+                            </div>
+                            <div class="insight-card">
+                                <span>Zapier / Make</span>
+                                <strong>Fontanería útil, no arquitectura</strong>
+                                <p>Resuelven flujos simples rápido. No construyen la agenda financiera viva, el scoring consistente ni el cuadro de dirección. Son compatibles, pero insuficientes como capa principal.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -5401,7 +5428,7 @@
             `;
 
             document.getElementById("cash-alerts").innerHTML = `
-                <li>${cashData.source === "sheet" ? "La agenda financiera ya está leyendo eventos reales desde Google Sheets y los KPIs salen de esa base conectada." : "Si el backend no devuelve agenda financiera, la vista mantiene el fallback local del PoC sin romper la demo."}</li>
+                <li>${cashData.source === "sheet" ? "La agenda financiera ya está leyendo eventos reales desde Google Sheets y los KPIs salen de esa base conectada." : "Si el backend no devuelve agenda financiera, la vista mantiene el fallback local de la demo sin romper la presentación."}</li>
                 ${cashData.evidence ? cashData.evidence.alerts.map((item) => `<li>${item}</li>`).join("") : ""}
                 <li>${cashData.lowestWeek ? `${cashData.lowestWeek.label} (${cashData.lowestWeek.range}) es la semana con peor neto: ${signedEuroFinance(cashData.lowestWeek.net)}.` : "La agenda actual no tiene todavía suficiente densidad para dibujar tensión semanal."}</li>
                 <li>${cashData.largestOutflow ? `La mayor salida prevista es ${formatFinanceCategory(cashData.largestOutflow.categoria)} en ${cashData.largestOutflow.sede} por ${euroFinance(cashData.largestOutflow.importe)}.` : "No hay salidas previstas registradas en la agenda actual."}</li>
