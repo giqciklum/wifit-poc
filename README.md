@@ -1,727 +1,701 @@
-# WiFit Gyms x Ciklum - Manual Maestro del PoC
+# WiFit Gyms × Ciklum — Manual Maestro
 
-Esta guía está pensada para abrirla justo antes de una reunión y no tener que reconstruir nada.
+Documento único para preparar, presentar y cerrar la reunión comercial.
+Úsalo como checklist pre-reunión, como guión durante la demo y como referencia para las preguntas que vengan.
 
-Objetivo:
+*Última revisión manual: 16 de abril de 2026.*
 
-- enseñar el PoC con claridad
-- contar bien la historia de producto
-- saber qué abrir, en qué orden y qué decir
-- mostrar socio, gestión, automatización, IA y finanzas sin abrumar
+---
 
-Última verificación manual de esta guía: `15 de abril de 2026`.
+## Índice
 
-## 1. Qué es este PoC
+1. [Resumen en 30 segundos](#1-resumen-en-30-segundos)
+2. [Enlaces y accesos](#2-enlaces-y-accesos)
+3. [Preflight — 15-20 minutos antes](#3-preflight--15-20-minutos-antes)
+4. [Guión de la reunión — 25 minutos](#4-guión-de-la-reunión--25-minutos)
+5. [Objeciones, mensajes según audiencia y preguntas duras](#5-objeciones-mensajes-según-audiencia-y-preguntas-duras)
+6. [Si algo falla en directo](#6-si-algo-falla-en-directo)
+7. [Después de la reunión](#7-después-de-la-reunión)
+8. [Si piden arrancar piloto en la propia reunión](#8-si-piden-arrancar-piloto-en-la-propia-reunión)
+9. [Las cinco capas del producto](#9-las-cinco-capas-del-producto)
+10. [Los cuatro casos de demo](#10-los-cuatro-casos-de-demo)
+11. [Finanzas: fórmulas, tabla, evidencias](#11-finanzas-fórmulas-tabla-evidencias)
+12. [Google Sheets: qué enseñar y qué no](#12-google-sheets-qué-enseñar-y-qué-no)
+13. [Datos reales vs sintéticos, qué cambia en vivo](#13-datos-reales-vs-sintéticos-qué-cambia-en-vivo)
+14. [FAQ extendido](#14-faq-extendido)
+15. [Arquitectura y endpoints](#15-arquitectura-y-endpoints)
+16. [Comandos útiles y archivos clave](#16-comandos-útiles-y-archivos-clave)
+17. [Fuentes públicas utilizadas](#17-fuentes-públicas-utilizadas)
+18. [Versión ultracorta si vas muy justo](#18-versión-ultracorta-si-vas-muy-justo)
 
-Esto no es una landing bonita y no es otro dashboard genérico.
+---
 
-Esto es una visión de producto conectada para WiFit:
+## 1. Resumen en 30 segundos
 
-- una capa premium para el socio
-- una capa operativa para negocio
-- una capa de automatización visible
-- una lectura financiera entendible
+WiFit Gyms es una cadena low-cost (7 sedes → 10 en roadmap, 12.000 socios, 41,90 € de cuota) recién adquirida por Private Equity. Esta demo les enseña una **capa única** que conecta tres audiencias con un mismo dato:
 
-La idea que hay que transmitir es esta:
+- **El socio** — app WiFit IA: coach, reservas, nutrición, progresión.
+- **El equipo operativo** — socios, leads, operaciones por sede.
+- **La dirección** — KPIs, agenda financiera viva, Revenue at Risk.
 
-`No solo cambia la pantalla; la acción deja rastro real en la capa operativa.`
+La demo es una visión comercial, no un producto terminado. El siguiente paso que se propone es un **piloto pagado de 6-8 semanas en 1 o 2 sedes**, con rango de inversión entre 25.000 € y 45.000 €.
 
-## 2. Enlaces clave
+La frase base que vende el producto:
 
-Demo pública  
-[https://giqciklum.github.io/wifit-poc/](https://giqciklum.github.io/wifit-poc/)
+> *"No solo cambia la pantalla; la acción deja rastro real en la capa operativa, y modifica la previsión de caja."*
 
-Repositorio  
-[https://github.com/giqciklum/wifit-poc](https://github.com/giqciklum/wifit-poc)
+Si solo tienes una frase de refuerzo:
 
-Google Sheet de demo  
-[https://docs.google.com/spreadsheets/d/1ew8qaFc1d0G7EjeR1xJa-llsb1o9dC2BYCdDBKcR8ek/](https://docs.google.com/spreadsheets/d/1ew8qaFc1d0G7EjeR1xJa-llsb1o9dC2BYCdDBKcR8ek/)
+> *"La misma acción puede impactar experiencia, operación, automatización y forecast financiero."*
 
-Web App de Apps Script  
-[https://script.google.com/macros/s/AKfycbwmmgY9mg4p8o6lVboAelyR2P0WtnMYo7kDJWWLpvzHy6B2kuiatZSr1qguU2jGDLwnWg/exec](https://script.google.com/macros/s/AKfycbwmmgY9mg4p8o6lVboAelyR2P0WtnMYo7kDJWWLpvzHy6B2kuiatZSr1qguU2jGDLwnWg/exec)
+---
 
-Archivos clave del repo  
-[index.html](/Users/computerxperts/Documents/POC/index.html)  
-[assets/demo-runtime.js](/Users/computerxperts/Documents/POC/assets/demo-runtime.js)  
-[apps-script/Code.gs](/Users/computerxperts/Documents/POC/apps-script/Code.gs)
+## 2. Enlaces y accesos
 
-## 3. Resumen en 20 segundos
+**Demo pública — modo presentación** (la que usas en reunión):
+```
+https://giqciklum.github.io/wifit-poc/?mode=present
+```
 
-La demo enseña dos journeys conectados:
+**Demo pública — modo normal** (con botón de Reiniciar visible):
+```
+https://giqciklum.github.io/wifit-poc/
+```
 
-- `Experiencia del Socio`
-- `Centro de Gestión`
+**Google Sheet — capa operativa de demo**:
+```
+https://docs.google.com/spreadsheets/d/1ew8qaFc1d0G7EjeR1xJa-llsb1o9dC2BYCdDBKcR8ek/
+```
 
-Encima de eso, el PoC añade dos cosas que le dan peso real:
+**Repositorio**:
+```
+https://github.com/giqciklum/wifit-poc
+```
 
-- automatización visible con trazabilidad operativa
-- lectura financiera conectada a eventos de negocio
+**Backend (Apps Script Web App)**:
+```
+https://script.google.com/macros/s/AKfycbwmmgY9mg4p8o6lVboAelyR2P0WtnMYo7kDJWWLpvzHy6B2kuiatZSr1qguU2jGDLwnWg/exec
+```
 
-Arquitectura actual:
+**Apps Script editor** (no mostrar en reunión, solo por si algo hay que retocar):
+```
+https://script.google.com/u/1/home/projects/1AYBLolx4wPBHoX80zTXwO01s2cVvmJ4Ggi0gZhVa4z1WhUm9wg-n6M8r/edit
+```
 
-`Frontend estático -> Apps Script -> Google Sheet`
+---
 
-Qué significa eso hoy:
+## 3. Preflight — 15-20 minutos antes
 
-- el frontend dispara acciones reales de demo
-- el backend escribe en Google Sheets
-- el frontend lee estado vivo por polling
-- si el backend falla, la demo sigue funcionando con fallback local
+Ejecútalo desde el mismo Mac y la misma wifi que vas a usar en la reunión. Tiempo total: 5-7 minutos si todo va bien, 15 si hay que arreglar algo.
 
-## 4. Estado actual del PoC
+### 3.1. Backend vivo y versión correcta
 
-Hoy el PoC ya soporta:
+```bash
+BASE="https://script.google.com/macros/s/AKfycbwmmgY9mg4p8o6lVboAelyR2P0WtnMYo7kDJWWLpvzHy6B2kuiatZSr1qguU2jGDLwnWg/exec"
+curl -sL "$BASE?action=state" | python3 -m json.tool | head -20
+```
 
-- portada premium y más cercana a producto real
-- dos recorridos diferenciados: socio y gestión
-- runtime compacto con `Abrir simulador`
-- triggers de negocio conectados
-- badge de backend: `Backend en vivo` o `Modo demo local`
-- lectura en vivo de `socios`, `leads`, `logs` y `finanzas`
-- pestaña `Finanzas` conectada al backend real
+Tiene que devolver:
+- `"status": "ok"`
+- `"version": "v2"` — imprescindible
+- Un bloque `resumen` con `socios_total`, `socios_activos`, etc.
 
-La parte financiera ya enseña:
+Si tarda mucho o da timeout, el Apps Script está frío. Llama primero al warmup y espera 20 segundos:
+```bash
+curl -sL "$BASE?action=warmup"
+```
 
-- `Cash In 30d`
-- `Cash Out 30d`
-- `Net Cash Forecast`
-- `Revenue at Risk`
-- `Balance semanal proyectado`
-- `Agenda financiera próxima`
+Si devuelve HTML en vez de JSON, los permisos del Apps Script se han cambiado — hay que ir al editor, "Implementar → Gestionar implementaciones → lápiz → Quién tiene acceso = Cualquier usuario".
 
-## 5. Qué sí es y qué no es
+### 3.2. Reset de la hoja
 
-### Sí es
+Para empezar limpios:
+```bash
+curl -sL "$BASE?action=reset"
+```
 
-- un PoC comercial potente
-- una visión de producto conectada
-- una demo con backend real de demostración
-- una forma muy entendible de enseñar automatización y operación
+Debe devolver `"status":"ok", "action":"reset", "version":"v2"`. Deja: 15 socios, 13 activos, 2 impagos (S003 y S011), 10 leads, 6 automatizaciones, agenda financiera limpia.
 
-### No es
+Después, abre la Google Sheet y verifica visualmente:
+- 7 pestañas: `socios`, `pagos`, `leads`, `reservas`, `automatizaciones`, `tareas`, `agenda_financiera`.
+- Fila 1 congelada y con color verde/teal.
+- Fechas en formato `2026-04-12`, no `Fri May 01 2026...`.
 
-- un producto de producción
-- la arquitectura final recomendada
-- un CRM o ERP terminado
-- una defensa de Google Sheets como backend final
+### 3.3. Frontend
 
-La forma correcta de explicarlo:
+Abre Chrome en modo incógnito para no arrastrar caché:
+```
+https://giqciklum.github.io/wifit-poc/?mode=present
+```
 
-`Google Sheets aquí es una capa operativa de demo para demostrar trazabilidad y automatización real de una forma muy entendible para el cliente.`
+Verifica:
+- **Badge superior derecho** dice "Backend en vivo · v2" en verde. Si tras 10 segundos sigue en "Modo demo local", la wifi está bloqueando `script.google.com` — cambia a 4G del móvil.
+- **Marca de agua** abajo a la derecha: "Modo presentación · WiFit × Ciklum".
+- **Botón "Reiniciar"** arriba está oculto (protege contra clics accidentales).
+- **Gráficos** (Cash In, Revenue at Risk, funnel de leads) cargan con números, no con cuadrículas vacías.
+- Fuentes **DM Sans** (cuerpo) y **Bebas Neue** (números grandes) se ven correctamente.
 
-## 6. Qué preparar antes de una reunión
+### 3.4. Simulación de prueba
 
-Abre estas 3 pestañas:
+Pulsa **"Abrir simulador"** y ejecuta el escenario **Activación premium**. Debe tardar 2-4 segundos. Verifica:
+- El socio nuevo aparece en la lista interna.
+- La Google Sheet muestra la nueva fila en `socios`, `pagos`, `automatizaciones` y `agenda_financiera`.
+- El mensaje de éxito sale en menos de 5 segundos.
 
-1. Demo  
-   [https://giqciklum.github.io/wifit-poc/](https://giqciklum.github.io/wifit-poc/)
-2. Google Sheet  
-   [https://docs.google.com/spreadsheets/d/1ew8qaFc1d0G7EjeR1xJa-llsb1o9dC2BYCdDBKcR8ek/](https://docs.google.com/spreadsheets/d/1ew8qaFc1d0G7EjeR1xJa-llsb1o9dC2BYCdDBKcR8ek/)
-3. Repo  
-   [https://github.com/giqciklum/wifit-poc](https://github.com/giqciklum/wifit-poc)
+Al terminar: vuelve a hacer **reset** (3.2) para empezar la reunión limpios.
 
-Orden recomendado:
+### 3.5. Entorno físico
 
-- casi toda la reunión: demo
-- prueba operativa: Google Sheet
-- solo si preguntan por detalle técnico: repo
+- Cierra todas las pestañas del navegador **excepto las 3 que necesitas** (demo, Sheet, repo).
+- Desactiva notificaciones de Slack, correo, calendario.
+- Modo **"No molestar"** del Mac activado.
+- Batería > 60% o cargador conectado.
+- Prueba compartir pantalla con un contacto antes: audio OK, resolución OK.
+- **Ten a mano** el `WiFit_Manual_Maestro_PoC.pdf` como salvavidas.
 
-Checklist rápido:
+---
 
-- la demo abre
-- el botón `Abrir simulador` funciona
-- el badge intenta conectar backend
-- puedes abrir la Google Sheet
-- no hay basura visual evidente de pruebas internas
+## 4. Guión de la reunión — 25 minutos
 
-## 7. Mensaje correcto de la demo
+**Formato**: 25 minutos efectivos, 1 pantalla compartida. Tú llevas la voz. La demo acompaña, no protagoniza.
 
-Si tienes que resumir la propuesta en una frase, usa esta:
+**Objetivo**: no vender tecnología — vender **un piloto pagado de 6-8 semanas** con una cola de 12-18 meses.
 
-`Estamos enseñando cómo una experiencia premium para el socio se conecta con una capa operativa real para negocio.`
+**Clave de lenguaje**: no menciones "PoC" ni "prueba de concepto". Es una **demo**. El siguiente paso es **piloto**.
 
-Si necesitas una segunda frase:
+### 4.1. Apertura — 2 min
 
-`La misma acción puede impactar experiencia, operación, automatización y forecast financiero.`
+> *"Gracias por el tiempo. Antes de tocar nada os cuento en tres frases lo que vamos a ver.*
+>
+> *Lo que traemos no compite ni con Harbiz ni con SIGEGym. Somos la capa conectada que une experiencia del socio, operación del día a día y agenda financiera del CFO, integrable con lo que ya tengáis.*
+>
+> *En los próximos 20 minutos os enseñamos una demo en vivo montada específicamente para WiFit, con vuestras sedes y estructura de cuotas, y cerramos con qué necesitaríamos para arrancar un piloto real."*
 
-## 8. Guion recomendado de 5 minutos
+### 4.2. Bloque 1 — La visión conectada · 3 min
 
-### Paso 1. Arranca por visión, no por tecnología
+Pestaña: landing. No hagas clic todavía.
 
-Abre la demo y di:
+> *"Lo que veis es una única capa con tres audiencias:*
+>
+> 1. *El socio — lo que ve Manuel cuando abre la app WiFit IA: plan de entrenamiento, coach virtual, reservas, nutrición.*
+> 2. *El equipo de WiFit — gestión de socios, leads, operación por sede, finanzas.*
+> 3. *La dirección — KPIs, expansión, agenda financiera viva.*
+>
+> *Y el truco es que los tres están alimentados por el mismo dato. No hay que duplicar información entre el CRM, la herramienta del personal trainer y el Excel del CFO."*
 
-`No estamos enseñando un dashboard genérico. Estamos enseñando dos experiencias conectadas: una para el socio y otra para gestión.`
+Apunta al badge **"Backend en vivo · v2"**:
 
-### Paso 2. Enseña la portada
+> *"Este indicador os lo señalo solo una vez: significa que lo que vais a ver no son pantallas de PowerPoint. Es datos reales contra una hoja conectada que podemos compartiros al final."*
 
-Recorre rápido:
+### 4.3. Bloque 2 — Experiencia del socio · 4 min
 
-- propuesta de valor
-- diferencia entre `Experiencia del Socio` y `Centro de Gestión`
-- presencia de `WiFit IA`
+Clic en **"Experiencia del socio"**. Recorrido breve:
 
-Objetivo:
+1. **Phone mock** (Manuel, socio premium).
+   > *"Manuel paga 41,90 €. Esta es la app que usa. Plan semanal generado por IA, coach con historial de lesiones, reservas de clase, progresión visible."*
 
-- que se entienda que esto es producto
-- que no parezca una demo técnica improvisada
+2. **Journey proof**.
+   > *"Cada pantalla tiene trazabilidad: de dónde sale el dato, qué automatización lo actualiza y cuándo. No es una maqueta."*
 
-### Paso 3. Entra en la parte socio
+**Lo que NO dices**: que es Harbiz pero mejor, que aquí hay IA generativa, que esto funciona con cualquier LLM.
 
-Abre `Experiencia del Socio` y enseña:
+### 4.4. Bloque 3 — Centro de gestión · 6 min
 
-- rutina
-- nutrición
-- clases
-- progreso
-- recomendación personalizada
+Vuelve a inicio, clic en **"Centro de gestión"**. Orden de pestañas:
 
-Qué decir:
+1. **Socios** — 15 socios, 7 sedes, mix de estados.
+   > *"Esto es lo que ve el equipo de sede. El estado (Activo / Impago / Pendiente) se sincroniza con pagos."*
 
-`La IA aquí no es un gadget. Es una capa premium que acompaña al socio y puede aumentar valor percibido, engagement y monetización.`
+2. **Leads** — 10 leads con scoring.
+   > *"Instagram, Google Ads, Facebook, referidos. Score automático, próxima acción sugerida. Esto sustituye el Excel que usáis hoy, y añade scoring."*
 
-### Paso 4. Vuelve y enseña gestión
+3. **Operaciones** — tareas abiertas por sede.
+   > *"Cada alerta lleva sede, responsable y prioridad. Os interconectáis con la realidad del centro, no solo con lo digital."*
 
-Abre `Centro de Gestión` y señala:
+4. **Finanzas** — **la pestaña clave.**
+   > *"Esto normalmente no existe en un gimnasio low-cost. Agenda financiera viva: Cash In 30 días, Cash Out, Net Forecast, y la pieza fuerte — Revenue at Risk. Impagos detectados, cobros en riesgo, y cuándo se recuperan si se ejecuta la automatización."*
 
-- socios
-- leads
-- operaciones
-- finanzas
-- visibilidad multi-área
+5. **Mercado** — comparativa con VivaGym / Basic Fit / competidores.
+   > *"Contexto competitivo. Dónde está WiFit y dónde quiere llegar."*
 
-Qué decir:
+6. **Ruta** — roadmap público de 7 → 10 sedes.
+   > *"Expansión visualizada con indicadores por sede. Útil para la conversación con el fondo."*
 
-`La gracia no es solo mejorar la experiencia del socio, sino conectar esa experiencia con una operación más visible y más automatizada.`
+### 4.5. Bloque 4 — El momento mágico · 4 min
 
-### Paso 5. Abre el simulador
+Vuelve a la runtime bar. Clic en **"Abrir simulador"**. Escenario: **Activación premium**.
 
-Pulsa `Abrir simulador`.
+Mientras se ejecuta (5-8 segundos):
+> *"Acabamos de simular que Manuel ha pagado su cuota mensual. Sin tocar nada más, os enseño qué pasa en la hoja real de Google en otra pestaña."*
 
-Di:
+Cambia a la Google Sheet y enseña, en este orden:
 
-`Aquí entramos en la capa viva del PoC: acciones concretas que generan impacto visible y trazabilidad real.`
+1. `socios` — nuevo socio añadido al final.
+2. `pagos` — nuevo cobro confirmado.
+3. `automatizaciones` — evento "Pago confirmado" con resultado.
+4. `agenda_financiera` — nueva fila de ingreso esperado a +30 días.
 
-### Paso 6. Lanza un caso principal
+> *"En 5 segundos: 4 sistemas actualizados simultáneamente. Esto es lo que os va a doler cuando paséis de 7 a 10 sedes: duplicar datos en 4 herramientas se vuelve inviable."*
 
-Orden recomendado:
+**Segundo escenario opcional si hay tiempo**: **Recuperación de impago**.
 
-1. `Activación premium`
-2. `Lead de prueba`
-3. `Recuperación de impago`
+> *"Caso inverso. Carlos lleva 30 días sin pagar. El sistema lo detecta, envía aviso, crea tarea para el gestor de sede, y mueve el ingreso a riesgo en la agenda financiera. Cuando se regulariza, pasa a confirmado y se añade el siguiente ciclo como esperado. El CFO ve en tiempo real el impacto de cada acción operativa."*
 
-No hace falta enseñar los tres siempre. Con uno o dos suele bastar.
+### 4.6. Bloque 5 — Qué NO es esto · 2 min
 
-### Paso 7. Enseña el impacto en pantalla
+Párate. Baja el ritmo.
 
-Muestra:
+> *"Antes de entrar en números quiero dejar claro qué no estoy vendiendo:*
+>
+> - *No os vendo una sustitución de SIGEGym. Si ya lo estáis mirando, seguid. SIGEGym hace gestión de facilities muy bien. Nosotros nos conectamos.*
+> - *No os vendo un coach de IA. Si queréis Harbiz, adelante. Es buen producto. Se integra aquí dentro.*
+> - *No os vendo un CRM. Tenéis o tendréis uno. Nos conectamos.*
+>
+> *Lo que os vendo es la capa conectiva que hace que todas esas piezas hablen entre ellas, y el cuadro de mando de dirección, operación y finanzas que ahora mismo está en tres hojas de cálculo distintas."*
 
-- cambio de estado
-- cronología de eventos
-- artefactos generados
-- efecto en socio y gestión
-- evidencia de automatización
+### 4.7. Bloque 6 — Cierre y siguiente paso · 4 min
 
-### Paso 8. Solo después abre la Google Sheet
+> *"Para pasar de esto que os hemos enseñado a algo real para WiFit, os proponemos un piloto de 6-8 semanas en 1 o 2 sedes:*
+>
+> - *Semana 1-2: conectamos vuestros datos reales (sede piloto).*
+> - *Semana 3-5: activamos los 3 flujos clave — activación, recuperación de impago, scoring de leads — y medimos.*
+> - *Semana 6-8: cuadro de mando para dirección, con KPIs reales.*
+>
+> *Rango de inversión: orden de magnitud de 25.000 € a 45.000 € según alcance, porque el piloto real lleva ingeniería de integración contra vuestros sistemas actuales. Propuesta formal la semana siguiente si hay interés.*
+>
+> *Lo que necesitamos para arrancar:*
+> 1. *Punto de contacto técnico por vuestra parte (pagos, CRM actual).*
+> 2. *Elegir sede piloto — sugerimos WiFit Retiro por tamaño.*
+> 3. *KPI de éxito del piloto firmado antes de empezar."*
 
-Di esto:
+Si preguntan "¿y vosotros quiénes sois?":
+> *"Ciklum: 25 años, 4.000 ingenieros. Proyectos similares de data & AI en retail y fitness en UK e Iberia. FoshTech es el caso de referencia más cercano — os lo pasamos con la propuesta."*
 
-`Y ahora os enseño que esto no se queda en frontend: la acción ha dejado rastro real en una capa operativa viva.`
+### 4.8. Tiempos orientativos
 
-Enseña primero:
+| Bloque | Minutos | Acumulado |
+|--------|---------|-----------|
+| Apertura | 2 | 2 |
+| Visión conectada | 3 | 5 |
+| Experiencia socio | 4 | 9 |
+| Centro gestión | 6 | 15 |
+| Momento mágico | 4 | 19 |
+| Qué no es esto | 2 | 21 |
+| Cierre y siguiente paso | 4 | 25 |
 
-- `automatizaciones`
+Si te pasas: corta primero **Mercado** y **Ruta** del Bloque 3. Si te sobran 5 minutos: añade el escenario de **Recuperación de impago** en el Bloque 4.
 
-Luego, según el caso:
+---
 
-- `socios`
-- `pagos`
-- `leads`
-- `tareas`
+## 5. Objeciones, mensajes según audiencia y preguntas duras
 
-### Paso 9. Solo si entra conversación financiera, abre Finanzas
+### 5.1. Objeciones más frecuentes
 
-No la enseñes por defecto si no hace falta.
+**"¿Esto no lo podemos hacer con Zapier o Make?"**
+> *"Los flujos simples, sí. La agenda financiera viva, el scoring consistente y la capa de dirección, no. Zapier es fontanería; esto es arquitectura."*
 
-Ábrela solo si aparece claramente un perfil financiero o de dirección.
+**"¿Por qué no usamos directamente SIGEGym?"**
+> *"Podéis. SIGEGym es excelente para facilities. Esto es complementario — podemos integrarnos con SIGEGym si lo adoptáis. Lo que nosotros hacemos es el lado experiencia + IA + dirección financiera, que SIGEGym no resuelve."*
 
-## 9. Qué enseña cada capa
+**"¿Esto es como Harbiz?"**
+> *"Harbiz es un coach virtual excelente, enfocado al coaching. Nosotros no competimos con eso. Si queréis Harbiz lo integramos aquí dentro. Lo que traemos es la capa que conecta a Harbiz con el CRM de socios, operación y cash forecast. Harbiz no tiene eso."*
 
-### Capa socio
+**"Seguridad, GDPR, dónde están los datos"**
+> *"La demo que veis va contra Google Sheets porque es una demo. El piloto real usa vuestra infraestructura o cloud europeo regulado. GDPR compliance se audita en semana 1 del piloto."*
 
-Qué se quiere transmitir:
+**"¿Plazos?"**
+> *"Piloto 6-8 semanas desde firma. Rollout completo a 7 + 10 sedes, 4-6 meses más. Lo relevante es que el piloto empieza a dar valor desde la semana 3, no al final."*
 
-- experiencia más premium que una app básica de gimnasio
-- personalización
-- seguimiento
-- recomendación
-- percepción de producto propio
+**"¿Y si el PE no lo aprueba?"**
+> *"Preparamos un one-pager orientado al fondo, centrado en Revenue at Risk y eficiencia operativa por sede. Son las dos métricas que mueven el comité."*
+
+**"¿Por qué construirlo con vosotros y no internamente?"**
+> *"Una herramienta estándar cubre una necesidad puntual. Una capa propia conectada a socio, captación, cobros y operación puede convertirse en un activo estratégico del grupo. Construirlo internamente os llevaría 9-12 meses y un equipo que hoy no tenéis. Nosotros traemos el blueprint ya probado."*
+
+**"¿Podemos ver el Apps Script?"**
+> *"Eso es infraestructura de demo. En el piloto real lo sustituimos por vuestro entorno. Os pasamos acceso de solo lectura a la Google Sheet después de la reunión si os interesa."*
+
+### 5.2. Mensajes según la persona que te preguntas
+
+**Si habla negocio general**:
+> *"Estamos enseñando una experiencia mejor para el socio y una operación más visible para el negocio, conectadas entre sí."*
+
+**Si habla operaciones**:
+> *"La gracia está en que cobros, incidencias, tareas y seguimiento dejan rastro y reducen trabajo manual."*
+
+**Si habla producto**:
+> *"Aquí hay una base clara para construir una experiencia propia y diferencial de WiFit, no una simple personalización de una herramienta estándar."*
+
+**Si habla CFO o dirección**:
+> *"La operación ya no se queda en backend invisible: aparece traducida en caja prevista, ingresos en riesgo y visibilidad de semanas tensas."*
+
+**Si preguntan por futuro**:
+> *"Hoy usamos una capa operativa muy entendible para demostrar valor rápido. Si esto avanza, la misma lógica se conecta a Stripe, CRM, ERP o stack cloud corporativo."*
+
+### 5.3. Si sale ciberseguridad en la reunión
+
+> *"Es una conversación muy relevante, pero yo la trataría como siguiente capa del proyecto: gobierno del dato, permisos, auditoría y resiliencia operativa."*
+
+No abras tú el tema en la demo principal. Si sale, respóndelo así y sigue.
+
+---
+
+## 6. Si algo falla en directo
+
+Frases listas para cada problema:
+
+**Backend cae a "Modo demo local"**
+> *"Hemos tenido un parpadeo en la red del backend de demo — es un incidental, la demo sigue funcionando contra datos locales, os muestro lo mismo y luego lo vemos con backend cuando la red vuelva."*
+
+**Demo tarda mucho**
+> *"Primera petición del día — la infraestructura de demo está en serverless, se calienta y de ahí en adelante va fluido."* *(es cierto: el cold start del Apps Script es real.)*
+
+**Chart.js no carga / gráficos vacíos**
+Recarga. Chart.js está vendorizado, si no carga es porque la wifi del cliente bloquea mucho más que eso.
+
+**El simulador se queda "procesando"**
+Espera 10 segundos máximo, luego: *"el backend estaba frío, ya se ha calentado, ahora va fluido"* y vuelve a pulsar.
+
+**"¿Está todo en Google Sheets?"**
+> *"La capa operativa de la demo, sí — es una decisión deliberada para poder enseñaros datos reales que podéis tocar. La arquitectura del piloto se define con vuestro CTO en la semana 1."*
+
+**Todo falla a la vez**
+Cambia a `WiFit_Manual_Maestro_PoC.pdf` en pantalla compartida. Tienes material para sostener la conversación sin demo.
+
+### Orden de fallback si vas justo de tiempo
+
+1. Portada
+2. Experiencia del Socio
+3. Centro de Gestión (solo Socios y Finanzas)
+4. Abrir simulador → Activación premium
+5. Google Sheet en `automatizaciones`
+
+---
+
+## 7. Después de la reunión
+
+### 7.1. Qué hacer en las 2 horas siguientes
+
+Email de follow-up, mientras están calientes:
+- Enlace a la demo.
+- PDF del manual adjunto.
+- Resumen del siguiente paso + fecha objetivo para propuesta formal.
+- One-pager del fondo si se pidió.
+
+Limpieza:
+- **No envíes la Google Sheet como está** — tiene datos con nombres ficticios que pueden confundir sin contexto. Si quieren verla, haz copia en solo-lectura etiquetada como "Demo sample".
+- **Reset definitivo** de la hoja (`?action=reset`) para no dejar filas de prueba colgando.
+
+### 7.2. Qué NO hacer
+
+- No prometas features adicionales sobre la marcha.
+- No publiques la demo en LinkedIn antes de tener el piloto firmado.
+- No compartas acceso al Apps Script editor.
+- No pulses "Reiniciar" durante la reunión. En modo presentación está oculto, pero por si acaso.
+- No entres al editor de Apps Script delante del cliente.
+- No digas "está hecho en Google Sheets" — di "capa operativa de demo".
+- No te pelees con Harbiz ni SIGEGym — son complementarios, no sustitutos.
+- No abras Finanzas si el perfil del cliente no es financiero.
+
+---
+
+## 8. Si piden arrancar piloto en la propia reunión
+
+- **No firmes nada verbal.** Di: *"Perfecto — mañana os mandamos propuesta formal con alcance, hitos, rango y condiciones, y la cerramos esta semana."*
+- **Pide**: punto de contacto técnico (email), sede piloto (sugerida Retiro), fecha objetivo de kickoff.
+- **Cierra**: *"¿Os va que enviemos propuesta formal el [día X] y cerramos llamada de 30 min el [día Y] para resolver dudas?"*
+
+---
+
+## 9. Las cinco capas del producto
+
+### 9.1. Capa socio
+
+Qué transmitir: experiencia más premium que una app básica de gimnasio, personalización, seguimiento, recomendación, percepción de producto propio.
 
 Mensaje útil:
+> *"WiFit IA convierte una cuota accesible en una experiencia con más valor percibido y más continuidad."*
 
-`WiFit IA convierte una cuota accesible en una experiencia con más valor percibido y más continuidad.`
+### 9.2. Capa gestor
 
-### Capa gestor
-
-Qué se quiere transmitir:
-
-- visión operativa
-- control de socios
-- captación
-- tareas
-- pagos
-- lectura ejecutiva
+Qué transmitir: visión operativa end-to-end, control de socios, captación, tareas, pagos, lectura ejecutiva.
 
 Mensaje útil:
+> *"La operación no va por un lado y el socio por otro. Todo forma parte del mismo sistema."*
 
-`La operación no va por un lado y el socio por otro. Todo forma parte del mismo sistema.`
+### 9.3. Capa automatización
 
-### Capa automatización
-
-Qué se quiere transmitir:
-
-- menos trabajo manual
-- acciones que dejan evidencia
-- secuencias visibles
-- respuesta rápida ante cobro, lead o incidencia
+Qué transmitir: menos trabajo manual, acciones que dejan evidencia, secuencias visibles, respuesta rápida ante cobro, lead o incidencia.
 
 Mensaje útil:
+> *"No solo mostramos el evento; mostramos la consecuencia operativa del evento."*
 
-`No solo mostramos el evento; mostramos la consecuencia operativa del evento.`
+### 9.4. Capa IA
 
-### Capa IA
-
-Qué se quiere transmitir:
-
-- valor real para el socio
-- posible monetización premium
-- diferenciación frente a soluciones más genéricas
+Qué transmitir: valor real para el socio, posible monetización premium, diferenciación frente a soluciones genéricas.
 
 Mensaje útil:
+> *"La IA aquí funciona como una capa de producto propia, no como un añadido cosmético."*
 
-`La IA aquí funciona como una capa de producto propia, no como un añadido cosmético.`
+### 9.5. Capa financiera
 
-### Capa financiera
-
-Qué se quiere transmitir:
-
-- visibilidad de caja futura
-- ingresos en riesgo
-- efecto de cobros e impagos sobre el forecast
-- lectura útil para dirección y CFO
+Qué transmitir: visibilidad de caja futura, ingresos en riesgo, efecto de cobros e impagos sobre el forecast, lectura útil para dirección y CFO.
 
 Mensaje útil:
+> *"No estamos enseñando solo facturación. Estamos enseñando cómo la operación modifica la previsión de caja."*
 
-`No estamos enseñando solo facturación. Estamos enseñando cómo la operación modifica la previsión de caja.`
+---
 
-## 10. Casos de demo recomendados
+## 10. Los cuatro casos de demo
 
-### Caso 1. Activación premium
+### 10.1. Activación premium
 
-Qué hacer en demo:
+1. Abre simulador.
+2. Lanza "Activación premium".
+3. Enseña cronología y evidencias.
+4. Abre Google Sheet: `automatizaciones`, `socios`, `pagos`, `agenda_financiera`.
 
-1. abrir simulador
-2. lanzar `Activación premium`
-3. enseñar cronología y evidencias
-4. abrir Google Sheet
-5. enseñar `automatizaciones`, `socios` y `pagos`
-
-Qué demuestra:
-
-- cobro confirmado
-- activación de servicio premium
-- trazabilidad operativa
-- impacto en experiencia y negocio
+Demuestra: cobro confirmado, activación de servicio premium, trazabilidad operativa, impacto en experiencia y negocio, ingreso futuro anotado en caja.
 
 Frase útil:
+> *"Un cobro confirmado no solo activa una vista premium; también deja alta, pago, automatización real y forecast ajustado."*
 
-`Un cobro confirmado no solo activa una vista premium; también deja alta, pago y automatización real.`
+### 10.2. Lead de prueba
 
-### Caso 2. Lead de prueba
+1. Lanza "Lead de prueba".
+2. Enseña priorización y seguimiento.
+3. Abre `automatizaciones` y `leads`.
 
-Qué hacer en demo:
-
-1. lanzar `Lead de prueba`
-2. enseñar priorización y seguimiento
-3. abrir `automatizaciones`
-4. abrir `leads`
-
-Qué demuestra:
-
-- captación conectada
-- siguiente mejor acción
-- lectura comercial más útil que una simple fila
+Demuestra: captación conectada, siguiente mejor acción, lectura comercial más útil que una fila.
 
 Frase útil:
+> *"El lead deja de ser una fila muerta y pasa a una secuencia con contexto y próxima acción."*
 
-`El lead deja de ser una fila muerta y pasa a una secuencia con contexto y próxima acción.`
+### 10.3. Recuperación de impago
 
-### Caso 3. Recuperación de impago
+1. Lanza "Recuperación de impago".
+2. Enseña eventos, retención y evidencias.
+3. Abre `automatizaciones` y `tareas`.
+4. Muestra `agenda_financiera`: fila movida a `riesgo`.
+5. Lanza regularización (`?action=regularize&socio_id=S003`).
+6. Muestra: fila vuelve a `confirmado` y se añade el siguiente ciclo como `esperado`.
 
-Qué hacer en demo:
-
-1. lanzar `Recuperación de impago`
-2. enseñar eventos, retención y evidencias
-3. abrir `automatizaciones`
-4. abrir `tareas`
-
-Qué demuestra:
-
-- detección de incidencia
-- secuencia de recuperación
-- impacto operativo inmediato
+Demuestra: detección de incidencia, secuencia de recuperación, impacto operativo inmediato, efecto sobre forecast.
 
 Frase útil:
+> *"El impago deja de descubrirse tarde y pasa a una secuencia visible de recuperación, con efecto inmediato en la caja prevista."*
 
-`El impago deja de descubrirse tarde y pasa a una secuencia visible de recuperación.`
+### 10.4. Perfil CFO / dirección financiera
 
-### Caso 4. Perfil CFO o dirección financiera
+1. Abre la pestaña Finanzas.
+2. Enseña los 4 KPIs.
+3. Recorre Balance semanal proyectado.
+4. Recorre Agenda financiera próxima.
+5. Si vienes de un trigger, señala la evidencia financiera generada.
 
-Qué hacer en demo:
-
-1. abrir `Finanzas`
-2. enseñar los 4 KPIs
-3. recorrer `Balance semanal proyectado`
-4. recorrer `Agenda financiera próxima`
-5. si vienes de un trigger, señalar la evidencia financiera generada
-
-Qué demuestra:
-
-- lectura de tesorería
-- ingresos en riesgo
-- semanas tensas
-- impacto real de cobros e impagos
+Demuestra: lectura de tesorería, ingresos en riesgo, semanas tensas, impacto real de cobros e impagos.
 
 Frase útil:
+> *"La misma capa que activa al socio y recupera impagos también anticipa caja y hace visible el forecast."*
 
-`La misma capa que activa al socio y recupera impagos también anticipa caja y hace visible el forecast.`
+---
 
-## 11. Cómo enseñar Finanzas
+## 11. Finanzas: fórmulas, tabla, evidencias
 
-La pestaña `Finanzas` ya está conectada al backend real y lee `snapshot.finanzas`.
+La pestaña Finanzas está conectada al backend real y lee `snapshot.finanzas`.
 
-Hoy muestra:
+### 11.1. Fórmulas de los KPIs
 
-- 4 KPI cards
-- balance semanal por ingresos vs gastos
-- agenda financiera de próximos eventos
+| KPI | Fórmula |
+|-----|---------|
+| Cash In 30d | suma de `importe` donde `tipo = ingreso` y `estado != riesgo` |
+| Cash Out 30d | suma de `importe` donde `tipo = gasto` |
+| Revenue at Risk | suma de `importe` donde `tipo = ingreso` y `estado = riesgo` |
+| Net Cash Forecast | `Cash In − Cash Out` |
 
-### Fórmulas de los KPIs
+### 11.2. Columnas de la tabla de agenda
 
-`Cash In 30d`
+`fecha`, `tipo`, `categoria`, `sede`, `importe`, `estado`.
 
-- suma de `importe` donde `tipo = ingreso` y `estado != riesgo`
+Estados posibles:
+- `esperado` — cobro previsto, aún no cobrado.
+- `confirmado` — cobro recibido.
+- `riesgo` — cobro no recibido tras fecha esperada.
 
-`Cash Out 30d`
+### 11.3. Evidencias financieras que ya se generan en la demo
 
-- suma de `importe` donde `tipo = gasto`
-
-`Revenue at Risk`
-
-- suma de `importe` donde `tipo = ingreso` y `estado = riesgo`
-
-`Net Cash Forecast`
-
-- `Cash In - Cash Out`
-
-### Qué mirar en la tabla
-
-Columnas:
-
-- `fecha`
-- `tipo`
-- `categoria`
-- `sede`
-- `importe`
-- `estado`
-
-### Qué decir al enseñarla
-
-`Esto ya no es un bloque financiero decorativo. Está conectado al backend y se recalcula según los eventos que estamos moviendo en la demo.`
-
-## 12. Evidencias financieras que ya existen en el front
-
-Cuando enseñas la capa financiera o el stream de automatización, ya puedes señalar:
-
+Cuando lanzas automatizaciones, el stream puede mostrar:
 - `Previsión de caja actualizada`
 - `Ingreso movido a riesgo en agenda financiera`
 - `Forecast de caja ajustado`
 
-Estas evidencias son importantes porque conectan:
+Estas evidencias son importantes porque conectan: pago o impago → operación → forecast financiero.
 
-- pago o impago
-- operación
-- forecast financiero
+### 11.4. Qué decir al abrirla
 
-## 13. Qué enseñar en Google Sheets
+> *"Esto ya no es un bloque financiero decorativo. Está conectado al backend y se recalcula según los eventos que estamos moviendo."*
 
-No hace falta enseñar toda la hoja.
+---
 
-Las pestañas más útiles son:
+## 12. Google Sheets: qué enseñar y qué no
 
-- `automatizaciones`
-- `socios`
-- `pagos`
-- `leads`
-- `tareas`
-- `agenda_financiera`
+No muestres toda la hoja. Orden recomendado:
 
-Orden recomendado:
+1. `automatizaciones` (siempre la primera).
+2. La pestaña específica del caso.
 
-1. `automatizaciones`
-2. la pestaña específica del caso
+Pestañas más útiles:
+- `automatizaciones` — el cartón universal.
+- `socios` — activación.
+- `pagos` — activación, impago.
+- `leads` — caso comercial.
+- `tareas` — impago.
+- `agenda_financiera` — CFO.
 
-Regla simple:
+Regla:
+> *"La hoja no vende. La hoja demuestra."*
 
-`La hoja no vende. La hoja demuestra.`
+Qué NO enseñar:
+- Apps Script editor.
+- Endpoints o URLs crudas.
+- JSON.
+- Edición manual de filas en directo.
 
-## 14. Qué cambia en vivo y qué no
+---
 
-### Sí cambia en vivo
+## 13. Datos reales vs sintéticos, qué cambia en vivo
 
-- estado de backend
-- KPIs conectados
-- snapshot de `socios`
-- snapshot de `leads`
-- snapshot de `logs`
-- snapshot de `finanzas`
+La demo mezcla:
+- **Referencias públicas reales**: marca, pricing público, sedes visibles, referencias de mercado.
+- **Datos sintéticos**: socios, leads, scoring, forecast, automatizaciones, tareas, pagos, agenda financiera.
 
-### No es el objetivo principal enseñar
+Cómo explicarlo:
+> *"Usamos referencias reales para que el caso sea creíble y datos sintéticos para demostrar flujos de negocio sin usar datos del cliente."*
 
-- Apps Script por dentro
-- endpoints
-- JSON
-- edición manual de filas en reunión
+### Qué cambia en vivo al ejecutar un trigger
 
-La forma correcta de explicarlo:
+- Estado del backend (badge superior).
+- KPIs conectados.
+- Snapshot de `socios`, `leads`, `logs`, `finanzas`.
+- Filas de la Google Sheet (`socios`, `pagos`, `automatizaciones`, `tareas`, `agenda_financiera`).
 
-`El PoC ya tiene lectura y escritura real sobre una capa operativa viva. No hace falta entrar en la implementación para entender el valor.`
+### Qué NO es objetivo enseñar
 
-## 15. Qué decir según quién tengas delante
+- Apps Script por dentro.
+- Endpoints.
+- JSON crudo.
+- Edición manual de filas en reunión.
 
-### Si habla negocio general
+Frase correcta:
+> *"El PoC ya tiene lectura y escritura real sobre una capa operativa viva. No hace falta entrar en la implementación para entender el valor."*
 
-`Estamos enseñando una experiencia mejor para el socio y una operación más visible para el negocio, conectadas entre sí.`
+---
 
-### Si habla operaciones
+## 14. FAQ extendido
 
-`La gracia está en que cobros, incidencias, tareas y seguimiento dejan rastro y reducen trabajo manual.`
-
-### Si habla producto
-
-`Aquí hay una base clara para construir una experiencia propia y diferencial de WiFit, no una simple personalización de una herramienta estándar.`
-
-### Si habla CFO o dirección
-
-`La operación ya no se queda en backend invisible: aparece traducida en caja prevista, ingresos en riesgo y visibilidad de semanas tensas.`
-
-### Si preguntan por build vs buy
-
-`Una herramienta estándar puede cubrir una necesidad puntual. Una capa propia conectada a socio, captación, cobros y operación puede convertirse en un activo estratégico del grupo.`
-
-### Si preguntan por futuro
-
-`Hoy usamos una capa operativa muy entendible para demostrar valor rápido. Si esto avanzara, la misma lógica podría conectarse a Stripe, CRM, ERP o stack cloud corporativo.`
-
-## 16. Qué no hacer en reunión
-
-No hagas esto:
-
-- no empieces por la hoja
-- no abras Apps Script
-- no expliques endpoints salvo que te lo pidan
-- no vendas Google Sheets como arquitectura final
-- no mezcles demasiadas historias a la vez
-- no abras `Finanzas` si no hay interés financiero claro
-
-## 17. Qué decir sobre ciberseguridad si sale el tema
-
-Ángulo recomendado:
-
-`Es una conversación muy relevante, pero yo la trataría como siguiente capa del proyecto: gobierno del dato, permisos, auditoría y resiliencia operativa.`
-
-No conviene abrir este relato en la demo principal salvo que el cliente lo lleve ahí.
-
-## 18. Cómo saber si el backend está vivo
-
-En la parte superior de la demo verás uno de estos estados:
-
-- `Backend en vivo`
-- `Modo demo local`
-- `Conectando backend`
-
-### Si sale `Backend en vivo`
-
-Puedes decir:
-
-`La página está conectada al backend y está refrescando estado operativo real.`
-
-### Si sale `Modo demo local`
-
-La demo sigue funcionando.
-
-Haz esto:
-
-1. refresca la página
-2. espera unos segundos
-3. comprueba si cambia el badge
-
-Si no cambia, sigue con la demo y di:
-
-`La capa visual y la lógica del journey siguen funcionando. La conexión live refuerza la trazabilidad, pero no es necesaria para entender el concepto.`
-
-## 19. Si algo falla en directo
-
-### Si falla la demo
-
-- refrescar la página
-- volver a portada
-- probar un único caso, no varios seguidos
-
-### Si falla el backend
-
-- seguir con la demo en modo local
-- evitar explicaciones técnicas largas
-
-### Si falla Google Sheets
-
-- no insistir
-- volver a la demo
-- centrar el relato en producto + automatización visible
-
-### Si vas justo de tiempo
-
-Haz solo esto:
-
-1. portada
-2. `Experiencia del Socio`
-3. `Centro de Gestión`
-4. `Abrir simulador`
-5. `Activación premium`
-6. Google Sheet en `automatizaciones`
-
-## 20. FAQ rápido
-
-### ¿Qué tecnología hay detrás?
+**¿Qué tecnología hay detrás?**
 
 Versión corta:
-
-`Frontend estático, automatización ligera y hoja operativa viva como backend de demo.`
+> *"Frontend estático, automatización ligera y hoja operativa viva como backend de demo."*
 
 Versión completa:
+> *"Frontend publicado en GitHub Pages. Llama a un Apps Script que escribe en Google Sheets. El frontend lee estado refrescando contra ese backend."*
 
-`La demo está publicada en GitHub Pages. El frontend llama a un Apps Script que escribe en Google Sheets y luego refresca el estado conectado leyendo ese backend.`
-
-### ¿Es Google Sheets el backend final?
-
+**¿Es Google Sheets el backend final?**
 No.
+> *"Es una capa operativa de demo para demostrar trazabilidad y automatización real de forma muy entendible."*
 
-`Es una capa operativa de demo para demostrar trazabilidad y automatización real de forma muy entendible.`
+**¿La IA es solo un chat?**
+No. La IA afecta experiencia del socio, personalización, continuidad y monetización premium.
 
-### ¿La IA es solo chat?
-
-No.
-
-En el relato correcto, la IA afecta:
-
-- experiencia del socio
-- personalización
-- continuidad
-- monetización premium
-
-### ¿La parte financiera es real o decorativa?
-
+**¿La parte financiera es real o decorativa?**
 Hoy ya está conectada al backend real de demo.
+> *"La lectura financiera no está separada del resto. Sale de eventos operativos y por eso sirve para dirección."*
 
-La conversación correcta es:
+**¿Qué pasa con multi-sede?**
+La demo ya modela las 7 sedes reales de WiFit como dimensión transversal. Socios, leads, tareas y agenda financiera se pueden filtrar por sede. En el piloto, cada sede tiene su slice y dirección ve el consolidado.
 
-`La lectura financiera no está separada del resto. Sale de eventos operativos y por eso sirve para dirección.`
+**¿Cuánto tardáis en replicar esto contra nuestros datos?**
+2 semanas para conectar sede piloto, 5 semanas para tener los 3 flujos clave medidos, 8 semanas para cuadro de mando de dirección.
 
-## 21. Datos reales vs sintéticos
+---
 
-La demo mezcla dos tipos de base:
+## 15. Arquitectura y endpoints
 
-- `referencias públicas reales`
-- `datos sintéticos de operación`
+```
+Frontend estático (GitHub Pages)
+        ↓
+Apps Script Web App (Google)
+        ↓
+Google Sheet (capa operativa de demo)
+```
 
-Qué entra en cada grupo:
+Endpoints principales:
 
-- reales: marca, narrativa, pricing público, sedes visibles y referencias de mercado
-- sintéticos: socios, leads, scoring, forecast, automatizaciones, tareas, pagos y agenda financiera
+| Endpoint | Qué hace |
+|----------|----------|
+| `?action=state` | estado resumido |
+| `?action=state&detail=full` | snapshot completo (`socios`, `leads`, `logs`, `finanzas`) |
+| `?action=warmup` | fire-and-forget para calentar el cold start |
+| `?action=reset` | restaura dataset inicial |
+| `?action=activation` | simula activación premium |
+| `?action=lead` | crea lead de prueba |
+| `?action=retention` | simula impago y secuencia de recuperación |
+| `?action=regularize&socio_id=...` | regulariza un impago |
 
-Esto es correcto y deseable en un PoC comercial.
+Polling del frontend: cada 12 segundos.
 
-La forma simple de explicarlo:
+Fallback: si el backend falla, el frontend sigue funcionando contra dataset local precargado; el badge cambia a "Modo demo local".
 
-`Usamos referencias reales para que el caso sea creíble y datos sintéticos para poder demostrar flujos de negocio sin usar datos del cliente.`
+---
 
-## 22. Limpieza de demo si habéis hecho muchas pruebas
+## 16. Comandos útiles y archivos clave
 
-Si se han lanzado muchos triggers de prueba, la hoja puede acumular filas nuevas.
+### 16.1. Curl útiles
 
-Opciones razonables antes de una reunión:
+```bash
+BASE="https://script.google.com/macros/s/AKfycbwmmgY9mg4p8o6lVboAelyR2P0WtnMYo7kDJWWLpvzHy6B2kuiatZSr1qguU2jGDLwnWg/exec"
 
-- dejar la hoja tal cual si el volumen no confunde
-- limpiar manualmente las filas más evidentes de prueba
-- resetear la base de demo si hace falta una puesta en escena más limpia
+# Calentar el Apps Script (2-3 min antes de empezar)
+curl -sL "$BASE?action=warmup"
 
-Regla práctica:
+# Estado rápido
+curl -sL "$BASE?action=state" | python3 -m json.tool | head -15
 
-`No hace falta dejar la hoja perfecta; hace falta que el relato se entienda bien.`
+# Estado con snapshot completo
+curl -sL "$BASE?action=state&detail=full" > /tmp/state.json \
+  && python3 -c "import json; d=json.load(open('/tmp/state.json')); print('v:',d.get('version'),'socios:',len(d.get('snapshot',{}).get('socios',[])),'finanzas:',len(d.get('snapshot',{}).get('finanzas',[])))"
 
-## 23. Arquitectura actual
+# Reset para empezar limpios
+curl -sL "$BASE?action=reset"
 
-Arquitectura actual del PoC:
+# Regularizar un impago concreto
+curl -sL "$BASE?action=regularize&socio_id=S003"
+```
 
-`Frontend estático publicado -> Apps Script Web App -> Google Sheet`
+### 16.2. Archivos clave del repo
 
-Endpoints principales del backend:
+- `README.md` — este manual.
+- `index.html` — UI completa (landing, experiencia socio, centro de gestión).
+- `assets/demo-runtime.js` — runtime, polling, simulador, badge.
+- `assets/chart.umd.min.js` — Chart.js vendorizado (resiliente a CDN bloqueado).
+- `apps-script/Code.gs` — backend Apps Script completo.
+- `sw.js` — service worker (network-first app shell, cache-first assets, nunca cachea backend).
+- `manifest.webmanifest` — PWA.
+- `WiFit_Manual_Maestro_PoC.pdf` — versión PDF de este manual, para adjuntar en follow-up.
 
-- `?action=state`
-- `?action=state&detail=full`
-- `?action=activation`
-- `?action=lead`
-- `?action=retention`
+---
 
-El `detail=full` devuelve hoy:
+## 17. Fuentes públicas utilizadas
 
-- `snapshot.socios`
-- `snapshot.leads`
-- `snapshot.logs`
-- `snapshot.finanzas`
+- [WiFit Gyms — web corporativa](https://wifitgyms.com/)
+- [WiFit Retiro — ficha de sede](https://wifitgyms.com/gimnasios/madrid/wifit-retiro/)
+- [Proceso de alta — cuotas WiFit](https://wifitgyms.provis.es/Public/ProcesoAlta/PasoSeleccionCuota.aspx)
+- [Harbiz — coach virtual](https://www.harbiz.io/)
+- [Harbiz — app de entrenamiento personal](https://www.harbiz.io/app-entrenamiento-personal)
 
-El frontend hace polling cada `12` segundos.
+---
 
-## 24. Tabs principales de la Google Sheet
+## 18. Versión ultracorta si vas muy justo
 
-La demo usa datos sintéticos y pestañas operativas como:
-
-- `socios`
-- `pagos`
-- `leads`
-- `reservas`
-- `automatizaciones`
-- `tareas`
-- `agenda_financiera`
-
-## 25. Archivos más importantes del proyecto
-
-Si alguien necesita contexto técnico rápido, estos son los archivos clave:
-
-1. [README.md](/Users/computerxperts/Documents/POC/README.md)
-2. [index.html](/Users/computerxperts/Documents/POC/index.html)
-3. [assets/demo-runtime.js](/Users/computerxperts/Documents/POC/assets/demo-runtime.js)
-4. [apps-script/Code.gs](/Users/computerxperts/Documents/POC/apps-script/Code.gs)
-
-## 26. Fuentes públicas usadas como base
-
-Referencias públicas utilizadas para inspirar el PoC:
-
-- [https://wifitgyms.com/](https://wifitgyms.com/)
-- [https://wifitgyms.com/gimnasios/madrid/wifit-retiro/](https://wifitgyms.com/gimnasios/madrid/wifit-retiro/)
-- [https://wifitgyms.provis.es/Public/ProcesoAlta/PasoSeleccionCuota.aspx](https://wifitgyms.provis.es/Public/ProcesoAlta/PasoSeleccionCuota.aspx)
-- [https://www.harbiz.io/](https://www.harbiz.io/)
-- [https://www.harbiz.io/app-entrenamiento-personal](https://www.harbiz.io/app-entrenamiento-personal)
-
-## 27. Versión ultracorta por si vas muy justo
-
-`La demo enseña una experiencia premium para el socio y una capa operativa real para negocio. Cuando lanzamos una acción, no solo cambia la interfaz: también deja trazabilidad operativa y puede impactar incluso el forecast financiero. Hoy usamos Google Sheets como backend de demo porque permite demostrar ese valor de forma rápida, entendible y creíble.`
+> *"La demo enseña una experiencia premium para el socio y una capa operativa real para negocio. Cuando lanzamos una acción, no solo cambia la interfaz: también deja trazabilidad operativa y puede impactar incluso el forecast financiero. Hoy usamos Google Sheets como backend de demo porque permite demostrar ese valor de forma rápida, entendible y creíble. El siguiente paso natural es un piloto pagado de 6-8 semanas en 1 o 2 sedes para pasar de demo a algo real sobre vuestros sistemas."*
